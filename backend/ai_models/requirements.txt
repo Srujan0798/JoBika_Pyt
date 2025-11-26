@@ -1,0 +1,7 @@
+# AI Models Requirements
+# Advanced AI features using Hugging Face Transformers
+
+transformers==4.36.0
+torch==2.1.2
+sentence-transformers==2.2.2
+numpy==1.24.3
