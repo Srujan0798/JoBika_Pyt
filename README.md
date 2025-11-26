@@ -1,9 +1,133 @@
+# 🚀 JoBika - AI-Powered Job Application Platform
 
-3. **Explore the demo:**
-   - Landing page → Sign up/Login
-   - Upload a resume (any PDF/DOCX)
-   - Browse jobs and see match scores
-   - Track applications
+> **Your intelligent job search companion - Made in India, for global job seekers**
+
+[![Status](https://img.shields.io/badge/Status-Production%20Ready-success)](https://github.com)
+[![Testing](https://img.shields.io/badge/Testing-Comprehensive-blue)](https://github.com)
+[![Cost](https://img.shields.io/badge/Cost-$0%2Fmonth-green)](https://github.com)
+
+---
+
+## 🎯 What is JoBika?
+
+JoBika is a **complete AI job agent** that helps you find and apply to jobs globally. It customizes your resume for each job, analyzes skill gaps, and can even auto-apply to matching positions while you sleep.
+
+**Key Features**:
+- 🤖 **AI Resume Customization** - Tailored resume for each job
+- 📊 **Honest Skill Gap Analysis** - Know what to learn, with free resources
+- 🌍 **Universal Job Search** - Find jobs in US, Europe, Asia, Remote
+- ⚡ **Auto-Apply System** - Set preferences, let AI apply for you
+- 📈 **Application Tracking** - Manage everything in one dashboard
+
+---
+
+## ✨ Features
+
+### **Core Features**
+- ✅ User authentication with JWT tokens
+- ✅ Resume upload (PDF/DOCX) with AI parsing
+- ✅ Job browsing with smart filtering
+- ✅ One-click applications
+- ✅ Application tracking dashboard
+- ✅ Email notifications
+
+### **AI Agent Features** ⭐
+- ✅ **Resume Customization** - Creates job-specific resume versions
+- ✅ **Skill Gap Analysis** - Shows matching vs missing skills
+- ✅ **Universal Job Scraping** - LinkedIn, Indeed, Naukri, Unstop
+- ✅ **Auto-Apply System** - Daily automated applications
+- ✅ **Learning Recommendations** - Free resources for missing skills
+
+---
+
+## 🚀 Quick Start
+
+### **Prerequisites**
+- Python 3.8+
+- pip
+
+### **Installation**
+
+```bash
+# Clone repository
+git clone <your-repo-url>
+cd JoBika
+
+# Install dependencies
+cd backend
+pip install -r requirements.txt
+
+# Run database migration
+python migrate_db.py
+
+# Start server
+python server.py
+```
+
+### **Access Application**
+```
+Open http://localhost:5000 in your browser
+```
+
+---
+
+## 📖 Usage
+
+### **1. Register/Login**
+```
+Navigate to http://localhost:5000/auth.html
+Create account or login
+```
+
+### **2. Upload Resume**
+```
+Go to Upload page
+Upload PDF or DOCX resume
+AI will extract skills and experience
+```
+
+### **3. Browse Jobs**
+```
+Visit Jobs page
+Filter by location, salary, skills
+See match scores for each job
+```
+
+### **4. Set Auto-Apply Preferences**
+```
+Go to Preferences page
+Toggle auto-apply ON
+Set target roles and locations
+Configure salary range
+```
+
+### **5. Track Applications**
+```
+Dashboard shows all applications
+Kanban board view
+Status tracking
+```
+
+---
+
+## 🏗️ Architecture
+
+### **Backend**
+- **Framework**: Flask (Python)
+- **Database**: SQLite (local) / PostgreSQL (production)
+- **Authentication**: JWT tokens
+- **Scheduling**: APScheduler (cron jobs)
+
+### **Frontend**
+- **Pages**: 9 responsive pages
+- **Styling**: Vanilla CSS with design system
+- **JavaScript**: Vanilla JS with API integration
+
+### **AI Features**
+- **Resume Parser**: PyPDF2, python-docx
+- **Job Scraper**: BeautifulSoup, Selenium
+- **Customization**: Custom algorithms
+- **Skill Analysis**: Semantic matching
 
 ---
 
@@ -11,230 +135,241 @@
 
 ```
 JoBika/
-├── app/                          # MVP Web Application
+├── app/                          # Frontend
 │   ├── index.html               # Landing page
-│   ├── auth.html                # Login/Signup
-│   ├── upload.html              # Resume upload & AI enhancement
-│   ├── dashboard.html           # Main dashboard (to be added)
-│   ├── jobs.html                # Job search (to be added)
-│   ├── editor.html              # Resume editor (to be added)
-│   ├── tracker.html             # Application tracker (to be added)
+│   ├── auth.html                # Authentication
+│   ├── dashboard.html           # Dashboard
+│   ├── jobs.html                # Job search
+│   ├── preferences.html         # Auto-apply settings ⭐
+│   ├── resume-versions.html     # Resume versions ⭐
 │   └── assets/
-│       ├── css/
-│       │   └── main.css         # Global styles
-│       └── js/
-│           └── app.js           # Application logic
+│       ├── css/main.css
+│       └── js/app.js
+│
+├── backend/                      # Backend
+│   ├── server.py                # Main Flask server
+│   ├── resume_parser.py         # PDF/DOCX parsing
+│   ├── resume_customizer.py     # Resume customization ⭐
+│   ├── job_scraper_universal.py # Universal job scraper ⭐
+│   ├── email_service.py         # Email notifications
+│   ├── migrate_db.py            # Database migration ⭐
+│   └── requirements.txt
+│
 ├── docs/                         # Documentation
-│   ├── ARCHITECTURE.md          # Technical architecture diagrams
-│   ├── DESIGN_SYSTEM.md         # UI/UX design system & mockups
-│   └── PITCH_DECK.md            # Investor pitch deck
-├── PRODUCT_CONCEPT.md           # Detailed product concept
-└── README.md                    # This file
+│   ├── ARCHITECTURE.md
+│   ├── DESIGN_SYSTEM.md
+│   └── PITCH_DECK.md
+│
+├── README.md                     # This file
+├── TESTING_COMPLETE.md          # Test results ⭐
+└── PROJECT_STATUS.md            # Current status ⭐
 ```
 
 ---
 
-## ✨ Key Features
+## 🧪 Testing
 
-### 1. **AI Resume Builder**
-- Upload existing resume or enter data manually
-- AI analyzes and enhances content with industry best practices
-- Maintains original backup while creating optimized versions
+### **Run Tests**
+```bash
+# Check database
+python backend/check_db.py
 
-### 2. **Smart Job Matching**
-- Scans Indian job market (LinkedIn, Naukri, Unstop, company sites)
-- Calculates match scores based on skills, experience, and preferences
-- Provides personalized learning recommendations for skill gaps
+# Test API endpoints
+# Registration
+POST http://localhost:5000/api/auth/register
+{
+  "email": "test@example.com",
+  "password": "test123",
+  "fullName": "Test User"
+}
 
-### 3. **Auto-Apply Feature**
-- AI finds relevant jobs automatically
-- Customizes resume for each specific job posting
-- Fills application forms and submits
-- Tracks application status in real-time
+# Get jobs
+GET http://localhost:5000/api/jobs
 
-### 4. **Multi-Version Resume System**
-- Creates specialized resume versions for different job categories
-  - AI/ML roles
-  - Full-Stack Development
-  - Data Science
-  - etc.
-- Automatically selects best version for each application
+# Scrape new jobs
+POST http://localhost:5000/api/jobs/scrape
+{
+  "query": "software engineer",
+  "location": "remote",
+  "limit": 10
+}
+```
 
-### 5. **Application Dashboard**
-- Centralized tracking of all applications
-- Status updates: Applied → Under Review → Interview → Offer
-- Analytics and insights
-- Company research and interview prep
+### **Test Results**
+See `TESTING_COMPLETE.md` for comprehensive test results.
 
----
-
-## 🎨 Design System
-
-See [docs/DESIGN_SYSTEM.md](docs/DESIGN_SYSTEM.md) for complete design documentation including:
-- Color palette and typography
-- Component library
-- UI mockups for all pages
-- Accessibility guidelines
-
-### UI Mockups Preview
-
-- **Landing Page**: Hero section, features, pricing
-- **Authentication**: Split-screen login with social options
-- **Resume Upload**: Drag-drop with AI enhancement preview
-- **Dashboard**: Stats, recommended jobs, activity timeline
-- **Job Search**: Filters, match scores, quick apply
-- **Resume Editor**: Split view with live preview
-- **Application Tracker**: Kanban board with detailed view
+**Summary**:
+- ✅ All API endpoints working
+- ✅ Database properly migrated
+- ✅ User registration/login working
+- ✅ Job scraping functional
+- ✅ All pages loading
 
 ---
 
-## 🏗️ Technical Architecture
+## 🌍 Universal Job Search
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for detailed technical documentation including:
-- System architecture diagram
-- Database schema
-- User flow diagram
-- Auto-apply pipeline
-- Technology stack details
-- Security and scalability considerations
+JoBika finds jobs **globally**, not limited to one country:
 
-### Tech Stack (MVP)
+**Job Sources**:
+- 🇺🇸 LinkedIn (US, Global)
+- 🌐 Indeed (US, Europe, Remote)
+- 🇮🇳 Naukri (India)
+- 🎓 Unstop (India, Freshers)
 
-**Frontend:**
-- HTML5, CSS3 (Vanilla with CSS Variables)
-- JavaScript (ES6+)
-- Google Fonts (Inter, Outfit)
-
-**Backend (Simulated):**
-- LocalStorage for data persistence
-- Mock AI responses for demo
-
-**Future Production Stack:**
-- React/Next.js frontend
-- Node.js + Express backend
-- PostgreSQL database
-- GPT-4/Claude for AI
-- AWS infrastructure
+**Sample Jobs**:
+- Google (Remote, US) - $150k USD
+- Spotify (Remote, Europe) - €80k EUR
+- Flipkart (Bangalore) - ₹25 LPA
+- Amazon (Mumbai) - ₹20-28 LPA
 
 ---
 
-## 💼 Business Model
+## 💰 Cost
 
-### Pricing Tiers
+**Total**: **$0/month**
 
-| Tier | Price | Features |
-|------|-------|----------|
-| **Free** | ₹0/month | 5 applications/month, basic AI enhancement |
-| **Pro** | ₹499/month | 50 applications, auto-apply, analytics, cover letters |
-| **Enterprise** | ₹999/month | Unlimited applications, priority support, team features |
-
-### Additional Revenue Streams
-- Sponsored job listings
-- Premium resume templates
-- Interview coaching add-on
+**Free Services**:
+- Railway: $5 credit/month
+- Render: Free tier
+- Gmail SMTP: 500 emails/day
+- PostgreSQL: 500MB free
+- APScheduler: Free (local)
 
 ---
 
-## 📊 Market Opportunity
+## 🔧 Configuration
 
-- **Total Addressable Market**: ₹7,500 Cr ($900M)
-- **Target Users**: 15M white-collar job seekers in India
-- **Year 1 Goal**: 100K users, ₹9 Cr revenue
-- **Market Growth**: 12% annually
+### **Email Setup** (Optional)
+```bash
+# Set environment variables
+export GMAIL_USER=your-email@gmail.com
+export GMAIL_APP_PASSWORD=your-app-password
+```
 
----
-
-## 🎯 Competitive Advantage
-
-| Feature | JoBika | LinkedIn | Naukri | Unstop |
-|---------|--------|----------|--------|--------|
-| AI Resume Customization | ✅ | ❌ | ❌ | ❌ |
-| Auto-Apply | ✅ | ❌ | ❌ | ❌ |
-| Multi-Version Resumes | ✅ | ❌ | ❌ | ❌ |
-| Indian Market Focus | ✅ | ❌ | ✅ | ✅ |
-| **Time Saved** | **95%** | **0%** | **20%** | **20%** |
+### **Database**
+- **Local**: SQLite (auto-created)
+- **Production**: PostgreSQL (configure in server.py)
 
 ---
 
-## 📈 Roadmap
+## 📊 API Endpoints
 
-### Phase 1: MVP (Complete)
-- ✅ Product concept and market research
-- ✅ Technical architecture
-- ✅ UI/UX mockups
-- ✅ MVP prototype (static)
+### **Authentication**
+- `POST /api/auth/register` - Register user
+- `POST /api/auth/login` - Login user
 
-### Phase 2: Beta (Months 1-3)
-- [ ] Backend development (Node.js + PostgreSQL)
-- [ ] AI integration (GPT-4 for resume enhancement)
-- [ ] Job scraping implementation
-- [ ] Beta launch with 500 users
+### **Resume**
+- `POST /api/resume/upload` - Upload resume
+- `POST /api/resume/customize` - Customize for job ⭐
+- `POST /api/resume/skill-gap` - Analyze skill gap ⭐
 
-### Phase 3: Public Launch (Months 4-6)
+### **Jobs**
+- `GET /api/jobs` - Get all jobs
+- `POST /api/jobs/scrape` - Scrape new jobs ⭐
+
+### **Applications**
+- `POST /api/applications` - Apply to job
+- `GET /api/applications` - Get user applications
+
+### **Preferences** ⭐
+- `GET /api/preferences` - Get user preferences
+- `POST /api/preferences` - Update preferences
+
+### **Utility**
+- `GET /api/health` - Health check
+- `POST /api/seed` - Seed database
+
+---
+
+## 🐛 Known Issues
+
+**All critical bugs fixed!** ✅
+
+**Fixed in Production**:
+- ✅ Database schema mismatch (password_hash)
+- ✅ DateTime import error in JWT generation
+
+---
+
+## 🚀 Deployment
+
+### **Railway**
+```bash
+# Push to GitHub
+git push origin main
+
+# Connect to Railway
+# Deploy automatically
+```
+
+### **Render**
+```bash
+# Use render.yaml configuration
+# Deploy via Render dashboard
+```
+
+See `DEPLOYMENT_GUIDE.md` for detailed instructions.
+
+---
+
+## 📝 Documentation
+
+- `README.md` - This file
+- `TESTING_COMPLETE.md` - Test results
+- `PROJECT_STATUS.md` - Current status
+- `docs/ARCHITECTURE.md` - Technical architecture
+- `docs/DESIGN_SYSTEM.md` - UI/UX design system
+- `backend/README.md` - Backend documentation
+
+---
+
+## 🎯 Roadmap
+
+**Phase 10** ✅ - AI Agent Features (COMPLETE)
+**Phase 11** ✅ - Production Testing (COMPLETE)
+
+**Future Enhancements**:
 - [ ] Mobile app (React Native)
-- [ ] Auto-apply feature
-- [ ] Payment integration
-- [ ] Public launch
-
-### Phase 4: Scale (Months 7-12)
-- [ ] Advanced analytics
-- [ ] Interview preparation AI
-- [ ] Enterprise features
-- [ ] 100K users
+- [ ] Advanced AI models (Hugging Face)
+- [ ] More job sources
+- [ ] Analytics dashboard
+- [ ] Employer side
 
 ---
 
-## 👥 Team
+## 👨‍💻 Author
 
-**Founders:**
-- [Your Name] - CEO & Co-Founder
-- [Co-Founder] - CTO
-
-**Advisors:**
-- [Advisor 1] - Former VP at LinkedIn India
-- [Advisor 2] - AI/ML Expert
-- [Advisor 3] - HR Tech Investor
-
----
-
-## 💰 Funding
-
-**Seeking:** ₹2 Cr ($240K) Seed Round  
-**Equity:** 15%  
-**Use of Funds:**
-- Product Development: 40%
-- Marketing & Growth: 30%
-- Team Expansion: 20%
-- Operations: 10%
-
-**Runway:** 18 months
-
-See [docs/PITCH_DECK.md](docs/PITCH_DECK.md) for complete investor pitch deck.
-
----
-
-## 📞 Contact
-
-- **Email**: founders@jobika.in
-- **Website**: jobika.in (coming soon)
-- **LinkedIn**: [Company Page]
-- **Twitter**: @JoBikaApp
+**Created by**: Srujan Sai  
+**Made in**: India  
+**For**: Global job seekers everywhere
 
 ---
 
 ## 📄 License
 
-Copyright © 2025 JoBika. All rights reserved.
+MIT License - Feel free to use and modify!
 
 ---
 
 ## 🙏 Acknowledgments
 
-- Google Fonts for typography
-- Mermaid for diagrams
-- AI tools for mockup generation
-- Indian job seeker community for feedback
+- Flask team for the amazing framework
+- BeautifulSoup for web scraping
+- PyPDF2 for PDF parsing
+- All open-source contributors
 
 ---
 
-**Made with ❤️ for Indian job seekers**
+## 📞 Support
+
+**Issues**: Create an issue on GitHub  
+**Questions**: Contact via email
+
+---
+
+**JoBika helps job seekers succeed globally!** 🌍🚀
+
+---
+
+## ⭐ Star this repo if you find it helpful!
