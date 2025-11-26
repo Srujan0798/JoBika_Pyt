@@ -80,12 +80,22 @@ async function register(email, password, fullName) {
     }
 }
 
-async function login(email, password) {
+async function login(email, password, twoFactorCode = null) {
     try {
+        const body = { email, password };
+        if (twoFactorCode) {
+            body.twoFactorCode = twoFactorCode;
+        }
+
         const data = await apiCall('/auth/login', {
             method: 'POST',
-            body: JSON.stringify({ email, password })
+            body: JSON.stringify(body)
         });
+
+        // Handle 2FA challenge
+        if (data.require2fa) {
+            return { require2fa: true };
+        }
 
         AppState.token = data.token;
         AppState.user = data.user;

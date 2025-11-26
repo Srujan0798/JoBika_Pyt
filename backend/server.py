@@ -13,6 +13,13 @@ import json
 from werkzeug.utils import secure_filename
 import re
 
+import pyotp
+import qrcode
+import io
+import base64
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+
 # Import custom modules
 from resume_parser import (
     parse_pdf, parse_docx, extract_email, extract_phone, extract_name,
@@ -32,8 +39,16 @@ from learning_recommendations import get_recommendations_for_gaps, get_learning_
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
 
+# Initialize Rate Limiter
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    default_limits=["200 per day", "50 per hour"],
+    storage_uri="memory://"
+)
+
 # Configuration
-SECRET_KEY = 'your-secret-key-change-in-production'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'doc'}
 
@@ -71,6 +86,8 @@ def init_db():
         password_hash TEXT NOT NULL,
         full_name TEXT,
         phone TEXT,
+        two_factor_secret TEXT,
+        is_two_factor_enabled BOOLEAN DEFAULT 0,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     )''')
     
@@ -148,6 +165,7 @@ def verify_token(token):
 # ============= AUTHENTICATION ENDPOINTS =============
 
 @app.route('/api/auth/register', methods=['POST'])
+@limiter.limit("5 per minute")
 def register():
     """Register new user"""
     try:
@@ -216,6 +234,7 @@ def register():
         return jsonify({'error': str(e)}), 500
 
 @app.route('/api/auth/login', methods=['POST'])
+@limiter.limit("5 per minute")
 def login():
     """Login user"""
     try:
@@ -241,6 +260,21 @@ def login():
         
         if not user:
             return jsonify({'error': 'Invalid credentials'}), 401
+            
+        # Check if 2FA is enabled
+        if user['is_two_factor_enabled']:
+            # If 2FA code is provided, verify it
+            code = data.get('twoFactorCode')
+            if code:
+                totp = pyotp.TOTP(user['two_factor_secret'])
+                if not totp.verify(code):
+                    return jsonify({'error': 'Invalid 2FA code'}), 401
+            else:
+                # Return 2FA required response
+                return jsonify({
+                    'require2fa': True,
+                    'email': email
+                }), 200
         
         # Generate JWT token
         token = jwt.encode({
@@ -255,7 +289,8 @@ def login():
                 'id': user['id'],
                 'email': user['email'],
                 'fullName': user['full_name'],
-                'phone': user['phone']
+                'phone': user['phone'],
+                'isTwoFactorEnabled': bool(user['is_two_factor_enabled'])
             }
         })
         
@@ -587,20 +622,6 @@ def create_application():
     """Create job application"""
     try:
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
-        user_id = verify_token(token)
-        
-        if not user_id:
-            return jsonify({'error': 'Unauthorized'}), 401
-        
-        data = request.json
-        job_id = data.get('jobId')
-        resume_version_id = data.get('resumeVersionId')
-        
-        conn = get_db()
-        cursor = conn.cursor()
-        
-        # Get job and resume
-        cursor.execute('SELECT * FROM jobs WHERE id = ?', (job_id,))
         job = cursor.fetchone()
         
         cursor.execute('''
@@ -841,6 +862,113 @@ def create_notification(user_id, title, message, type='info'):
         conn.close()
     except Exception as e:
         print(f"Failed to create notification: {e}")
+
+    except Exception as e:
+        print(f"Failed to create notification: {e}")
+
+# ============= SECURITY (2FA) ENDPOINTS =============
+
+@app.route('/api/auth/2fa/setup', methods=['POST'])
+def setup_2fa():
+    """Generate 2FA secret and QR code"""
+    try:
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_id = verify_token(token)
+        
+        if not user_id:
+            return jsonify({'error': 'Unauthorized'}), 401
+            
+        # Generate secret
+        secret = pyotp.random_base32()
+        
+        # Generate QR code
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('SELECT email FROM users WHERE id = ?', (user_id,))
+        user = cursor.fetchone()
+        conn.close()
+        
+        if not user:
+            return jsonify({'error': 'User not found'}), 404
+            
+        totp = pyotp.TOTP(secret)
+        provisioning_uri = totp.provisioning_uri(name=user['email'], issuer_name="JoBika")
+        
+        # Create QR code image
+        img = qrcode.make(provisioning_uri)
+        buffered = io.BytesIO()
+        img.save(buffered, format="PNG")
+        qr_code_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
+        
+        return jsonify({
+            'secret': secret,
+            'qrCode': f"data:image/png;base64,{qr_code_base64}"
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/auth/2fa/verify', methods=['POST'])
+def verify_2fa():
+    """Verify 2FA code and enable it"""
+    try:
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_id = verify_token(token)
+        
+        if not user_id:
+            return jsonify({'error': 'Unauthorized'}), 401
+            
+        data = request.json
+        secret = data.get('secret')
+        code = data.get('code')
+        
+        if not secret or not code:
+            return jsonify({'error': 'Secret and code required'}), 400
+            
+        totp = pyotp.TOTP(secret)
+        if totp.verify(code):
+            # Enable 2FA for user
+            conn = get_db()
+            cursor = conn.cursor()
+            cursor.execute('''
+                UPDATE users 
+                SET two_factor_secret = ?, is_two_factor_enabled = 1 
+                WHERE id = ?
+            ''', (secret, user_id))
+            conn.commit()
+            conn.close()
+            
+            return jsonify({'message': '2FA enabled successfully'})
+        else:
+            return jsonify({'error': 'Invalid code'}), 400
+            
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/api/auth/2fa/disable', methods=['POST'])
+def disable_2fa():
+    """Disable 2FA"""
+    try:
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_id = verify_token(token)
+        
+        if not user_id:
+            return jsonify({'error': 'Unauthorized'}), 401
+            
+        conn = get_db()
+        cursor = conn.cursor()
+        cursor.execute('''
+            UPDATE users 
+            SET two_factor_secret = NULL, is_two_factor_enabled = 0 
+            WHERE id = ?
+        ''', (user_id,))
+        conn.commit()
+        conn.close()
+        
+        return jsonify({'message': '2FA disabled successfully'})
+        
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
 
 # ============= UTILITY ENDPOINTS =============
 

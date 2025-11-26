@@ -133,143 +133,298 @@
             <div
                 style="background: rgba(255,255,255,0.1); padding: 1.5rem; border-radius: 1rem; backdrop-filter: blur(10px);">
                 <p style="font-style: italic; margin-bottom: 1rem;">
-                    "JoBika helped me apply to 50+ jobs in a week. I got 3 interview calls in the first month!"
-                </p>
-                <p style="font-weight: 600;">- Priya S., Software Engineer</p>
+                    <!DOCTYPE html>
+                    <html lang="en">
+
+                    <head>
+                        <meta charset="UTF-8">
+                        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                        <title>Sign In - JoBika</title>
+                        <link rel="preconnect" href="https://fonts.googleapis.com">
+                        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+                        <link
+                            href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+                            rel="stylesheet">
+                        <link rel="stylesheet" href="assets/css/main.css">
+                        <style>
+                            body {
+                                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                                min-height: 100vh;
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                            }
+
+                            .auth-container {
+                                background: white;
+                                border-radius: 1.5rem;
+                                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+                                overflow: hidden;
+                                max-width: 900px;
+                                width: 100%;
+                                margin: 2rem;
+                                display: grid;
+                                grid-template-columns: 1fr 1fr;
+                            }
+
+                            .auth-left {
+                                background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
+                                padding: 3rem;
+                                color: white;
+                                display: flex;
+                                flex-direction: column;
+                                justify-content: center;
+                            }
+
+                            .auth-left h2 {
+                                font-family: var(--font-display);
+                                font-size: 2rem;
+                                margin-bottom: 1rem;
+                            }
+
+                            .auth-right {
+                                padding: 3rem;
+                            }
+
+                            .form-group {
+                                margin-bottom: 1.5rem;
+                            }
+
+                            .form-group label {
+                                display: block;
+                                margin-bottom: 0.5rem;
+                                font-weight: 500;
+                                color: var(--gray-700);
+                            }
+
+                            .social-login {
+                                display: grid;
+                                grid-template-columns: 1fr 1fr;
+                                gap: 1rem;
+                                margin-top: 1.5rem;
+                            }
+
+                            .social-btn {
+                                padding: 0.75rem;
+                                border: 1px solid var(--gray-300);
+                                border-radius: 0.5rem;
+                                background: white;
+                                cursor: pointer;
+                                font-weight: 500;
+                                transition: all var(--transition-base);
+                                display: flex;
+                                align-items: center;
+                                justify-content: center;
+                                gap: 0.5rem;
+                            }
+
+                            .social-btn:hover {
+                                border-color: var(--primary-blue);
+                                background: var(--gray-50);
+                            }
+
+                            .divider {
+                                text-align: center;
+                                margin: 1.5rem 0;
+                                position: relative;
+                            }
+
+                            .divider::before {
+                                content: '';
+                                position: absolute;
+                                left: 0;
+                                top: 50%;
+                                width: 100%;
+                                height: 1px;
+                                background: var(--gray-300);
+                            }
+
+                            .divider span {
+                                background: white;
+                                padding: 0 1rem;
+                                position: relative;
+                                color: var(--gray-500);
+                            }
+
+                            @media (max-width: 768px) {
+                                .auth-container {
+                                    grid-template-columns: 1fr;
+                                }
+
+                                .auth-left {
+                                    display: none;
+                                }
+                            }
+                        </style>
+                    </head>
+
+                    <body>
+                        <div class="auth-container">
+                            <div class="auth-left">
+                                <h2>Welcome to JoBika</h2>
+                                <p style="font-size: 1.125rem; opacity: 0.9; margin-bottom: 2rem;">
+                                    Join thousands of job seekers who are landing their dream jobs faster with AI.
+                                </p>
+                                <p style="font-weight: 600;">- Priya S., Software Engineer</p>
+                            </div>
+                        </div>
+
+                        <div class="auth-right">
+                            <h1 id="formTitle"
+                                style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 0.5rem;">Sign
+                                In
+                            </h1>
+                            <p id="formSubtitle" style="color: var(--gray-600); margin-bottom: 2rem;">Welcome back!
+                                Please enter your
+                                details.</p>
+
+                            <form id="authForm" onsubmit="handleSubmit(event)">
+                                <div class="form-group" id="nameField" style="display: none;">
+                                    <label for="fullName">Full Name</label>
+                                    <input type="text" id="fullName" class="input" placeholder="John Doe">
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="email">Email</label>
+                                    <input type="email" id="email" class="input" placeholder="you@example.com" required>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="password">Password</label>
+                                    <input type="password" id="password" class="input" placeholder="••••••••" required>
+                                </div>
+
+                                <div class="form-group hidden" id="2faGroup" style="display: none;">
+                                    <label for="2faCode">2FA Code</label>
+                                    <input type="text" id="2faCode" class="input" placeholder="Enter 6-digit code">
+                                    <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">Open
+                                        your authenticator app to view the code</p>
+                                </div>
+
+                                <div class="flex-between"
+                                    style="margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center;">
+                                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
+                                        <input type="checkbox" id="remember">
+                                        <span style="font-size: 0.875rem; color: var(--gray-600);">Remember me</span>
+                                    </label>
+                                    <a href="#"
+                                        style="font-size: 0.875rem; color: var(--primary-blue); text-decoration: none;">Forgot
+                                        password?</a>
+                                </div>
+
+                                <button type="submit" id="submitBtn" class="btn btn-primary"
+                                    style="width: 100%; justify-content: center; background: var(--primary-blue); color: white; padding: 0.75rem; border-radius: 0.5rem; border: none; font-weight: 600; cursor: pointer;">Sign
+                                    In</button>
+                            </form>
+
+                            <div class="divider">
+                                <span>Or continue with</span>
+                            </div>
+
+                            <div class="social-login">
+                                <button class="social-btn" onclick="socialLogin('google')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24">
+                                        <path fill="#4285F4"
+                                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                                        <path fill="#34A853"
+                                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                                        <path fill="#FBBC05"
+                                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                                        <path fill="#EA4335"
+                                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+                                    </svg>
+                                    Google
+                                </button>
+                                <button class="social-btn" onclick="socialLogin('linkedin')">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#0077B5">
+                                        <path
+                                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
+                                    </svg>
+                                    LinkedIn
+                                </button>
+                            </div>
+
+                            <p id="toggleText" style="text-align: center; margin-top: 2rem; color: var(--gray-600);">
+                                Don't have an account? <a href="#" onclick="toggleForm(); return false;"
+                                    style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">Sign
+                                    up</a>
+                            </p>
+                        </div>
             </div>
-        </div>
 
-        <div class="auth-right">
-            <h1 id="formTitle" style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 0.5rem;">Sign In
-            </h1>
-            <p id="formSubtitle" style="color: var(--gray-600); margin-bottom: 2rem;">Welcome back! Please enter your
-                details.</p>
+            <script src="assets/js/app.js"></script>
+            <script>
+                let isSignUp = false;
 
-            <form id="authForm" onsubmit="handleSubmit(event)">
-                <div class="form-group" id="nameField" style="display: none;">
-                    <label for="fullName">Full Name</label>
-                    <input type="text" id="fullName" class="input" placeholder="John Doe">
-                </div>
+                function toggleForm() {
+                    isSignUp = !isSignUp;
+                    const title = document.getElementById('formTitle');
+                    const subtitle = document.getElementById('formSubtitle');
+                    const submitBtn = document.getElementById('submitBtn');
+                    const toggleText = document.getElementById('toggleText');
+                    const nameField = document.getElementById('nameField');
 
-                <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" class="input" placeholder="you@example.com" required>
-                </div>
-
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password" id="password" class="input" placeholder="••••••••" required>
-                </div>
-
-                <div class="flex-between" style="margin-bottom: 1.5rem;">
-                    <label style="display: flex; align-items: center; gap: 0.5rem; cursor: pointer;">
-                        <input type="checkbox" id="remember">
-                        <span style="font-size: 0.875rem; color: var(--gray-600);">Remember me</span>
-                    </label>
-                    <a href="#" style="font-size: 0.875rem; color: var(--primary-blue); text-decoration: none;">Forgot
-                        password?</a>
-                </div>
-
-                <button type="submit" id="submitBtn" class="btn btn-primary"
-                    style="width: 100%; justify-content: center;">Sign
-                    In</button>
-            </form>
-
-            <div class="divider">
-                <span>Or continue with</span>
-            </div>
-
-            <div class="social-login">
-                <button class="social-btn" onclick="socialLogin('google')">
-                    <svg width="20" height="20" viewBox="0 0 24 24">
-                        <path fill="#4285F4"
-                            d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-                        <path fill="#34A853"
-                            d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-                        <path fill="#FBBC05"
-                            d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
-                        <path fill="#EA4335"
-                            d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
-                    </svg>
-                    Google
-                </button>
-                <button class="social-btn" onclick="socialLogin('linkedin')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#0077B5">
-                        <path
-                            d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-                    </svg>
-                    LinkedIn
-                </button>
-            </div>
-
-            <p id="toggleText" style="text-align: center; margin-top: 2rem; color: var(--gray-600);">
-                Don't have an account? <a href="#" onclick="toggleForm(); return false;"
-                    style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">Sign up</a>
-            </p>
-        </div>
-    </div>
-
-    <script src="assets/js/app.js"></script>
-    <script>
-        let isSignUp = false;
-
-        function toggleForm() {
-            isSignUp = !isSignUp;
-            const title = document.getElementById('formTitle');
-            const subtitle = document.getElementById('formSubtitle');
-            const submitBtn = document.getElementById('submitBtn');
-            const toggleText = document.getElementById('toggleText');
-            const nameField = document.getElementById('nameField');
-
-            if (isSignUp) {
-                title.textContent = 'Create Account';
-                subtitle.textContent = 'Start your job search journey';
-                submitBtn.textContent = 'Sign Up';
-                toggleText.innerHTML = 'Already have an account? <a href="#" onclick="toggleForm(); return false;" style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">Sign In</a>';
-                nameField.style.display = 'block';
-            } else {
-                title.textContent = 'Sign In';
-                subtitle.textContent = 'Welcome back! Please enter your details.';
-                submitBtn.textContent = 'Sign In';
-                toggleText.innerHTML = 'Don\'t have an account? <a href="#" onclick="toggleForm(); return false;" style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">Sign up</a>';
-                nameField.style.display = 'none';
-            }
-        }
-
-        async function handleSubmit(e) {
-            e.preventDefault();
-
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            const fullName = document.getElementById('fullName').value;
-            const submitBtn = document.getElementById('submitBtn');
-
-            // Disable button and show loading
-            submitBtn.disabled = true;
-            submitBtn.textContent = isSignUp ? 'Creating Account...' : 'Signing In...';
-
-            try {
-                if (isSignUp) {
-                    await window.JoBikaAPI.register(email, password, fullName);
-                    alert('Account created successfully! ✅');
-                } else {
-                    await window.JoBikaAPI.login(email, password);
+                    if (isSignUp) {
+                        title.textContent = 'Create Account';
+                        subtitle.textContent = 'Start your job search journey';
+                        submitBtn.textContent = 'Sign Up';
+                        toggleText.innerHTML = 'Already have an account? <a href="#" onclick="toggleForm(); return false;" style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">Sign In</a>';
+                        nameField.style.display = 'block';
+                    } else {
+                        title.textContent = 'Sign In';
+                        subtitle.textContent = 'Welcome back! Please enter your details.';
+                        submitBtn.textContent = 'Sign In';
+                        toggleText.innerHTML = 'Don\'t have an account? <a href="#" onclick="toggleForm(); return false;" style="color: var(--primary-blue); text-decoration: none; font-weight: 600;">Sign up</a>';
+                        nameField.style.display = 'none';
+                    }
                 }
 
-                // Redirect to upload page
-                window.location.href = 'upload.html';
-            } catch (error) {
-                console.error('Auth error:', error);
-                // Error already shown by API function
-                submitBtn.disabled = false;
-                submitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
-            }
-        }
+                async function handleSubmit(e) {
+                    e.preventDefault();
 
-        function socialLogin(provider) {
-            alert(`${provider} login will be implemented in production version!`);
-        }
-    </script>
+                    const email = document.getElementById('email').value;
+                    const password = document.getElementById('password').value;
+                    const fullName = document.getElementById('fullName').value;
+                    const twoFactorCode = document.getElementById('2faCode').value;
+                    const submitBtn = document.getElementById('submitBtn');
+
+                    // Disable button and show loading
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = isSignUp ? 'Creating Account...' : 'Signing In...';
+
+                    try {
+                        if (isSignUp) {
+                            await window.JoBikaAPI.register(email, password, fullName);
+                            alert('Account created successfully! ✅');
+                            window.location.href = 'upload.html';
+                        } else {
+                            const result = await window.JoBikaAPI.login(email, password, twoFactorCode);
+
+                            if (result.require2fa) {
+                                // Show 2FA input
+                                document.getElementById('2faGroup').style.display = 'block';
+                                document.getElementById('password').disabled = true;
+                                document.getElementById('email').disabled = true;
+                                submitBtn.textContent = 'Verify 2FA';
+                                submitBtn.disabled = false;
+                                document.getElementById('2faCode').focus();
+                                return;
+                            }
+
+                            window.location.href = 'dashboard.html';
+                        }
+                    } catch (error) {
+                        console.error('Auth error:', error);
+                        alert(error.message || 'Authentication failed');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = isSignUp ? 'Sign Up' : 'Sign In';
+                    }
+                }
+
+                function socialLogin(provider) {
+                    alert(`${provider} login will be implemented in production version!`);
+                }
+            </script>
 </body>
 
 </html>

@@ -10,6 +10,11 @@
 - 4 email types: Welcome, Application Confirmation, Job Alerts, Skill Recommendations
 - Beautiful HTML email templates
 
+**2. Security Enhancements**
+- Two-Factor Authentication (2FA) with TOTP
+- QR Code generation for easy setup
+- Secure backup codes (planned)
+
 **2. Cloud Deployment Ready**
 - Railway deployment configuration
 - Render deployment configuration  
