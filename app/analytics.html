@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics - JoBika</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .stat-card.success {
+            border-left-color: var(--success);
+        }
+
+        .stat-card.warning {
+            border-left-color: var(--warning);
+        }
+
+        .stat-card.info {
+            border-left-color: var(--primary-purple);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin: 0.5rem 0;
+        }
+
+        .stat-label {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+
+        .chart-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: var(--gray-900);
+        }
+
+        .recommendations-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .recommendation-item {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--primary-blue);
+        }
+
+        .recommendation-item.high {
+            border-left-color: var(--danger);
+        }
+
+        .recommendation-item.medium {
+            border-left-color: var(--warning);
+        }
+
+        .recommendation-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+        }
+
+        .recommendation-desc {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .skill-badge {
+            display: inline-block;
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            margin: 0.25rem;
+            font-size: 0.875rem;
+        }
+
+        .funnel-container {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .funnel-stage {
+            background: linear-gradient(90deg, var(--primary-blue), var(--primary-purple));
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+
+        .funnel-stage:hover {
+            transform: translateX(5px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray-600);
+        }
+
+        .error-message {
+            background: var(--danger-light);
+            color: var(--danger);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">JoBika</a>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="tracker.html">Applications</a></li>
+                <li><a href="analytics.html" class="active">Analytics</a></li>
+                <li><a href="profile.html">Profile</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <h1 style="margin-bottom: 2rem;">📊 Analytics Dashboard</h1>
+
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading analytics...</p>
+        </div>
+
+        <div id="error" class="error-message" style="display: none;"></div>
+
+        <div id="analytics-content" style="display: none;">
+            <!-- Overview Stats -->
+            <div class="analytics-grid" id="overview-stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Applications</div>
+                    <div class="stat-value" id="total-apps">0</div>
+                </div>
+                <div class="stat-card success">
+                    <div class="stat-label">Interviews</div>
+                    <div class="stat-value" id="interviews">0</div>
+                </div>
+                <div class="stat-card warning">
+                    <div class="stat-label">Offers</div>
+                    <div class="stat-value" id="offers">0</div>
+                </div>
+                <div class="stat-card info">
+                    <div class="stat-label">Avg Match Score</div>
+                    <div class="stat-value" id="avg-score">0%</div>
+                </div>
+            </div>
+
+            <!-- Application Timeline Chart -->
+            <div class="chart-container">
+                <h2 class="chart-title">Application Timeline (Last 30 Days)</h2>
+                <canvas id="timeline-chart"></canvas>
+            </div>
+
+            <!-- Two Column Layout -->
+            <div class="grid grid-2" style="gap: 2rem;">
+                <!-- Success Rate Chart -->
+                <div class="chart-container">
+                    <h2 class="chart-title">Success Rate by Match Score</h2>
+                    <canvas id="success-chart"></canvas>
+                </div>
+
+                <!-- Application Funnel -->
+                <div class="chart-container">
+                    <h2 class="chart-title">Application Funnel</h2>
+                    <div class="funnel-container" id="funnel-container"></div>
+                </div>
+            </div>
+
+            <!-- Top Skills -->
+            <div class="chart-container">
+                <h2 class="chart-title">Top Skills in Demand</h2>
+                <div id="top-skills"></div>
+            </div>
+
+            <!-- Recommendations -->
+            <div class="chart-container">
+                <h2 class="chart-title">💡 Personalized Recommendations</h2>
+                <ul class="recommendations-list" id="recommendations"></ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth check
+        const token = localStorage.getItem('token');
+        if (!token) {
+            window.location.href = 'auth.html';
+        }
+
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'auth.html';
+        });
+
+        // Load Analytics
+        async function loadAnalytics() {
+            try {
+                // Overview
+                const overviewRes = await fetch(`${API_BASE}/analytics/overview`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const overview = await overviewRes.json();
+
+                document.getElementById('total-apps').textContent = overview.total_applications || 0;
+                document.getElementById('interviews').textContent = overview.interviews || 0;
+                document.getElementById('offers').textContent = overview.offers || 0;
+                document.getElementById('avg-score').textContent = (overview.avg_match_score || 0) + '%';
+
+                // Timeline
+                const timelineRes = await fetch(`${API_BASE}/analytics/timeline?days=30`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const timeline = await timelineRes.json();
+                renderTimelineChart(timeline);
+
+                // Success Rate
+                const successRes = await fetch(`${API_BASE}/analytics/success-rate`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const successRate = await successRes.json();
+                renderSuccessChart(successRate);
+
+                // Funnel
+                const funnelRes = await fetch(`${API_BASE}/analytics/funnel`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const funnel = await funnelRes.json();
+                renderFunnel(funnel);
+
+                // Top Skills
+                const skillsRes = await fetch(`${API_BASE}/analytics/skills?limit=10`);
+                const skills = await skillsRes.json();
+                renderTopSkills(skills);
+
+                // Recommendations
+                const recsRes = await fetch(`${API_BASE}/analytics/recommendations`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const recommendations = await recsRes.json();
+                renderRecommendations(recommendations);
+
+                // Show content
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('analytics-content').style.display = 'block';
+
+            } catch (error) {
+                console.error('Analytics error:', error);
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('error').style.display = 'block';
+                document.getElementById('error').textContent = 'Failed to load analytics. Please ensure you have applied to some jobs first.';
+            }
+        }
+
+        function renderTimelineChart(timeline) {
+            const ctx = document.getElementById('timeline-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: timeline.map(d => d.date),
+                    datasets: [{
+                        label: 'Applications',
+                        data: timeline.map(d => d.count),
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function renderSuccessChart(data) {
+            const ctx = document.getElementById('success-chart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: data.map(d => d.range),
+                    datasets: [{
+                        label: 'Success Rate (%)',
+                        data: data.map(d => d.success_rate),
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444', '#6b7280']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, max: 100 }
+                    }
+                }
+            });
+        }
+
+        function renderFunnel(funnel) {
+            const container = document.getElementById('funnel-container');
+            const stages = [
+                { name: 'Applied', count: funnel.applied, width: '100%' },
+                { name: 'Interview', count: funnel.interview, width: '75%' },
+                { name: 'Offer', count: funnel.offer, width: '50%' },
+                { name: 'Rejected', count: funnel.rejected, width: '25%', color: '#ef4444' }
+            ];
+
+            stages.forEach(stage => {
+                const div = document.createElement('div');
+                div.className = 'funnel-stage';
+                div.style.width = stage.width;
+                if (stage.color) div.style.background = stage.color;
+                div.innerHTML = `
+                    <span>${stage.name}</span>
+                    <strong>${stage.count}</strong>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function renderTopSkills(skills) {
+            const container = document.getElementById('top-skills');
+            skills.forEach(skill => {
+                const badge = document.createElement('span');
+                badge.className = 'skill-badge';
+                badge.textContent = `${skill.skill} (${skill.count})`;
+                container.appendChild(badge);
+            });
+        }
+
+        function renderRecommendations(recommendations) {
+            const container = document.getElementById('recommendations');
+            
+            if (recommendations.length === 0) {
+                container.innerHTML = '<li style="color: var(--gray-600);">Great job! No immediate actions needed.</li>';
+                return;
+            }
+
+            recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.className = `recommendation-item ${rec.priority}`;
+                li.innerHTML = `
+                    <div class="recommendation-title">${rec.title}</div>
+                    <div class="recommendation-desc">${rec.description}</div>
+                `;
+                container.appendChild(li);
+            });
+        }
+
+        // Load data on page load
+        loadAnalytics();
+    </script>
+</body>
+</html>

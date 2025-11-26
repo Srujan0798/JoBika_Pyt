@@ -1,0 +1,378 @@
+/* Mobile Responsive Enhancements for JoBika */
+
+/* =================================
+   1. MOBILE-FIRST BREAKPOINTS
+   ================================= */
+
+:root {
+    --mobile: 480px;
+    --tablet: 768px;
+    --desktop: 1024px;
+    --wide: 1440px;
+}
+
+/* =================================
+   2. RESPONSIVE TYPOGRAPHY
+   ================================= */
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+    
+    h1 {
+        font-size: 2rem !important;
+    }
+    
+    h2 {
+        font-size: 1.5rem !important;
+    }
+    
+    h3 {
+        font-size: 1.25rem !important;
+    }
+}
+
+/* =================================
+   3. RESPONSIVE NAVIGATION
+   ================================= */
+
+@media (max-width: 768px) {
+    nav .container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+    
+    .nav-links {
+        flex-direction: column;
+        gap: 0.5rem;
+        width: 100%;
+    }
+    
+    .nav-links a {
+        padding: 0.5rem;
+        width: 100%;
+    }
+}
+
+/* =================================
+   4. RESPONSIVE GRID LAYOUTS
+   ================================= */
+
+@media (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .grid-4 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .grid,
+    .grid-2,
+    .grid-3,
+    .grid-4 {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+}
+
+/* =================================
+   5. RESPONSIVE CONTAINERS
+   ================================= */
+
+@media (max-width: 768px) {
+    .container {
+        padding: 0 1rem;
+    }
+    
+    .content-wrapper {
+        padding: 1.5rem !important;
+    }
+    
+    .card {
+        padding: 1rem !important;
+    }
+}
+
+/* =================================
+   6. RESPONSIVE FORMS
+   ================================= */
+
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="tel"],
+    textarea,
+    select {
+        font-size: 16px !important; /* Prevents zoom on iOS */
+        padding: 0.75rem !important;
+    }
+    
+    .btn,
+    .primary-btn,
+    .secondary-btn {
+        width: 100%;
+        padding: 1rem !important;
+        font-size: 1rem !important;
+    }
+    
+    .flex-between {
+        flex-direction: column;
+        align-items: stretch !important;
+        gap: 1rem;
+    }
+}
+
+/* =================================
+   7. RESPONSIVE TABLES
+   ================================= */
+
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+    
+    th, td {
+        padding: 0.5rem !important;
+        font-size: 0.875rem !important;
+    }
+}
+
+/* =================================
+   8. RESPONSIVE MODALS/CARDS
+   ================================= */
+
+@media (max-width: 768px) {
+    .modal-content,
+    .pricing-card,
+    .job-card {
+        width: 100% !important;
+        margin: 0 !important;
+    }
+    
+    .feature-card {
+        padding: 1.5rem 1rem !important;
+    }
+}
+
+/* =================================
+   9. HIDE/SHOW ON MOBILE
+   ================================= */
+
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+    
+    .show-mobile {
+        display: block !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .show-mobile {
+        display: none !important;
+    }
+}
+
+/* =================================
+   10. TOUCH-FRIENDLY INTERACTIONS
+   ================================= */
+
+@media (max-width: 768px) {
+    /* Larger touch targets */
+    button,
+    a,
+    input[type="submit"],
+    input[type="button"] {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Remove hover effects on touch devices */
+    .btn:hover,
+    .card:hover {
+        transform: none;
+    }
+}
+
+/* =================================
+   11. RESPONSIVE HERO SECTION
+   ================================= */
+
+@media (max-width: 768px) {
+    .hero {
+        padding: 3rem 0 !important;
+    }
+    
+    .hero h1 {
+        font-size: 2rem !important;
+        line-height: 1.3 !important;
+    }
+    
+    .hero p {
+        font-size: 1rem !important;
+    }
+}
+
+/* =================================
+   12. RESPONSIVE DASHBOARD
+   ================================= */
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+    
+    .stat-card {
+        text-align: center;
+    }
+    
+    .sidebar {
+        width: 100% !important;
+        position: relative !important;
+    }
+    
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+}
+
+/* =================================
+   13. RESPONSIVE FILE UPLOAD
+   ================================= */
+
+@media (max-width: 768px) {
+    .upload-area {
+        min-height: 200px !important;
+        padding: 1.5rem !important;
+    }
+    
+    .upload-icon {
+        font-size: 2rem !important;
+    }
+}
+
+/* =================================
+   14. RESPONSIVE PRICING CARDS
+   ================================= */
+
+@media (max-width: 768px) {
+    .pricing-card.featured {
+        transform: scale(1) !important;
+        border-width: 2px;
+    }
+    
+    .price {
+        font-size: 2rem !important;
+    }
+}
+
+/* =================================
+   15. RESPONSIVE SPACING
+   ================================= */
+
+@media (max-width: 768px) {
+    section {
+        padding: 2rem 0 !important;
+    }
+    
+    .mb-2 { margin-bottom: 1rem !important; }
+    .mb-3 { margin-bottom: 1.5rem !important; }
+    .mb-4 { margin-bottom: 2rem !important; }
+    
+    .mt-2 { margin-top: 1rem !important; }
+    .mt-3 { margin-top: 1.5rem !important; }
+    .mt-4 { margin-top: 2rem !important; }
+}
+
+/* =================================
+   16. LANDSCAPE MODE (TABLETS)
+   ================================= */
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .grid-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+    
+    .hero h1 {
+        font-size: 2.5rem !important;
+    }
+}
+
+/* =================================
+   17. SAFE AREA (iOS NOTCH)
+   ================================= */
+
+@supports (padding: max(0px)) {
+    body {
+        padding-left: max(0px, env(safe-area-inset-left));
+        padding-right: max(0px, env(safe-area-inset-right));
+        padding-bottom: max(0px, env(safe-area-inset-bottom));
+    }
+}
+
+/* =================================
+   18. PREVENT ZOOM ON INPUTS (iOS)
+   ================================= */
+
+@media (max-width: 768px) {
+    input[type="text"],
+    input[type="email"],
+    input[type="password"],
+    input[type="number"],
+    input[type="tel"],
+    input[type="url"],
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+}
+
+/* =================================
+   19. RESPONSIVE IMAGES
+   ================================= */
+
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+.responsive-img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* =================================
+   20. PRINT STYLES
+   ================================= */
+
+@media print {
+    .no-print,
+    nav,
+    footer,
+    .btn,
+    button {
+        display: none !important;
+    }
+    
+    body {
+        font-size: 12pt;
+        color: black;
+        background: white;
+    }
+    
+    a {
+        text-decoration: underline;
+        color: black;
+    }
+}

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 - Page Not Found | JoBika</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .error-code {
+            font-size: 10rem;
+            font-weight: 700;
+            line-height: 1;
+            opacity: 0.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .link {
+            color: white;
+            text-decoration: underline;
+            opacity: 0.8;
+        }
+
+        .link:hover {
+            opacity: 1;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-code">404</div>
+        <h1>Page Not Found</h1>
+        <p>Sorry, the page you're looking for doesn't exist.</p>
+        <a href="/app/index.html" class="btn">Back to Home</a>
+
+        <div class="links">
+            <a href="/app/dashboard.html" class="link">Dashboard</a>
+            <a href="/app/jobs.html" class="link">Browse Jobs</a>
+            <a href="/app/tracker.html" class="link">My Applications</a>
+        </div>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>500 - Server Error | JoBika</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        .error-container {
+            text-align: center;
+            padding: 2rem;
+            max-width: 600px;
+        }
+
+        .error-code {
+            font-size: 10rem;
+            font-weight: 700;
+            line-height: 1;
+            opacity: 0.2;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        p {
+            font-size: 1.25rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .btn {
+            display: inline-block;
+            background: white;
+            color: #ef4444;
+            padding: 1rem 2rem;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s;
+            margin: 0.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .technical-details {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 2rem;
+            text-align: left;
+            font-size: 0.875rem;
+            font-family: monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="error-container">
+        <div class="error-code">500</div>
+        <h1>Internal Server Error</h1>
+        <p>Oops! Something went wrong on our end. We're working to fix it.</p>
+
+        <div>
+            <a href="/app/index.html" class="btn">Back to Home</a>
+            <a href="javascript:location.reload()" class="btn">Retry</a>
+        </div>
+
+        <div class="technical-details" id="technical-details" style="display: none;">
+            <strong>Technical Details:</strong><br>
+            Error Type: <span id="error-type">Unknown</span><br>
+            Time: <span id="error-time"></span><br>
+            <br>
+            <small>Please report this to our support team if the error persists.</small>
+        </div>
+    </div>
+
+    <script>
+        // Display error details if available
+        const urlParams = new URLSearchParams(window.location.search);
+        const errorType = urlParams.get('type');
+
+        if (errorType) {
+            document.getElementById('technical-details').style.display = 'block';
+            document.getElementById('error-type').textContent = errorType;
+            document.getElementById('error-time').textContent = new Date().toLocaleString();
+        }
+    </script>
+</body>
+
+</html>

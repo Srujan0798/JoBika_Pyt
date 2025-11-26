@@ -1,6 +1,29 @@
+```
 # 🚀 JoBika - AI-Powered Job Application Platform
 
-> **Your intelligent job search companion - Made in India, for global job seekers**
+> **Status**: ✅ Production Ready | **Cost**: $0/month | **Features**: 60+ | **API Endpoints**: 36+
+
+Transform your job search with AI-powered resume customization, automated applications, and intelligent job matching.
+
+## ⭐ Quick Links
+
+- 📚 [Complete Feature List](docs/FEATURES.md)
+- 🚀 [Quick Start Guide](INSTALL.md)
+- 📖 [API Documentation](http://localhost:5000/api/docs/) (when running)
+- 🛠️ [Troubleshooting](docs/TROUBLESHOOTING.md)
+- 🔒 [Security Guide](docs/SECURITY.md)
+- 🎯 [Achievement Summary](ACHIEVEMENTS.md)
+
+## 🆕 Latest Features
+
+- ✨ **Analytics Dashboard** - Beautiful charts and insights
+- 📊 **User Profile** - Comprehensive stats and history
+- 🎨 **Dark Mode** - System-aware theme toggle
+- 📝 **AI Cover Letters** - 3 professional templates
+- 🎓 **Interview Prep** - AI-generated questions & tips
+- ⚡ **Performance Caching** - Lightning-fast responses
+- 📧 **Smart Job Alerts** - Automated email notifications
+- 🔒 **Enhanced Security** - Production-ready protection
 
 [![Status](https://img.shields.io/badge/Status-Production%20Ready-success)](https://github.com)
 [![Testing](https://img.shields.io/badge/Testing-Comprehensive-blue)](https://github.com)
@@ -43,30 +66,45 @@ JoBika is a **complete AI job agent** that helps you find and apply to jobs glob
 ## 🚀 Quick Start
 
 ### **Prerequisites**
-- Python 3.8+
+- Python 3.8+ 
 - pip
 
-### **Installation**
+### **Method 1: Automated Setup (Recommended)**
 
 ```bash
 # Clone repository
 git clone <your-repo-url>
-cd JoBika
+cd JoBika_Py
+
+# Run automated setup (Mac/Linux)
+chmod +x setup.sh
+./setup.sh
+
+# Or use Python script (Cross-platform)
+python3 start.py
+```
+
+### **Method 2: Manual Setup**
+
+```bash
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
 # Install dependencies
 cd backend
 pip install -r requirements.txt
 
 # Run database migration
-python migrate_db.py
+python3 migrate_db.py
 
 # Start server
-python server.py
+python3 server.py
 ```
 
 ### **Access Application**
 ```
-Open http://localhost:5000 in your browser
+Open http://localhost:5000/app/index.html in your browser
 ```
 
 ---
@@ -169,10 +207,26 @@ JoBika/
 
 ## 🧪 Testing
 
-### **Run Tests**
+### **Run Automated Tests**
+```bash
+cd backend/tests
+python3 run_tests.py
+```
+
+### **Run Specific Test Suites**
+```bash
+# Unit tests only
+python3 test_basic.py
+
+# API integration tests only
+python3 test_api.py
+```
+
+### **Manual API Testing**
 ```bash
 # Check database
-python backend/check_db.py
+cd backend
+python3 check_db.py
 
 # Test API endpoints
 # Registration

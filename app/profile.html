@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - JoBika</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <style>
+        .profile-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: var(--primary-blue);
+            font-weight: 700;
+        }
+
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 2rem;
+        }
+
+        .profile-sidebar {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-main {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .profile-section {
+            margin-bottom: 2rem;
+        }
+
+        .profile-section h3 {
+            color: var(--gray-900);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--gray-200);
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .info-label {
+            color: var(--gray-600);
+            font-weight: 500;
+        }
+
+        .info-value {
+            color: var(--gray-900);
+        }
+
+        .edit-btn {
+            background: var(--primary-blue);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .edit-btn:hover {
+            background: var(--primary-purple);
+            transform: translateY(-2px);
+        }
+
+        .skill-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .skill-item {
+            background: var(--primary-blue);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+        }
+
+        .resume-item {
+            background: var(--gray-50);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .resume-info {
+            flex: 1;
+        }
+
+        .resume-name {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .resume-date {
+            font-size: 0.875rem;
+            color: var(--gray-600);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .badge.primary {
+            background: var(--primary-blue);
+            color: white;
+        }
+
+        .badge.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-box {
+            text-align: center;
+            padding: 1.5rem;
+            background: var(--gray-50);
+            border-radius: 8px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-blue);
+        }
+
+        .stat-text {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .profile-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="container">
+            <a href="index.html" class="logo">JoBika</a>
+            <ul class="nav-links">
+                <li><a href="dashboard.html">Dashboard</a></li>
+                <li><a href="jobs.html">Jobs</a></li>
+                <li><a href="tracker.html">Applications</a></li>
+                <li><a href="analytics.html">Analytics</a></li>
+                <li><a href="profile.html" class="active">Profile</a></li>
+                <li><a href="#" id="logout-btn">Logout</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <div class="container" style="padding: 2rem 0;">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="profile-avatar" id="user-avatar">U</div>
+            <h1 id="user-name">Loading...</h1>
+            <p id="user-email">email@example.com</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-number" id="stat-applications">0</div>
+                <div class="stat-text">Total Applications</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="stat-interviews">0</div>
+                <div class="stat-text">Interviews</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="stat-match">0%</div>
+                <div class="stat-text">Avg Match Score</div>
+            </div>
+        </div>
+
+        <!-- Profile Grid -->
+        <div class="profile-grid">
+            <!-- Sidebar -->
+            <div class="profile-sidebar">
+                <div class="profile-section">
+                    <h3>Account Info</h3>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value" id="profile-email">email@example.com</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Full Name</span>
+                        <span class="info-value" id="profile-name">User Name</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value" id="profile-phone">Not provided</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Member Since</span>
+                        <span class="info-value" id="profile-joined">2025</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">2FA Status</span>
+                        <span class="info-value">
+                            <span class="badge success" id="2fa-status">Enabled</span>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <button class="edit-btn" style="width: 100%;"
+                        onclick="alert('Edit profile feature coming soon!')">Edit Profile</button>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="profile-main">
+                <div class="profile-section">
+                    <h3>Skills</h3>
+                    <div class="skill-list" id="user-skills">
+                        <span class="skill-item">Loading...</span>
+                    </div>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Resumes</h3>
+                    <div id="resume-list">
+                        <p style="color: var(--gray-600);">Loading resumes...</p>
+                    </div>
+                    <button class="edit-btn" onclick="window.location.href='upload.html'">Upload New Resume</button>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Preferences</h3>
+                    <div class="info-row">
+                        <span class="info-label">Auto-Apply</span>
+                        <span class="info-value">
+                            <span class="badge primary" id="autoapply-status">Disabled</span>
+                        </span>
+                    </div>
+                    <button class="edit-btn" style="margin-top: 1rem;"
+                        onclick="window.location.href='preferences.html'">
+                        Manage Preferences
+                    </button>
+                </div>
+
+                <div class="profile-section">
+                    <h3>Recent Activity</h3>
+                    <div id="recent-activity">
+                        <p style="color: var(--gray-600);">Loading activity...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auth check
+        const token = localStorage.getItem('token');
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+
+        if (!token) {
+            window.location.href = 'auth.html';
+        }
+
+        const API_BASE = 'http://localhost:5000/api';
+
+        // Logout
+        document.getElementById('logout-btn').addEventListener('click', (e) => {
+            e.preventDefault();
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'auth.html';
+        });
+
+        // Load user data
+        document.getElementById('user-name').textContent = user.fullName || 'User';
+        document.getElementById('user-email').textContent = user.email || '';
+        document.getElementById('profile-email').textContent = user.email || '';
+        document.getElementById('profile-name').textContent = user.fullName || 'Not provided';
+        document.getElementById('profile-phone').textContent = user.phone || 'Not provided';
+        document.getElementById('user-avatar').textContent = (user.fullName || 'U')[0].toUpperCase();
+        document.getElementById('2fa-status').textContent = user.isTwoFactorEnabled ? 'Enabled' : 'Disabled';
+        document.getElementById('2fa-status').className = user.isTwoFactorEnabled ? 'badge success' : 'badge';
+
+        // Load analytics stats
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/analytics/overview`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const stats = await response.json();
+
+                document.getElementById('stat-applications').textContent = stats.total_applications || 0;
+                document.getElementById('stat-interviews').textContent = stats.interviews || 0;
+                document.getElementById('stat-match').textContent = (stats.avg_match_score || 0) + '%';
+            } catch (error) {
+                console.error('Failed to load stats:', error);
+            }
+        }
+
+        // Load resumes
+        async function loadResumes() {
+            try {
+                const response = await fetch(`${API_BASE}/resume/list`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const resumes = await response.json();
+                    renderResumes(resumes);
+                } else {
+                    document.getElementById('resume-list').innerHTML = '<p style="color: var(--gray-600);">No resumes uploaded yet.</p>';
+                }
+
+                // Also load skills from latest resume
+                loadSkills();
+            } catch (error) {
+                console.error('Failed to load resumes:', error);
+                document.getElementById('resume-list').innerHTML = '<p style="color: var(--gray-600);">No resumes uploaded yet.</p>';
+            }
+        }
+
+        function renderResumes(resumes) {
+            const container = document.getElementById('resume-list');
+
+            if (!resumes || resumes.length === 0) {
+                container.innerHTML = '<p style="color: var(--gray-600);">No resumes uploaded yet.</p>';
+                return;
+            }
+
+            container.innerHTML = '';
+            resumes.forEach((resume, index) => {
+                const div = document.createElement('div');
+                div.className = 'resume-item';
+                div.innerHTML = `
+                    <div class="resume-info">
+                        <div class="resume-name">${resume.filename || `Resume ${index + 1}`}</div>
+                        <div class="resume-date">Uploaded: ${new Date(resume.created_at).toLocaleDateString()}</div>
+                    </div>
+                    ${index === 0 ? '<span class="badge primary">Primary</span>' : ''}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        async function loadSkills() {
+            // Mock skills for now - would come from resume data
+            const skills = ['Python', 'JavaScript', 'React', 'Node.js', 'SQL', 'Git'];
+            const container = document.getElementById('user-skills');
+            container.innerHTML = '';
+
+            skills.forEach(skill => {
+                const span = document.createElement('span');
+                span.className = 'skill-item';
+                span.textContent = skill;
+                container.appendChild(span);
+            });
+        }
+
+        // Load recent activity
+        async function loadActivity() {
+            try {
+                const response = await fetch(`${API_BASE}/applications`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const applications = await response.json();
+
+                const container = document.getElementById('recent-activity');
+                if (applications && applications.length > 0) {
+                    container.innerHTML = '';
+                    applications.slice(0, 5).forEach(app => {
+                        const div = document.createElement('div');
+                        div.className = 'info-row';
+                        div.innerHTML = `
+                            <span class="info-label">Applied to ${app.jobTitle || 'Job'}</span>
+                            <span class="info-value">${new Date(app.appliedDate).toLocaleDateString()}</span>
+                        `;
+                        container.appendChild(div);
+                    });
+                } else {
+                    container.innerHTML = '<p style="color: var(--gray-600);">No recent activity</p>';
+                }
+            } catch (error) {
+                console.error('Failed to load activity:', error);
+                document.getElementById('recent-activity').innerHTML = '<p style="color: var(--gray-600);">No recent activity</p>';
+            }
+        }
+
+        // Load all data
+        loadStats();
+        loadResumes();
+        loadActivity();
+    </script>
+</body>
+
+</html>

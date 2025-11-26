@@ -1,0 +1,243 @@
+/* JoBika Dark Mode Theme */
+
+:root {
+    /* Light mode colors (already defined in main.css) */
+    --bg-primary: #ffffff;
+    --bg-secondary: #f9fafb;
+    --text-primary: #1f2937;
+    --text-secondary: #6b7280;
+    --border-color: #e5e7eb;
+    --card-bg: #ffffff;
+}
+
+[data-theme="dark"] {
+    /* Dark mode color palette */
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --text-primary: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --border-color: #334155;
+    --card-bg: #1e293b;
+
+    /* Override specific colors */
+    --gray-50: #1e293b;
+    --gray-100: #334155;
+    --gray-200: #475569;
+    --gray-300: #64748b;
+    --gray-400: #94a3b8;
+    --gray-500: #cbd5e1;
+    --gray-600: #e2e8f0;
+    --gray-700: #f1f5f9;
+    --gray-800: #f8fafc;
+    --gray-900: #ffffff;
+}
+
+/* Apply theme to body */
+body {
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Cards and containers */
+[data-theme="dark"] .card,
+[data-theme="dark"] .job-card,
+[data-theme="dark"] .feature-card,
+[data-theme="dark"] .stat-card,
+[data-theme="dark"] .profile-sidebar,
+[data-theme="dark"] .profile-main,
+[data-theme="dark"] .chart-container {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+/* Inputs and forms */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+    color: var(--text-secondary);
+}
+
+/* Navigation */
+[data-theme="dark"] .navbar {
+    background-color: var(--bg-secondary);
+    border-bottom-color: var(--border-color);
+}
+
+/* Tables */
+[data-theme="dark"] table {
+    background-color: var(--card-bg);
+}
+
+[data-theme="dark"] th {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+[data-theme="dark"] td {
+    color: var(--text-primary);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] tr:hover {
+    background-color: var(--bg-secondary);
+}
+
+/* Modals */
+[data-theme="dark"] .modal-content {
+    background-color: var(--card-bg);
+}
+
+/* Toast notifications */
+[data-theme="dark"] .toast {
+    background-color: var(--card-bg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+/* Skeleton loaders */
+[data-theme="dark"] .skeleton {
+    background: linear-gradient(90deg, #334155 25%, #475569 50%, #334155 75%);
+}
+
+/* Dark mode toggle button */
+.theme-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.theme-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Icons in dark mode */
+[data-theme="dark"] .theme-toggle {
+    background: linear-gradient(135deg, #f59e0b 0%, #f97316 100%);
+}
+
+/* Pricing cards in dark mode */
+[data-theme="dark"] .pricing-card {
+    background-color: var(--card-bg);
+    border-color: var(--border-color);
+}
+
+[data-theme="dark"] .pricing-card.featured {
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+    border-color: var(--primary-blue);
+}
+
+/* Hero section */
+[data-theme="dark"] .hero {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+}
+
+/* Code blocks */
+[data-theme="dark"] pre,
+[data-theme="dark"] code {
+    background-color: var(--bg-secondary);
+    color: var(--text-primary);
+}
+
+/* Links */
+[data-theme="dark"] a {
+    color: #60a5fa;
+}
+
+[data-theme="dark"] a:hover {
+    color: #93c5fd;
+}
+
+/* Scrollbar (webkit) */
+[data-theme="dark"] ::-webkit-scrollbar {
+    background-color: var(--bg-primary);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+    background-color: var(--gray-300);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+    background-color: var(--gray-400);
+}
+
+/* Upload area */
+[data-theme="dark"] .upload-area {
+    background-color: var(--bg-secondary);
+    border-color: var(--border-color);
+}
+
+/* Status badges */
+[data-theme="dark"] .badge {
+    filter: brightness(1.2);
+}
+
+/* Funnel stages */
+[data-theme="dark"] .funnel-stage {
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+/* Resume item */
+[data-theme="dark"] .resume-item {
+    background-color: var(--bg-secondary);
+}
+
+/* Info rows */
+[data-theme="dark"] .info-row {
+    border-color: var(--border-color);
+}
+
+/* Stat boxes */
+[data-theme="dark"] .stat-box {
+    background-color: var(--bg-secondary);
+}
+
+/* Recommendation items */
+[data-theme="dark"] .recommendation-item {
+    background-color: var(--card-bg);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    .theme-toggle {
+        bottom: 80px;
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+    }
+}
+
+/* Smooth transitions for theme change */
+* {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Disable transitions on theme change to prevent flashing */
+body.theme-changing * {
+    transition: none !important;
+}

@@ -37,8 +37,39 @@ from job_scraper_universal import UniversalJobScraper, AutoApplySystem
 from analytics import get_application_stats, get_market_insights
 from learning_recommendations import get_recommendations_for_gaps, get_learning_resources
 
+# Import new modules
+try:
+    from api_docs import init_swagger
+    from security_middleware import init_security_middleware, validate_email, validate_password
+    from performance_monitor import init_performance_monitoring, track_performance
+    from analytics_dashboard import init_analytics_endpoints
+    from cover_letter_generator import init_cover_letter_endpoints
+    from cache_system import init_cache_endpoints, cache_response
+    from job_alerts import init_job_alerts
+    from resume_comparer import init_resume_comparison_endpoints
+    from interview_prep import init_interview_prep_endpoints
+    from application_reminders import init_application_reminders
+    ENHANCED_FEATURES = True
+    print("✅ All enhanced features loaded successfully!")
+except ImportError as e:
+    ENHANCED_FEATURES = False
+    print(f"⚠️  Enhanced features not available: {e}")
+    # Define dummy decorators
+    def track_performance(f):
+        return f
+    def cache_response(ttl=300, key_prefix=''):
+        def decorator(f):
+            return f
+        return decorator
+
+from dotenv import load_dotenv
+load_dotenv()  # Load environment variables
+
 app = Flask(__name__)
 CORS(app)  # Enable CORS for all routes
+
+# Configuration
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
 
 # Initialize Rate Limiter
 limiter = Limiter(
@@ -182,7 +213,68 @@ def init_db():
     print("✅ Database initialized")
 
 # Initialize database on startup
-init_db()
+if not os.path.exists('jobika.db'):
+    print("📦 Database not found. Initializing for the first time...")
+    init_db()
+    print("✅ Database initialized successfully!")
+else:
+    print("✅ Database found. Checking schema...")
+    init_db()  # Ensures all tables exist
+
+# Initialize Enhanced Features
+if ENHANCED_FEATURES:
+    try:
+        swagger = init_swagger(app)
+        print("✅ Swagger API documentation available at /api/docs/")
+    except Exception as e:
+        print(f"⚠️  Could not initialize Swagger: {e}")
+    
+    try:
+        init_security_middleware(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize security middleware: {e}")
+    
+    try:
+        init_performance_monitoring(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize performance monitoring: {e}")
+    
+    try:
+        init_analytics_endpoints(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize analytics dashboard: {e}")
+    
+    try:
+        init_cover_letter_endpoints(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize cover letter generator: {e}")
+    
+    try:
+        init_cache_endpoints(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize cache system: {e}")
+    
+    try:
+        init_job_alerts(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize job alerts: {e}")
+    
+    try:
+        init_resume_comparison_endpoints(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize resume comparison: {e}")
+    
+    try:
+        init_interview_prep_endpoints(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize interview prep: {e}")
+    
+    try:
+        init_application_reminders(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize application reminders: {e}")
+    
+    print("🎉 All systems initialized successfully!")
 
 # Helper functions
 def hash_password(password):
@@ -728,8 +820,25 @@ def create_application():
     """Create job application"""
     try:
         token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_id = verify_token(token)
+        
+        if not user_id:
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        data = request.json
+        job_id = data.get('jobId')
+        
+        if not job_id:
+            return jsonify({'error': 'Job ID required'}), 400
+        
+        conn = get_db()
+        cursor = conn.cursor()
+        
+        # Get job details
+        cursor.execute('SELECT * FROM jobs WHERE id = ?', (job_id,))
         job = cursor.fetchone()
         
+        # Get user's resume
         cursor.execute('''
             SELECT * FROM resumes
             WHERE user_id = ?
