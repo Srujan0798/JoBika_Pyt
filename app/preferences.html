@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auto-Apply Preferences - JoBika</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        .preferences-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .pref-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .pref-section {
+            margin-bottom: 32px;
+        }
+
+        .pref-section h3 {
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #374151;
+        }
+
+        .form-input,
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-input:focus,
+        .form-select:focus {
+            outline: none;
+            border-color: #6366f1;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 60px;
+            height: 34px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 26px;
+            width: 26px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: #6366f1;
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(26px);
+        }
+
+        .tag-input-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 8px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            min-height: 48px;
+        }
+
+        .tag {
+            padding: 6px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 16px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .tag-remove {
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .tag-input {
+            border: none;
+            outline: none;
+            flex: 1;
+            min-width: 120px;
+            padding: 6px;
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            background: #6366f1;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .save-btn:hover {
+            background: #4f46e5;
+        }
+
+        .info-box {
+            background: #f0f9ff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px;
+            margin-top: 24px;
+            border-radius: 4px;
+        }
+
+        .info-box h4 {
+            margin: 0 0 8px 0;
+            color: #1e40af;
+        }
+
+        .info-box p {
+            margin: 0;
+            color: #1e3a8a;
+            font-size: 14px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">JoBika</a>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="jobs.html">Jobs</a>
+                <a href="resume-versions.html">Resume Versions</a>
+                <a href="preferences.html" class="active">Preferences</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="preferences-container">
+        <h1 style="margin-bottom: 32px;">Auto-Apply Preferences</h1>
+
+        <div class="pref-card">
+            <form id="preferencesForm">
+                <!-- Auto-Apply Toggle -->
+                <div class="pref-section">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <h3>Enable Auto-Apply</h3>
+                            <p style="color: #666; font-size: 14px;">Automatically apply to matching jobs daily</p>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" id="autoApplyEnabled">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Target Roles -->
+                <div class="pref-section">
+                    <h3>Target Roles</h3>
+                    <div class="form-group">
+                        <label class="form-label">What roles are you looking for?</label>
+                        <div class="tag-input-container" id="rolesContainer">
+                            <input type="text" class="tag-input" id="roleInput"
+                                placeholder="Type role and press Enter...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Locations -->
+                <div class="pref-section">
+                    <h3>Preferred Locations</h3>
+                    <div class="form-group">
+                        <label class="form-label">Where do you want to work?</label>
+                        <div class="tag-input-container" id="locationsContainer">
+                            <input type="text" class="tag-input" id="locationInput"
+                                placeholder="Type location and press Enter...">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Salary Range -->
+                <div class="pref-section">
+                    <h3>Salary Expectations</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">Minimum Salary (LPA)</label>
+                            <input type="number" class="form-input" id="salaryMin" placeholder="e.g., 8">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Maximum Salary (LPA)</label>
+                            <input type="number" class="form-input" id="salaryMax" placeholder="e.g., 25">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Auto-Apply Settings -->
+                <div class="pref-section">
+                    <h3>Auto-Apply Settings</h3>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div class="form-group">
+                            <label class="form-label">Max Applications Per Day</label>
+                            <input type="number" class="form-input" id="maxApps" value="10" min="1" max="50">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Minimum Match Score (%)</label>
+                            <input type="number" class="form-input" id="minMatch" value="60" min="0" max="100">
+                        </div>
+                    </div>
+                </div>
+
+                <button type="submit" class="save-btn">Save Preferences</button>
+            </form>
+
+            <div class="info-box">
+                <h4>ℹ️ How Auto-Apply Works</h4>
+                <p>
+                    JoBika will scan for new jobs daily at 9 AM. Jobs matching your criteria and minimum match score
+                    will be automatically applied to using your customized resume. You'll receive a daily email summary
+                    of all applications.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        let targetRoles = [];
+        let preferredLocations = [];
+
+        // Tag input functionality
+        function setupTagInput(inputId, containerId, tagsArray) {
+            const input = document.getElementById(inputId);
+            const container = document.getElementById(containerId);
+
+            input.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = input.value.trim();
+                    if (value && !tagsArray.includes(value)) {
+                        tagsArray.push(value);
+                        addTag(container, value, tagsArray);
+                        input.value = '';
+                    }
+                }
+            });
+        }
+
+        function addTag(container, text, tagsArray) {
+            const tag = document.createElement('div');
+            tag.className = 'tag';
+            tag.innerHTML = `
+                ${text}
+                <span class="tag-remove" onclick="removeTag(this, '${text}', ${tagsArray === targetRoles ? 'targetRoles' : 'preferredLocations'})">×</span>
+            `;
+            container.insertBefore(tag, container.querySelector('.tag-input'));
+        }
+
+        function removeTag(element, text, arrayName) {
+            const array = arrayName === 'targetRoles' ? targetRoles : preferredLocations;
+            const index = array.indexOf(text);
+            if (index > -1) {
+                array.splice(index, 1);
+            }
+            element.parentElement.remove();
+        }
+
+        async function loadPreferences() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/preferences`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (response.ok) {
+                    const prefs = await response.json();
+                    populateForm(prefs);
+                }
+            } catch (error) {
+                console.error('Error loading preferences:', error);
+            }
+        }
+
+        function populateForm(prefs) {
+            document.getElementById('autoApplyEnabled').checked = prefs.autoApplyEnabled || false;
+            document.getElementById('salaryMin').value = prefs.salaryMin ? prefs.salaryMin / 100000 : '';
+            document.getElementById('salaryMax').value = prefs.salaryMax ? prefs.salaryMax / 100000 : '';
+            document.getElementById('maxApps').value = prefs.maxApplicationsPerDay || 10;
+            document.getElementById('minMatch').value = prefs.minMatchScore || 60;
+
+            // Load roles and locations
+            if (prefs.targetRoles) {
+                targetRoles = prefs.targetRoles;
+                const rolesContainer = document.getElementById('rolesContainer');
+                targetRoles.forEach(role => addTag(rolesContainer, role, targetRoles));
+            }
+
+            if (prefs.preferredLocations) {
+                preferredLocations = prefs.preferredLocations;
+                const locsContainer = document.getElementById('locationsContainer');
+                preferredLocations.forEach(loc => addTag(locsContainer, loc, preferredLocations));
+            }
+        }
+
+        async function savePreferences(e) {
+            e.preventDefault();
+
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            const preferences = {
+                autoApplyEnabled: document.getElementById('autoApplyEnabled').checked,
+                targetRoles: targetRoles,
+                preferredLocations: preferredLocations,
+                salaryMin: parseInt(document.getElementById('salaryMin').value) * 100000 || 0,
+                salaryMax: parseInt(document.getElementById('salaryMax').value) * 100000 || 0,
+                maxApplicationsPerDay: parseInt(document.getElementById('maxApps').value),
+                minMatchScore: parseInt(document.getElementById('minMatch').value)
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/preferences`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(preferences)
+                });
+
+                if (response.ok) {
+                    alert('✅ Preferences saved successfully!');
+                } else {
+                    alert('❌ Failed to save preferences');
+                }
+            } catch (error) {
+                console.error('Error saving preferences:', error);
+                alert('❌ Error saving preferences');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'auth.html';
+        }
+
+        // Initialize
+        setupTagInput('roleInput', 'rolesContainer', targetRoles);
+        setupTagInput('locationInput', 'locationsContainer', preferredLocations);
+        document.getElementById('preferencesForm').addEventListener('submit', savePreferences);
+        loadPreferences();
+    </script>
+</body>
+
+</html>

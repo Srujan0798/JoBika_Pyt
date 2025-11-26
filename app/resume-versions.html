@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resume Versions - JoBika</title>
+    <link rel="stylesheet" href="assets/css/main.css">
+    <style>
+        .versions-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        .version-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .version-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .version-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .match-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .match-high {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .match-medium {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .match-low {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .version-details {
+            color: #666;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .skill-tag {
+            padding: 4px 12px;
+            background: #e3f2fd;
+            color: #1976d2;
+            border-radius: 16px;
+            font-size: 13px;
+        }
+
+        .version-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .btn-view,
+        .btn-download {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .btn-view {
+            background: #6366f1;
+            color: white;
+        }
+
+        .btn-view:hover {
+            background: #4f46e5;
+        }
+
+        .btn-download {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .btn-download:hover {
+            background: #e5e7eb;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 64px;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="index.html" class="logo">JoBika</a>
+            <div class="nav-links">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="jobs.html">Jobs</a>
+                <a href="resume-versions.html" class="active">Resume Versions</a>
+                <a href="preferences.html">Preferences</a>
+                <a href="#" onclick="logout()">Logout</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="versions-container">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+                <h1>Resume Versions</h1>
+                <p style="color: #666; margin-top: 8px;">Customized resumes for each job application</p>
+            </div>
+            <button class="btn-primary" onclick="window.location.href='upload.html'">
+                Upload New Resume
+            </button>
+        </div>
+
+        <div id="versionsContainer">
+            <div class="empty-state">
+                <div class="empty-state-icon">📄</div>
+                <h3>No resume versions yet</h3>
+                <p>Apply to jobs to create customized resume versions</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+
+        async function loadResumeVersions() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/resume/versions`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                if (!response.ok) throw new Error('Failed to load versions');
+
+                const versions = await response.json();
+                displayVersions(versions);
+            } catch (error) {
+                console.error('Error loading versions:', error);
+            }
+        }
+
+        function displayVersions(versions) {
+            const container = document.getElementById('versionsContainer');
+
+            if (!versions || versions.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">📄</div>
+                        <h3>No resume versions yet</h3>
+                        <p>Apply to jobs to create customized resume versions</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = versions.map(version => `
+                <div class="version-card">
+                    <div class="version-header">
+                        <div class="version-name">${version.versionName}</div>
+                        <div class="match-badge ${getMatchClass(version.matchScore)}">
+                            ${version.matchScore}% Match
+                        </div>
+                    </div>
+                    <div class="version-details">
+                        Created: ${new Date(version.createdAt).toLocaleDateString()} | 
+                        Job: ${version.jobTitle} at ${version.company}
+                    </div>
+                    <div class="skills-list">
+                        ${version.skills.slice(0, 6).map(skill =>
+                `<span class="skill-tag">${skill}</span>`
+            ).join('')}
+                        ${version.skills.length > 6 ? `<span class="skill-tag">+${version.skills.length - 6} more</span>` : ''}
+                    </div>
+                    <div class="version-actions">
+                        <button class="btn-view" onclick="viewVersion(${version.id})">View Resume</button>
+                        <button class="btn-download" onclick="downloadVersion(${version.id})">Download PDF</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function getMatchClass(score) {
+            if (score >= 75) return 'match-high';
+            if (score >= 50) return 'match-medium';
+            return 'match-low';
+        }
+
+        function viewVersion(id) {
+            // TODO: Implement version viewer
+            alert('Resume viewer coming soon!');
+        }
+
+        function downloadVersion(id) {
+            // TODO: Implement PDF download
+            alert('PDF download coming soon!');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            window.location.href = 'auth.html';
+        }
+
+        // Load versions on page load
+        loadResumeVersions();
+    </script>
+</body>
+
+</html>
