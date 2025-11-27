@@ -1,5 +1,5 @@
-// API Configuration
-const API_BASE_URL = 'http://localhost:5000/api';
+// API Configuration - use relative URL to work with current server
+const API_BASE_URL = '/api';
 
 // Global app state
 const AppState = {

@@ -67,8 +67,20 @@ except ImportError as e:
 from dotenv import load_dotenv
 load_dotenv()  # Load environment variables
 
+# Configure static folder to serve app/ directory
+import os
+from flask import send_from_directory
+static_folder_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'app'))
+
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+# Configure CORS to allow frontend requests
+CORS(app, resources={
+    r"/api/*": {
+        "origins": ["http://localhost:8080", "http://127.0.0.1:8080"],
+        "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+        "allow_headers": ["Content-Type", "Authorization"]
+    }
+})
 
 # Configuration
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
@@ -112,7 +124,7 @@ oauth.register(
 )
 
 # Configuration
-SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production')
+SECRET_KEY = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production') # This line is now redundant due to app.config['SECRET_KEY']
 UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = {'pdf', 'docx', 'doc'}
 
@@ -298,6 +310,18 @@ def verify_token(token):
         return payload['user_id']
     except:
         return None
+
+# Routes to serve frontend app files
+@app.route('/')
+def index():
+    """Serve the main landing page"""
+    return send_from_directory(static_folder_path, 'index.html')
+
+@app.route('/app/<path:path>')
+def send_app_files(path):
+    """Serve static files from app directory"""
+    return send_from_directory(static_folder_path, path)
+
 
 # ============= AUTHENTICATION ENDPOINTS =============
 
