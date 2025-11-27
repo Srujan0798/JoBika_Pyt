@@ -514,6 +514,26 @@ window.JoBikaAPI = {
     markAllRead
 };
 
+// Additional function for saving jobs
+async function saveJob(jobId) {
+    try {
+        const data = await apiCall('/jobs/saved', {
+            method: 'POST',
+            body: JSON.stringify({ jobId })
+        });
+        // Update local state
+        if (!AppState.savedJobs) {
+            AppState.savedJobs = [];
+        }
+        AppState.savedJobs.push(data);
+        localStorage.setItem('jobika_saved_jobs', JSON.stringify(AppState.savedJobs));
+        return data;
+    } catch (error) {
+        console.error('Failed to save job:', error);
+        throw error;
+    }
+}
+
 // Additional functions for saved jobs
 async function getSavedJobs() {
     try {
