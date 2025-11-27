@@ -74,9 +74,21 @@ static_folder_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..
 
 app = Flask(__name__)
 # Configure CORS to allow frontend requests
+allowed_origins = [
+    "http://localhost:8080",
+    "http://127.0.0.1:8080",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000"
+]
+
+# Add production origin if set
+production_origin = os.environ.get('ALLOWED_ORIGINS')
+if production_origin:
+    allowed_origins.append(production_origin)
+
 CORS(app, resources={
     r"/api/*": {
-        "origins": ["http://localhost:8080", "http://127.0.0.1:8080"],
+        "origins": allowed_origins,
         "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
         "allow_headers": ["Content-Type", "Authorization"]
     }
@@ -338,12 +350,20 @@ def verify_token(token):
 @app.route('/')
 def index():
     """Serve the main landing page"""
-    return send_from_directory(static_folder_path, 'index.html')
+    try:
+        return send_from_directory(static_folder_path, 'index.html')
+    except Exception as e:
+        print(f"Error serving index.html: {e}")
+        return jsonify({'error': 'Frontend not found', 'message': str(e)}), 404
 
 @app.route('/app/<path:path>')
 def send_app_files(path):
     """Serve static files from app directory"""
-    return send_from_directory(static_folder_path, path)
+    try:
+        return send_from_directory(static_folder_path, path)
+    except Exception as e:
+        print(f"Error serving {path}: {e}")
+        return jsonify({'error': 'File not found', 'path': path}), 404
 
 
 # ============= AUTHENTICATION ENDPOINTS =============
