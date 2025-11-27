@@ -49,6 +49,8 @@ try:
     from resume_comparer import init_resume_comparison_endpoints
     from interview_prep import init_interview_prep_endpoints
     from application_reminders import init_application_reminders
+    from salary_insights import init_salary_insights_endpoints
+    from pdf_export import init_pdf_export_endpoints
     ENHANCED_FEATURES = True
     print("✅ All enhanced features loaded successfully!")
 except ImportError as e:
@@ -273,6 +275,16 @@ if ENHANCED_FEATURES:
         init_application_reminders(app)
     except Exception as e:
         print(f"⚠️  Could not initialize application reminders: {e}")
+    
+    try:
+        init_salary_insights_endpoints(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize salary insights: {e}")
+    
+    try:
+        init_pdf_export_endpoints(app)
+    except Exception as e:
+        print(f"⚠️  Could not initialize PDF export: {e}")
     
     print("🎉 All systems initialized successfully!")
 

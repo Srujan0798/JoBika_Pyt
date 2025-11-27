@@ -1,0 +1,319 @@
+"""
+PDF Export System for JoBika
+Export applications and reports to PDF format
+"""
+
+from datetime import datetime
+import json
+
+class PDFExporter:
+    """Export data to PDF format"""
+    
+    def __init__(self, db_path='jobika.db'):
+        self.db_path = db_path
+    
+    def get_db(self):
+        """Get database connection"""
+        import sqlite3
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+        return conn
+    
+    def generate_html_for_pdf(self, user_id, data_type='applications'):
+        """
+        Generate HTML that can be converted to PDF
+        
+        Args:
+            user_id: User ID
+            data_type: Type of data to export (applications, resume, analytics)
+        
+        Returns:
+            HTML string ready for PDF conversion
+        """
+        if data_type == 'applications':
+            return self._generate_applications_html(user_id)
+        elif data_type == 'resume':
+            return self._generate_resume_html(user_id)
+        elif data_type == 'analytics':
+            return self._generate_analytics_html(user_id)
+        else:
+            return self._generate_summary_html(user_id)
+    
+    def _generate_applications_html(self, user_id):
+        """Generate HTML for applications export"""
+        conn = self.get_db()
+        cursor = conn.cursor()
+        
+        try:
+            # Get user info
+            cursor.execute('SELECT full_name, email FROM users WHERE id = ?', (user_id,))
+            user = cursor.fetchone()
+            
+            # Get applications
+            cursor.execute('''
+                SELECT a.*, j.title as job_title, j.company, j.location
+                FROM applications a
+                JOIN jobs j ON a.job_id = j.id
+                WHERE a.user_id = ?
+                ORDER BY a.applied_date DESC
+            ''', (user_id,))
+            applications = cursor.fetchall()
+            
+            # Generate HTML
+            html = f'''
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Job Applications Report - {user['full_name'] if user else 'User'}</title>
+    <style>
+        body {{
+            font-family: 'Arial', sans-serif;
+            margin: 40px;
+            color: #333;
+        }}
+        h1 {{
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }}
+        .header {{
+            margin-bottom: 30px;
+        }}
+        .meta {{
+            color: #666;
+            font-size: 14px;
+        }}
+        table {{
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }}
+        th {{
+            background: #667eea;
+            color: white;
+            padding: 12px;
+            text-align: left;
+        }}
+        td {{
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }}
+        tr:nth-child(even) {{
+            background: #f9f9f9;
+        }}
+        .status {{
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }}
+        .status-applied {{ background: #e3f2fd; color: #1976d2; }}
+        .status-interview {{ background: #fff3e0; color: #f57c00; }}
+        .status-rejected {{ background: #ffebee; color: #c62828; }}
+        .status-accepted {{ background: #e8f5e9; color: #2e7d32; }}
+        .footer {{
+            margin-top: 40px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }}
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Job Applications Report</h1>
+        <div class="meta">
+            <strong>Name:</strong> {user['full_name'] if user else 'N/A'}<br>
+            <strong>Email:</strong> {user['email'] if user else 'N/A'}<br>
+            <strong>Generated:</strong> {datetime.now().strftime('%B %d, %Y at %H:%M')}<br>
+            <strong>Total Applications:</strong> {len(applications)}
+        </div>
+    </div>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Position</th>
+                <th>Location</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+'''
+            
+            for app in applications:
+                status_class = f"status-{app['status']}"
+                html += f'''
+            <tr>
+                <td>{app['company']}</td>
+                <td>{app['job_title']}</td>
+                <td>{app['location']}</td>
+                <td>{app['applied_date'][:10] if app['applied_date'] else 'N/A'}</td>
+                <td><span class="status {status_class}">{app['status'].upper()}</span></td>
+            </tr>
+'''
+            
+            html += '''
+        </tbody>
+    </table>
+    
+    <div class="footer">
+        Generated by JoBika - AI-Powered Job Application Platform<br>
+        https://github.com/Srujan0798/JoBika_Py
+    </div>
+</body>
+</html>
+'''
+            return html
+            
+        finally:
+            conn.close()
+    
+    def _generate_resume_html(self, user_id):
+        """Generate HTML for resume export"""
+        conn = self.get_db()
+        cursor = conn.cursor()
+        
+        try:
+            cursor.execute('''
+                SELECT * FROM resumes
+                WHERE user_id = ?
+                ORDER BY created_at DESC
+                LIMIT 1
+            ''', (user_id,))
+            resume = cursor.fetchone()
+            
+            if not resume:
+                return "<html><body><h1>No resume found</h1></body></html>"
+            
+            skills = json.loads(resume['skills']) if resume['skills'] else []
+            
+            html = f'''
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Resume - {resume['name'] or 'User'}</title>
+    <style>
+        body {{
+            font-family: 'Arial', sans-serif;
+            margin: 40px;
+            color: #333;
+            line-height: 1.6;
+        }}
+        h1 {{
+            color: #667eea;
+            margin-bottom: 10px;
+        }}
+        h2 {{
+            color: #764ba2;
+            border-bottom: 2px solid #764ba2;
+            padding-bottom: 5px;
+            margin-top: 30px;
+        }}
+        .contact {{
+            color: #666;
+            margin-bottom: 30px;
+        }}
+        .skills {{
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }}
+        .skill {{
+            background: #667eea;
+            color: white;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+        }}
+    </style>
+</head>
+<body>
+    <h1>{resume['name'] or 'Resume'}</h1>
+    <div class="contact">
+        <strong>Email:</strong> {resume['email'] or 'N/A'}<br>
+        <strong>Phone:</strong> {resume['phone'] or 'N/A'}<br>
+        <strong>Experience:</strong> {resume['experience_years'] or 0} years
+    </div>
+    
+    <h2>Skills</h2>
+    <div class="skills">
+'''
+            
+            for skill in skills:
+                html += f'<span class="skill">{skill}</span>\n'
+            
+            html += f'''
+    </div>
+    
+    <h2>Summary</h2>
+    <p>{resume['summary'] or 'No summary available'}</p>
+</body>
+</html>
+'''
+            return html
+            
+        finally:
+            conn.close()
+    
+    def _generate_analytics_html(self, user_id):
+        """Generate HTML for analytics export"""
+        return "<html><body><h1>Analytics Report</h1><p>Coming soon...</p></body></html>"
+    
+    def _generate_summary_html(self, user_id):
+        """Generate HTML for summary export"""
+        return "<html><body><h1>Summary Report</h1><p>Coming soon...</p></body></html>"
+
+# Global instance
+pdf_exporter = PDFExporter()
+
+def init_pdf_export_endpoints(app):
+    """Initialize PDF export endpoints"""
+    from flask import request, jsonify, Response
+    
+    @app.route('/api/export/pdf/<data_type>', methods=['GET'])
+    def export_to_pdf(data_type):
+        """Export data to PDF-ready HTML"""
+        from server import verify_token
+        
+        token = request.headers.get('Authorization', '').replace('Bearer ', '')
+        user_id = verify_token(token)
+        
+        if not user_id:
+            return jsonify({'error': 'Unauthorized'}), 401
+        
+        # Generate HTML
+        html = pdf_exporter.generate_html_for_pdf(user_id, data_type)
+        
+        # Return HTML response (client can convert to PDF using browser print or library)
+        return Response(html, mimetype='text/html')
+    
+    @app.route('/api/export/formats')
+    def get_export_formats():
+        """Get available export formats"""
+        return jsonify({
+            'formats': [
+                {
+                    'id': 'applications',
+                    'name': 'Applications Report',
+                    'description': 'Export all your job applications'
+                },
+                {
+                    'id': 'resume',
+                    'name': 'Resume',
+                    'description': 'Export your resume'
+                },
+                {
+                    'id': 'analytics',
+                    'name': 'Analytics Report',
+                    'description': 'Export analytics data'
+                }
+            ]
+        })
+    
+    print("✅ PDF export endpoints initialized")
