@@ -133,6 +133,39 @@ def init_guest_endpoints(app, UPLOAD_FOLDER):
         except Exception as e:
             return jsonify({'error': str(e)}), 500
     
+            return jsonify({
+                'success': True,
+                'customizedResume': customized,
+                'message': 'Resume customized! Login to save this version.'
+            })
+            
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+            
+    @app.route('/api/guest/enhance-section', methods=['POST'])
+    def guest_enhance_section():
+        """
+        Enhance resume section without authentication.
+        """
+        try:
+            data = request.json
+            text = data.get('text', '')
+            section_type = data.get('sectionType', 'summary')
+            
+            if not text:
+                return jsonify({'error': 'Text is required'}), 400
+            
+            enhanced_text = resume_customizer.enhance_section(text, section_type)
+            
+            return jsonify({
+                'success': True,
+                'enhancedText': enhanced_text,
+                'message': 'Section enhanced!'
+            })
+            
+        except Exception as e:
+            return jsonify({'error': str(e)}), 500
+    
     @app.route('/api/auth/migrate-guest-data', methods=['POST'])
     def migrate_guest_data():
         """

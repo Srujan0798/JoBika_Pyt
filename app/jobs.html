@@ -184,29 +184,7 @@
 </head>
 
 <body>
-    <!-- Login Prompt Modal -->
-    <div id="loginPromptModal" class="login-prompt-modal">
-        <div class="login-prompt-content">
-            <div class="login-prompt-icon">🔒</div>
-            <h3>Login Required</h3>
-            <p>To <span id="featureName">save jobs</span>, you need to create an account.</p>
-
-            <div class="login-prompt-buttons">
-                <button class="login-prompt-btn login-prompt-btn-primary"
-                    onclick="window.location.href='/auth.html?mode=register'">
-                    Create Free Account
-                </button>
-                <button class="login-prompt-btn login-prompt-btn-secondary"
-                    onclick="window.location.href='/auth.html?mode=login'">
-                    Login
-                </button>
-                <button class="login-prompt-btn login-prompt-btn-tertiary" onclick="sessionManager.hideLoginPrompt()">
-                    Continue as Guest
-                </button>
-            </div>
-        </div>
-    </div>
-
+    <script src="assets/js/session-manager.js"></script>
     <aside class="sidebar">
         <div class="logo">JoBika</div>
         <ul class="nav-menu">
@@ -235,9 +213,9 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <span>⚙️</span>
-                    <span>Settings</span>
+                <a href="#" class="nav-link" onclick="createJobAlert()">
+                    <span>🔔</span>
+                    <span>Job Alerts</span>
                 </a>
             </li>
         </ul>
@@ -559,6 +537,53 @@
                 async function quickApply(jobId) {
                     const btn = event.target;
                     const originalText = btn.textContent;
+
+                    if (sessionManager.isGuest) {
+                        // Show realistic progress modal
+                        const modal = document.createElement('div');
+                        modal.className = 'auth-modal-overlay';
+                        modal.style.display = 'flex';
+                        modal.style.zIndex = '10000';
+                        modal.innerHTML = `
+                            <div class="auth-modal-container" style="text-align: center;">
+                                <div style="font-size: 3rem; margin-bottom: 1rem;">🤖</div>
+                                <h2 style="margin-bottom: 1rem;">AI is applying for you...</h2>
+                                <div style="background: #f3f4f6; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 1.5rem;">
+                                    <div id="applyProgress" style="background: var(--primary-blue); width: 0%; height: 100%; transition: width 0.5s;"></div>
+                                </div>
+                                <p id="applyStatus" style="color: var(--gray-600);">Analyzing job requirements...</p>
+                            </div>
+                        `;
+                        document.body.appendChild(modal);
+
+                        // Simulate steps
+                        const steps = [
+                            { pct: 30, text: 'Customizing resume...' },
+                            { pct: 60, text: 'Generating cover letter...' },
+                            { pct: 90, text: 'Submitting application...' },
+                            { pct: 100, text: 'Application Sent! (Demo)' }
+                        ];
+
+                        for (let step of steps) {
+                            await new Promise(r => setTimeout(r, 800));
+                            const progress = document.getElementById('applyProgress');
+                            const status = document.getElementById('applyStatus');
+                            if (progress && status) {
+                                progress.style.width = step.pct + '%';
+                                status.textContent = step.text;
+                            }
+                        }
+
+                        await new Promise(r => setTimeout(r, 1000));
+                        modal.remove();
+
+                        btn.textContent = 'Applied (Demo) ✅';
+                        btn.classList.remove('btn-primary');
+                        btn.classList.add('btn-success');
+                        btn.disabled = true;
+                        return;
+                    }
+
                     btn.disabled = true;
                     btn.textContent = 'Applying...';
 
@@ -598,11 +623,45 @@
                         `;
                         document.body.appendChild(modal);
                     } catch (error) {
+                        console.error('Failed to generate cover letter:', error);
                         alert('Failed to generate cover letter: ' + error.message);
-                    } finally {
                         btn.textContent = originalText;
                         btn.disabled = false;
                     }
+                }
+
+                function createJobAlert() {
+                    if (sessionManager.isGuest) {
+                        // Show realistic toast
+                        const toast = document.createElement('div');
+                        toast.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:#10b981;color:white;padding:1rem 2rem;border-radius:0.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);z-index:10000;animation:slideIn 0.3s forwards;display:flex;align-items:center;gap:0.5rem;';
+                        toast.innerHTML = `
+                            <span style="font-size:1.25rem;">🔔</span>
+                            <div>
+                                <div style="font-weight:600;">Alert Created!</div>
+                                <div style="font-size:0.875rem;">We'll notify you of new matches. (Demo)</div>
+                            </div>
+                        `;
+                        document.body.appendChild(toast);
+
+                        // Add animation styles if not present
+                        if (!document.getElementById('toastStyles')) {
+                            const style = document.createElement('style');
+                            style.id = 'toastStyles';
+                            style.textContent = `
+                                @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                                @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
+                            `;
+                            document.head.appendChild(style);
+                        }
+
+                        setTimeout(() => {
+                            toast.style.animation = 'slideOut 0.3s forwards';
+                            setTimeout(() => toast.remove(), 300);
+                        }, 3000);
+                        return;
+                    }
+                    alert('Job alerts feature coming soon for logged in users!');
                 }
 
                 async function getInterviewPrepUI(jobId) {

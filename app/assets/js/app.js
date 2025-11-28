@@ -617,6 +617,12 @@ async function updateResume(data) {
 
 async function enhanceResumeSection(text, sectionType) {
     try {
+        if (window.sessionManager && window.sessionManager.isGuest) {
+            return await apiCall('/guest/enhance-section', {
+                method: 'POST',
+                body: JSON.stringify({ text, sectionType })
+            });
+        }
         return await apiCall('/resume/enhance-section', {
             method: 'POST',
             body: JSON.stringify({ text, sectionType })
