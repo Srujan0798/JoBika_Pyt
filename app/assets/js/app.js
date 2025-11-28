@@ -441,9 +441,9 @@ function isLoggedIn() {
     return !!AppState.token;
 }
 
-function requireAuth() {
+function requireAuth(redirect = true) {
     if (!isLoggedIn()) {
-        window.location.href = 'auth.html';
+        if (redirect) window.location.href = 'auth.html';
         return false;
     }
     return true;

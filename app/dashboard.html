@@ -12,6 +12,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="stylesheet" href="assets/css/guest-mode.css">
     <style>
         body {
             background: var(--gray-50);
@@ -463,16 +464,45 @@
                     <main class="main-content">
                         <div class="header">
                             <div>
-                                <div class="stat-value">142</div>
-                                <div class="stat-label">Total Applications</div>
+                                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Welcome, <span
+                                        id="userName">User</span>!</h1>
+                                <p style="color: var(--gray-600);" id="userRole">Ready to find your dream job?</p>
+                            </div>
+                            <div class="user-menu">
+                                <div class="user-avatar">👤</div>
+                            </div>
+                        </div>
+
+                        <div class="stats-grid">
+                            <div class="card stat-card">
+                                <div class="stat-header">
+                                    <div>
+                                        <div class="stat-value">142</div>
+                                        <div class="stat-label">Total Applications</div>
+                                    </div>
+                                    <div class="stat-icon">📊</div>
+                                </div>
+                                <div class="stat-trend">↑ 12% this week</div>
+                            </div>
+                            <div class="card stat-card">
+                                <div class="stat-header">
+                                    <div>
+                                        <div class="stat-value">8</div>
+                                        <div class="stat-label">Interviews</div>
+                                    </div>
+                                    <div class="stat-icon"
+                                        style="background: rgba(245, 158, 11, 0.1); color: var(--warning);">📅</div>
+                                </div>
+                                <div class="stat-trend">2 scheduled today</div>
+                            </div>
+                            <div class="card stat-card">
                                 <div class="stat-header">
                                     <div>
                                         <div class="stat-value">2</div>
                                         <div class="stat-label">Offers Received</div>
                                     </div>
                                     <div class="stat-icon"
-                                        style="background: rgba(34, 197, 94, 0.1); color: var(--success);">🎉
-                                    </div>
+                                        style="background: rgba(34, 197, 94, 0.1); color: var(--success);">🎉</div>
                                 </div>
                                 <div class="stat-trend">Congratulations!</div>
                             </div>
@@ -563,6 +593,7 @@
                         </div>
                     </main>
 
+                    <script src="assets/js/session-manager.js"></script>
                     <script src="assets/js/app.js"></script>
                     <script>
                         // Render recommended jobs
@@ -650,6 +681,15 @@
 
                         // Initialize
                         document.addEventListener('DOMContentLoaded', () => {
+                            // Check if guest
+                            if (sessionManager.isGuest) {
+                                document.getElementById('userName').textContent = 'Guest User';
+                                document.getElementById('userRole').textContent = 'Explorer';
+
+                                // Hide or update sections for guest
+                                // For now, we just render empty/default state
+                            }
+
                             renderJobs();
                         });
                     </script>
