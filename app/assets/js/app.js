@@ -29,6 +29,14 @@ async function apiCall(endpoint, options = {}) {
         });
 
         if (!response.ok) {
+            if (response.status === 401) {
+                if (window.sessionManager) {
+                    window.sessionManager.showAuthModal('login');
+                    // Don't throw error immediately to allow UI to handle it gracefully if needed
+                    // or just stop execution
+                    return null;
+                }
+            }
             const error = await response.json();
             throw new Error(error.error || 'API request failed');
         }

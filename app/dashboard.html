@@ -684,10 +684,35 @@
                             // Check if guest
                             if (sessionManager.isGuest) {
                                 document.getElementById('userName').textContent = 'Guest User';
-                                document.getElementById('userRole').textContent = 'Explorer';
+                                document.getElementById('userRole').textContent = 'Exploring Demo Mode';
 
-                                // Hide or update sections for guest
-                                // For now, we just render empty/default state
+                                // Populate Demo Data
+                                const stats = document.querySelectorAll('.stat-value');
+                                if (stats.length >= 3) {
+                                    stats[0].textContent = '142'; // Applications
+                                    stats[1].textContent = '8';   // Interviews
+                                    stats[2].textContent = '2';   // Offers
+                                }
+
+                                // Add "Demo Mode" badge
+                                const header = document.querySelector('.header');
+                                const badge = document.createElement('span');
+                                badge.className = 'skill-tag';
+                                badge.style.background = '#e0f2fe';
+                                badge.style.color = '#0284c7';
+                                badge.style.marginLeft = '1rem';
+                                badge.textContent = 'Demo Mode';
+                                header.querySelector('h1').appendChild(badge);
+
+                                // Update sidebar login link
+                                const logoutLink = document.querySelector('a[onclick="logout()"]');
+                                if (logoutLink) {
+                                    logoutLink.innerHTML = '<span>🔑</span><span>Login</span>';
+                                    logoutLink.onclick = (e) => {
+                                        e.preventDefault();
+                                        sessionManager.showAuthModal('login');
+                                    };
+                                }
                             }
 
                             renderJobs();

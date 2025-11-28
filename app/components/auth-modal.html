@@ -1,0 +1,220 @@
+<div id="globalAuthModal" class="auth-modal-overlay" style="display: none;">
+    <div class="auth-modal-container">
+        <button class="auth-modal-close" onclick="sessionManager.hideAuthModal()">&times;</button>
+
+        <div class="auth-modal-tabs">
+            <button class="auth-tab active" onclick="sessionManager.switchAuthTab('login')">Sign In</button>
+            <button class="auth-tab" onclick="sessionManager.switchAuthTab('register')">Sign Up</button>
+        </div>
+
+        <!-- Login Form -->
+        <div id="authModalLogin" class="auth-form-section">
+            <h2 class="auth-title">Welcome Back</h2>
+            <p class="auth-subtitle">Continue your journey to your dream job</p>
+
+            <form onsubmit="sessionManager.handleModalLogin(event)">
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" class="input" required placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="input" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Sign In</button>
+            </form>
+
+            <div class="auth-divider">
+                <span>or continue with</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn" onclick="alert('Google login coming soon!')">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20">
+                    Google
+                </button>
+                <button class="social-btn" onclick="alert('GitHub login coming soon!')">
+                    <img src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" width="20">
+                    GitHub
+                </button>
+            </div>
+        </div>
+
+        <!-- Register Form -->
+        <div id="authModalRegister" class="auth-form-section" style="display: none;">
+            <h2 class="auth-title">Create Account</h2>
+            <p class="auth-subtitle">Start your free trial today</p>
+
+            <form onsubmit="sessionManager.handleModalRegister(event)">
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" name="name" class="input" required placeholder="John Doe">
+                </div>
+                <div class="form-group">
+                    <label>Email Address</label>
+                    <input type="email" name="email" class="input" required placeholder="you@example.com">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" name="password" class="input" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Account</button>
+            </form>
+
+            <div class="auth-divider">
+                <span>or continue with</span>
+            </div>
+
+            <div class="social-login">
+                <button class="social-btn" onclick="alert('Google login coming soon!')">
+                    <img src="https://www.svgrepo.com/show/475656/google-color.svg" alt="Google" width="20">
+                    Google
+                </button>
+                <button class="social-btn" onclick="alert('GitHub login coming soon!')">
+                    <img src="https://www.svgrepo.com/show/512317/github-142.svg" alt="GitHub" width="20">
+                    GitHub
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .auth-modal-overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 9999;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        animation: fadeIn 0.3s forwards;
+    }
+
+    .auth-modal-container {
+        background: white;
+        width: 90%;
+        max-width: 400px;
+        border-radius: 1.5rem;
+        padding: 2rem;
+        position: relative;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        transform: scale(0.95);
+        animation: scaleIn 0.3s forwards;
+    }
+
+    .auth-modal-close {
+        position: absolute;
+        top: 1rem;
+        right: 1.5rem;
+        background: none;
+        border: none;
+        font-size: 2rem;
+        color: var(--gray-400);
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .auth-modal-close:hover {
+        color: var(--gray-900);
+    }
+
+    .auth-modal-tabs {
+        display: flex;
+        border-bottom: 2px solid var(--gray-100);
+        margin-bottom: 2rem;
+    }
+
+    .auth-tab {
+        flex: 1;
+        background: none;
+        border: none;
+        padding: 1rem;
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--gray-400);
+        cursor: pointer;
+        transition: all 0.2s;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -2px;
+    }
+
+    .auth-tab.active {
+        color: var(--primary-blue);
+        border-bottom-color: var(--primary-blue);
+    }
+
+    .auth-title {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        font-family: var(--font-display);
+    }
+
+    .auth-subtitle {
+        color: var(--gray-600);
+        margin-bottom: 1.5rem;
+    }
+
+    .auth-divider {
+        display: flex;
+        align-items: center;
+        text-align: center;
+        margin: 1.5rem 0;
+        color: var(--gray-400);
+        font-size: 0.875rem;
+    }
+
+    .auth-divider::before,
+    .auth-divider::after {
+        content: '';
+        flex: 1;
+        border-bottom: 1px solid var(--gray-200);
+    }
+
+    .auth-divider span {
+        padding: 0 1rem;
+    }
+
+    .social-login {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+    }
+
+    .social-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        padding: 0.75rem;
+        background: white;
+        border: 1px solid var(--gray-200);
+        border-radius: 0.5rem;
+        cursor: pointer;
+        transition: all 0.2s;
+        font-weight: 500;
+    }
+
+    .social-btn:hover {
+        background: var(--gray-50);
+        border-color: var(--gray-300);
+    }
+
+    @keyframes fadeIn {
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes scaleIn {
+        to {
+            transform: scale(1);
+        }
+    }
+</style>
