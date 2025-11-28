@@ -12,6 +12,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="stylesheet" href="assets/css/guest-mode.css">
     <style>
         body {
             background: var(--gray-50);
@@ -183,6 +184,29 @@
 </head>
 
 <body>
+    <!-- Login Prompt Modal -->
+    <div id="loginPromptModal" class="login-prompt-modal">
+        <div class="login-prompt-content">
+            <div class="login-prompt-icon">🔒</div>
+            <h3>Login Required</h3>
+            <p>To <span id="featureName">save jobs</span>, you need to create an account.</p>
+
+            <div class="login-prompt-buttons">
+                <button class="login-prompt-btn login-prompt-btn-primary"
+                    onclick="window.location.href='/auth.html?mode=register'">
+                    Create Free Account
+                </button>
+                <button class="login-prompt-btn login-prompt-btn-secondary"
+                    onclick="window.location.href='/auth.html?mode=login'">
+                    Login
+                </button>
+                <button class="login-prompt-btn login-prompt-btn-tertiary" onclick="sessionManager.hideLoginPrompt()">
+                    Continue as Guest
+                </button>
+            </div>
+        </div>
+    </div>
+
     <aside class="sidebar">
         <div class="logo">JoBika</div>
         <ul class="nav-menu">
@@ -485,6 +509,7 @@
                 <div class="jobs-grid" id="jobsGrid"></div>
             </main>
 
+            <script src="assets/js/session-manager.js"></script>
             <script src="assets/js/app.js"></script>
             <script>
                 function renderJobs() {
@@ -692,6 +717,30 @@
                     } catch (error) {
                         alert('Failed to customize resume: ' + error.message);
                     } finally {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                    }
+                }
+
+                async function saveJob(jobId) {
+                    // Check if guest mode
+                    if (sessionManager.isGuest) {
+                        sessionManager.showLoginPrompt('save jobs');
+                        return;
+                    }
+
+                    const btn = event.target;
+                    const originalText = btn.textContent;
+                    btn.disabled = true;
+                    btn.textContent = 'Saving...';
+
+                    try {
+                        await window.JoBikaAPI.saveJob(jobId);
+                        btn.textContent = 'Saved ✅';
+                        btn.classList.remove('btn-secondary');
+                        btn.classList.add('btn-success');
+                    } catch (error) {
+                        alert('Failed to save job: ' + error.message);
                         btn.textContent = originalText;
                         btn.disabled = false;
                     }
