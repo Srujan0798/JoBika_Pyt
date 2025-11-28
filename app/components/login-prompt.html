@@ -1,0 +1,26 @@
+<!-- Login Prompt Modal -->
+<!-- Include this in all pages that need guest mode support -->
+
+<div id="loginPromptModal" class="login-prompt-modal">
+    <div class="login-prompt-content">
+        <div class="login-prompt-icon">🔒</div>
+        <h3>Login Required</h3>
+        <p>To <span id="featureName">access this feature</span>, you need to create an account.</p>
+        
+        <div class="login-prompt-buttons">
+            <button class="login-prompt-btn login-prompt-btn-primary" onclick="window.location.href='/auth.html?mode=register'">
+                Create Free Account
+            </button>
+            <button class="login-prompt-btn login-prompt-btn-secondary" onclick="window.location.href='/auth.html?mode=login'">
+                Login
+            </button>
+            <button class="login-prompt-btn login-prompt-btn-tertiary" onclick="sessionManager.hideLoginPrompt()">
+                Continue as Guest
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Required Scripts -->
+<script src="/assets/js/session-manager.js"></script>
+<link rel="stylesheet" href="/assets/css/guest-mode.css">

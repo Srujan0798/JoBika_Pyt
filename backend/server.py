@@ -256,6 +256,14 @@ if ENHANCED_FEATURES:
     
     print("🎉 All systems initialized successfully!")
 
+# Initialize Guest Mode Endpoints
+try:
+    from guest_endpoints import init_guest_endpoints
+    init_guest_endpoints(app, UPLOAD_FOLDER)
+    print("✅ Guest mode enabled - users can try the app without login!")
+except Exception as e:
+    print(f"⚠️  Could not initialize guest mode: {e}")
+
 # Helper functions
 def hash_password(password):
     return hashlib.sha256(password.encode()).hexdigest()
