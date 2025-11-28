@@ -251,6 +251,7 @@
         </div>
     </main>
 
+    <script src="assets/js/session-manager.js"></script>
     <script src="assets/js/app.js"></script>
     <script>
         function renderApplications() {
@@ -361,7 +362,22 @@
 
         // Initialize
         document.addEventListener('DOMContentLoaded', async () => {
-            window.JoBikaAPI.requireAuth();
+            if (sessionManager.isGuest) {
+                // Show guest state
+                const container = document.querySelector('.applications-grid');
+                if (container) {
+                    container.innerHTML = `
+                        <div style="grid-column: 1/-1; text-align: center; padding: 4rem;">
+                            <div style="font-size: 4rem; margin-bottom: 1rem;">🔒</div>
+                            <h2>Login to Track Applications</h2>
+                            <p style="color: var(--gray-600); margin-bottom: 2rem;">Track your job applications, interviews, and offers in one place.</p>
+                            <button class="btn btn-primary" onclick="window.location.href='auth.html?mode=register'">Create Free Account</button>
+                        </div>
+                    `;
+                }
+                return;
+            }
+
             await window.JoBikaAPI.loadApplications();
             renderApplications();
         });
