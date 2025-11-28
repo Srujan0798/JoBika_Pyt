@@ -525,53 +525,8 @@
                             <div>
                                 <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">Recent Activity
                                 </h2>
-                                <div class="card" style="padding: 1rem;">
-                                    <div
-                                        style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gray-200);">
-                                        <div
-                                            style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); margin-top: 0.5rem;">
-                                        </div>
-                                        <div>
-                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Interview scheduled</p>
-                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Google India -
-                                                Senior
-                                                Developer</p>
-                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
-                                                2 hours
-                                                ago</p>
-                                        </div>
-                                    </div>
-
-                                    <div
-                                        style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gray-200);">
-                                        <div
-                                            style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-blue); margin-top: 0.5rem;">
-                                        </div>
-                                        <div>
-                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Application submitted
-                                            </p>
-                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Amazon - Backend
-                                                Engineer
-                                            </p>
-                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
-                                                5 hours
-                                                ago</p>
-                                        </div>
-                                    </div>
-
-                                    <div style="display: flex; gap: 1rem; padding: 1rem 0;">
-                                        <div
-                                            style="width: 8px; height: 8px; border-radius: 50%; background: var(--warning); margin-top: 0.5rem;">
-                                        </div>
-                                        <div>
-                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Profile viewed</p>
-                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Microsoft recruiter
-                                            </p>
-                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">
-                                                1 day
-                                                ago</p>
-                                        </div>
-                                    </div>
+                                <div id="recentActivity" class="card" style="padding: 1rem;">
+                                    <!-- Activity injected via JS -->
                                 </div>
                             </div>
 
@@ -716,7 +671,84 @@
                             }
 
                             renderJobs();
+                            renderRecentActivity();
                         });
+
+                        // Render Recent Activity
+                        function renderRecentActivity() {
+                            const container = document.getElementById('recentActivity');
+                            if (!container) return;
+
+                            if (sessionManager.isGuest) {
+                                container.innerHTML = `
+                                    <div style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gray-200);">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); margin-top: 0.5rem;"></div>
+                                        <div>
+                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Interview scheduled</p>
+                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Google India - Senior Developer</p>
+                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">2 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gray-200);">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-blue); margin-top: 0.5rem;"></div>
+                                        <div>
+                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Application submitted</p>
+                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Amazon - Backend Engineer</p>
+                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">5 hours ago</p>
+                                        </div>
+                                    </div>
+                                    <div style="display: flex; gap: 1rem; padding: 1rem 0;">
+                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--warning); margin-top: 0.5rem;"></div>
+                                        <div>
+                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Profile viewed</p>
+                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Microsoft recruiter</p>
+                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">1 day ago</p>
+                                        </div>
+                                    </div>
+                                `;
+                            } else {
+                                container.innerHTML = `
+                                    <div style="text-align: center; padding: 2rem; color: var(--gray-600);">
+                                        <p>No recent activity.</p>
+                                        <a href="jobs.html" style="color: var(--primary-blue); text-decoration: none; font-size: 0.875rem;">Start applying →</a>
+                                    </div>
+                                `;
+                            }
+                        }
+
+                        function testJobAlertUI() {
+                            if (sessionManager.isGuest) {
+                                // Show realistic toast
+                                const toast = document.createElement('div');
+                                toast.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:#10b981;color:white;padding:1rem 2rem;border-radius:0.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);z-index:10000;animation:slideIn 0.3s forwards;display:flex;align-items:center;gap:0.5rem;';
+                                toast.innerHTML = `
+                                    <span style="font-size:1.25rem;">🔔</span>
+                                    <div>
+                                        <div style="font-weight:600;">Test Alert Sent!</div>
+                                        <div style="font-size:0.875rem;">Check your email inbox. (Demo)</div>
+                                    </div>
+                                `;
+                                document.body.appendChild(toast);
+
+                                // Add animation styles if not present
+                                if (!document.getElementById('toastStyles')) {
+                                    const style = document.createElement('style');
+                                    style.id = 'toastStyles';
+                                    style.textContent = `
+                                        @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+                                        @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
+                                    `;
+                                    document.head.appendChild(style);
+                                }
+
+                                setTimeout(() => {
+                                    toast.style.animation = 'slideOut 0.3s forwards';
+                                    setTimeout(() => toast.remove(), 300);
+                                }, 3000);
+                            } else {
+                                alert('Test alert sent to your email!');
+                            }
+                        }
                     </script>
                 </body>
 
