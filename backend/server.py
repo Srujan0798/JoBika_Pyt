@@ -104,6 +104,11 @@ CORS(app, resources={
 # Configuration
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max upload
 
+# SECRET_KEY for sessions (required for OAuth)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev-secret-key-change-in-production-12345')
+if app.config['SECRET_KEY'] == 'dev-secret-key-change-in-production-12345':
+    print("⚠️  WARNING: Using default SECRET_KEY. Set SECRET_KEY environment variable in production!")
+
 # Initialize Rate Limiter
 limiter = Limiter(
     get_remote_address,
