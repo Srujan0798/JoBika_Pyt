@@ -586,6 +586,8 @@ window.JoBikaAPI = {
     enhanceResumeSection,
     isLoggedIn,
     requireAuth,
+    loadMockJobs,
+    loadMockApplications,
     getState: () => AppState,
     toggleNotifications,
     markAllRead

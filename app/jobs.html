@@ -817,6 +817,10 @@
 
                 // Initialize
                 document.addEventListener('DOMContentLoaded', () => {
+                    // Load mock jobs if AppState.jobs is empty
+                    if (!AppState.jobs || AppState.jobs.length === 0) {
+                        window.JoBikaAPI.loadMockJobs();
+                    }
                     renderJobs();
                 });
             </script>
