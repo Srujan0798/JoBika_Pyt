@@ -4,6 +4,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="JoBika - The AI-powered job application assistant for Indian job seekers. Optimize your resume, auto-apply to jobs, and track applications in one place.">
+    <meta name="keywords"
+        content="AI resume builder, job application tracker, auto apply jobs, Indian job market, resume optimization">
+    <meta property="og:title" content="JoBika - Land Your Dream Job in Minutes">
+    <meta property="og:description"
+        content="AI-powered resume optimization and auto-apply for the Indian job market. Save 95% of your time.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://jobika.app">
+
     <title>JoBika - Land Your Dream Job in Minutes</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -12,6 +22,7 @@
         rel="stylesheet">
     <link rel="stylesheet" href="assets/css/main.css">
     <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="stylesheet" href="assets/css/guest-mode.css">
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -19,71 +30,112 @@
         }
 
         .hero {
-            padding: 6rem 0;
+            padding: 8rem 0 6rem;
             text-align: center;
             color: white;
         }
 
         .hero h1 {
             font-family: var(--font-display);
-            font-size: 3.5rem;
+            font-size: 4rem;
             font-weight: 800;
             margin-bottom: 1.5rem;
-            line-height: 1.2;
+            line-height: 1.1;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
 
         .hero p {
-            font-size: 1.25rem;
-            margin-bottom: 2rem;
+            font-size: 1.5rem;
+            margin-bottom: 2.5rem;
             opacity: 0.95;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
         .features {
-            padding: 4rem 0;
+            padding: 6rem 0;
             background: white;
         }
 
         .feature-card {
             text-align: center;
-            padding: 2rem;
+            padding: 2.5rem;
+            border-radius: 1.5rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
         }
 
         .feature-icon {
-            width: 64px;
-            height: 64px;
+            width: 72px;
+            height: 72px;
             background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-            border-radius: 1rem;
+            border-radius: 1.25rem;
             display: flex;
             align-items: center;
             justify-content: center;
             margin: 0 auto 1.5rem;
             color: white;
-            font-size: 2rem;
+            font-size: 2.5rem;
+            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2);
+        }
+
+        .trusted-by {
+            padding: 3rem 0;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            color: white;
+        }
+
+        .trusted-logos {
+            display: flex;
+            justify-content: center;
+            gap: 3rem;
+            margin-top: 1.5rem;
+            opacity: 0.8;
+            flex-wrap: wrap;
+        }
+
+        .trusted-logo {
+            font-weight: 700;
+            font-size: 1.5rem;
+            font-family: var(--font-display);
         }
 
         .pricing {
-            padding: 4rem 0;
+            padding: 6rem 0;
             background: var(--gray-50);
         }
 
         .pricing-card {
             background: white;
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-radius: 1.5rem;
+            padding: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             text-align: center;
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
         .pricing-card.featured {
-            border: 3px solid var(--primary-blue);
+            border: 2px solid var(--primary-blue);
             transform: scale(1.05);
+            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.15);
+            z-index: 1;
         }
 
         .price {
-            font-size: 3rem;
-            font-weight: 700;
+            font-size: 3.5rem;
+            font-weight: 800;
             color: var(--primary-blue);
             margin: 1rem 0;
+            font-family: var(--font-display);
         }
 
         .price-features {
@@ -93,22 +145,37 @@
         }
 
         .price-features li {
-            padding: 0.5rem 0;
+            padding: 0.75rem 0;
             display: flex;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.75rem;
+            color: var(--gray-700);
         }
 
         .price-features li::before {
             content: "✓";
             color: var(--success);
-            font-weight: bold;
+            font-weight: 800;
+            background: rgba(16, 185, 129, 0.1);
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            font-size: 0.875rem;
         }
 
         nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            backdrop-filter: blur(12px);
             padding: 1rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         nav .container {
@@ -119,42 +186,49 @@
 
         .logo {
             font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
+            font-size: 1.75rem;
+            font-weight: 800;
             color: white;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 
         .nav-links {
             display: flex;
             gap: 2rem;
             list-style: none;
+            align-items: center;
         }
 
         .nav-links a {
             color: white;
             text-decoration: none;
             font-weight: 500;
-            transition: opacity var(--transition-base);
+            transition: opacity 0.2s;
         }
 
         .nav-links a:hover {
             opacity: 0.8;
         }
     </style>
-    <link rel="stylesheet" href="assets/css/guest-mode.css">
 </head>
 
 <body>
     <script src="assets/js/session-manager.js"></script>
     <nav>
         <div class="container">
-            <a href="index.html" class="logo">JoBika</a>
+            <a href="index.html" class="logo">
+                <span>🚀</span> JoBika
+            </a>
             <ul class="nav-links">
                 <li><a href="#features">Features</a></li>
                 <li><a href="#pricing">Pricing</a></li>
                 <li><a href="#" onclick="sessionManager.showAuthModal('login'); return false;">Login</a></li>
-                <li><a href="upload.html" class="btn btn-primary" style="padding: 0.5rem 1.5rem;">Get Started</a></li>
+                <li><a href="dashboard.html" class="btn btn-primary"
+                        style="padding: 0.75rem 1.5rem; background: white; color: var(--primary-blue);">Get Started</a>
+                </li>
             </ul>
         </div>
     </nav>
@@ -162,54 +236,79 @@
     <section class="hero">
         <div class="container">
             <h1>Land Your Dream Job<br>in Minutes, Not Hours</h1>
-            <p>AI-powered resume optimization and auto-apply for the Indian job market</p>
+            <p>AI-powered resume optimization and auto-apply tailored for the Indian job market. Stop wasting time on
+                portals and start getting interviews.</p>
             <div class="flex-center" style="gap: 1rem;">
-                <a href="upload.html" class="btn btn-primary" style="font-size: 1.125rem; padding: 1rem 2rem;">Start
-                    Free
-                    Trial</a>
+                <a href="dashboard.html" class="btn btn-primary"
+                    style="font-size: 1.125rem; padding: 1rem 2.5rem; background: white; color: var(--primary-blue); font-weight: 700;">Try
+                    Demo Mode</a>
                 <a href="#features" class="btn btn-secondary"
-                    style="background: rgba(255,255,255,0.2); color: white; border: none;">Learn More</a>
+                    style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px);">Learn
+                    More</a>
+            </div>
+            <p style="font-size: 0.875rem; margin-top: 1rem; opacity: 0.8;">No credit card required • Instant access</p>
+        </div>
+    </section>
+
+    <section class="trusted-by">
+        <div class="container">
+            <p style="font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-size: 0.875rem;">Trusted by
+                job seekers at</p>
+            <div class="trusted-logos">
+                <div class="trusted-logo">Google</div>
+                <div class="trusted-logo">Amazon</div>
+                <div class="trusted-logo">Microsoft</div>
+                <div class="trusted-logo">Flipkart</div>
+                <div class="trusted-logo">Swiggy</div>
             </div>
         </div>
     </section>
 
     <section id="features" class="features">
         <div class="container">
-            <h2 class="text-center" style="font-size: 2.5rem; margin-bottom: 3rem; font-family: var(--font-display);">
-                Why JoBika?</h2>
+            <h2 class="text-center"
+                style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-display); color: var(--gray-900);">
+                Everything You Need to Get Hired</h2>
+            <p class="text-center"
+                style="color: var(--gray-600); margin-bottom: 4rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                JoBika streamlines your entire job search process with powerful AI tools designed for success.</p>
+
             <div class="grid grid-3">
                 <div class="feature-card">
                     <div class="feature-icon">🤖</div>
-                    <h3 style="margin-bottom: 1rem;">AI Resume Builder</h3>
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">AI Resume Builder</h3>
                     <p style="color: var(--gray-600);">Upload your resume and let AI enhance it with industry best
-                        practices</p>
+                        practices and keywords.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🎯</div>
-                    <h3 style="margin-bottom: 1rem;">Smart Job Matching</h3>
-                    <p style="color: var(--gray-600);">Get match scores and personalized learning recommendations</p>
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Smart Job Matching</h3>
+                    <p style="color: var(--gray-600);">Get instant match scores and personalized learning
+                        recommendations for every job.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⚡</div>
-                    <h3 style="margin-bottom: 1rem;">Auto-Apply</h3>
-                    <p style="color: var(--gray-600);">AI finds jobs, customizes your resume, and applies automatically
-                    </p>
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Auto-Apply</h3>
+                    <p style="color: var(--gray-600);">AI finds relevant jobs, customizes your resume, and applies
+                        automatically for you.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">📊</div>
-                    <h3 style="margin-bottom: 1rem;">Application Tracker</h3>
-                    <p style="color: var(--gray-600);">Track all applications in one dashboard with real-time updates
-                    </p>
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Application Tracker</h3>
+                    <p style="color: var(--gray-600);">Track all your applications, interviews, and offers in one
+                        centralized dashboard.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">🇮🇳</div>
-                    <h3 style="margin-bottom: 1rem;">Indian Market Focus</h3>
-                    <p style="color: var(--gray-600);">Aggregates jobs from LinkedIn, Naukri, Unstop, and more</p>
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Indian Market Focus</h3>
+                    <p style="color: var(--gray-600);">Aggregates jobs from top Indian portals like LinkedIn, Naukri,
+                        and Unstop.</p>
                 </div>
                 <div class="feature-card">
                     <div class="feature-icon">⏱️</div>
-                    <h3 style="margin-bottom: 1rem;">Save 95% Time</h3>
-                    <p style="color: var(--gray-600);">Reduce application time from 1 hour to 2-5 minutes</p>
+                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Save 95% Time</h3>
+                    <p style="color: var(--gray-600);">Reduce your daily application time from hours to just a few
+                        minutes.</p>
                 </div>
             </div>
         </div>
@@ -217,27 +316,34 @@
 
     <section id="pricing" class="pricing">
         <div class="container">
-            <h2 class="text-center" style="font-size: 2.5rem; margin-bottom: 3rem; font-family: var(--font-display);">
+            <h2 class="text-center"
+                style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-display); color: var(--gray-900);">
                 Simple, Transparent Pricing</h2>
+            <p class="text-center" style="color: var(--gray-600); margin-bottom: 4rem;">Start for free, upgrade when
+                you're ready to scale.</p>
+
             <div class="grid grid-3">
                 <div class="pricing-card">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Free</h3>
-                    <div class="price">₹0<span style="font-size: 1rem; color: var(--gray-600);">/month</span></div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--gray-900);">Free</h3>
+                    <div class="price">₹0<span
+                            style="font-size: 1rem; color: var(--gray-600); font-weight: 500;">/mo</span></div>
                     <ul class="price-features">
                         <li>5 applications/month</li>
                         <li>Basic resume enhancement</li>
                         <li>Job search & filtering</li>
                         <li>Manual applications</li>
                     </ul>
-                    <a href="upload.html" class="btn btn-secondary" style="width: 100%;">Get Started</a>
+                    <a href="dashboard.html" class="btn btn-secondary" style="width: 100%;">Get Started</a>
                 </div>
 
                 <div class="pricing-card featured">
                     <div
-                        style="background: var(--primary-blue); color: white; padding: 0.5rem; border-radius: 0.5rem; margin-bottom: 1rem; font-weight: 600;">
-                        Most Popular</div>
-                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Pro</h3>
-                    <div class="price">₹499<span style="font-size: 1rem; color: var(--gray-600);">/month</span></div>
+                        style="position: absolute; top: 0; left: 0; right: 0; background: var(--primary-blue); color: white; padding: 0.5rem; font-weight: 600; font-size: 0.875rem;">
+                        MOST POPULAR</div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; margin-top: 1.5rem; color: var(--gray-900);">Pro
+                    </h3>
+                    <div class="price">₹499<span
+                            style="font-size: 1rem; color: var(--gray-600); font-weight: 500;">/mo</span></div>
                     <ul class="price-features">
                         <li>50 applications/month</li>
                         <li>AI resume optimization</li>
@@ -245,12 +351,13 @@
                         <li>Cover letter generation</li>
                         <li>Analytics dashboard</li>
                     </ul>
-                    <a href="upload.html" class="btn btn-primary" style="width: 100%;">Start Free Trial</a>
+                    <a href="dashboard.html" class="btn btn-primary" style="width: 100%;">Start Free Trial</a>
                 </div>
 
                 <div class="pricing-card">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem;">Enterprise</h3>
-                    <div class="price">₹999<span style="font-size: 1rem; color: var(--gray-600);">/month</span></div>
+                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--gray-900);">Enterprise</h3>
+                    <div class="price">₹999<span
+                            style="font-size: 1rem; color: var(--gray-600); font-weight: 500;">/mo</span></div>
                     <ul class="price-features">
                         <li>Unlimited applications</li>
                         <li>Priority support</li>
@@ -258,16 +365,49 @@
                         <li>Custom integrations</li>
                         <li>Dedicated account manager</li>
                     </ul>
-                    <a href="auth.html" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
+                    <a href="mailto:sales@jobika.app" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
                 </div>
             </div>
         </div>
     </section>
 
-    <footer style="background: var(--gray-900); color: white; padding: 3rem 0; text-align: center;">
+    <footer
+        style="background: var(--gray-900); color: white; padding: 4rem 0 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
         <div class="container">
-            <p>&copy; 2025 JoBika. All rights reserved.</p>
-            <p style="margin-top: 1rem; color: var(--gray-400);">Made with ❤️ for Indian job seekers</p>
+            <div class="grid grid-4" style="margin-bottom: 3rem; text-align: left;">
+                <div>
+                    <div class="logo" style="margin-bottom: 1rem;">🚀 JoBika</div>
+                    <p style="color: var(--gray-400); font-size: 0.875rem;">Empowering Indian job seekers with AI tools
+                        to land their dream jobs faster.</p>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Product</h4>
+                    <ul style="list-style: none; color: var(--gray-400); font-size: 0.875rem; line-height: 2;">
+                        <li><a href="#features" style="color: inherit; text-decoration: none;">Features</a></li>
+                        <li><a href="#pricing" style="color: inherit; text-decoration: none;">Pricing</a></li>
+                        <li><a href="dashboard.html" style="color: inherit; text-decoration: none;">Demo</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Company</h4>
+                    <ul style="list-style: none; color: var(--gray-400); font-size: 0.875rem; line-height: 2;">
+                        <li><a href="#" style="color: inherit; text-decoration: none;">About Us</a></li>
+                        <li><a href="#" style="color: inherit; text-decoration: none;">Blog</a></li>
+                        <li><a href="#" style="color: inherit; text-decoration: none;">Careers</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1rem;">Legal</h4>
+                    <ul style="list-style: none; color: var(--gray-400); font-size: 0.875rem; line-height: 2;">
+                        <li><a href="#" style="color: inherit; text-decoration: none;">Privacy Policy</a></li>
+                        <li><a href="#" style="color: inherit; text-decoration: none;">Terms of Service</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div
+                style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
+                <p>&copy; 2025 JoBika. Made with ❤️ in India.</p>
+            </div>
         </div>
     </footer>
 </body>
