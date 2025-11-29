@@ -1,8 +1,8 @@
 const OpenAI = require('openai');
 
 class ATSService {
-    constructor() {
-        this.openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+    constructor(apiKey = null) {
+        this.openai = apiKey ? new OpenAI({ apiKey }) : null;
     }
 
     async calculateATSScore(resumeText, jobDescription) {

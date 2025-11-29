@@ -23,7 +23,7 @@ const db = new DatabaseManager();
 const authService = new AuthService();
 const orionService = new OrionCoachService(process.env.OPENAI_API_KEY);
 const jobScraper = new JobScraper();
-const atsService = new ATSService();
+const atsService = new ATSService(process.env.OPENAI_API_KEY);
 
 // Health check
 app.get('/health', (req, res) => {
