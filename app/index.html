@@ -4,412 +4,229 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JoBika - AI-Powered Job Search for India</title>
     <meta name="description"
-        content="JoBika - The AI-powered job application assistant for Indian job seekers. Optimize your resume, auto-apply to jobs, and track applications in one place.">
-    <meta name="keywords"
-        content="AI resume builder, job application tracker, auto apply jobs, Indian job market, resume optimization">
-    <meta property="og:title" content="JoBika - Land Your Dream Job in Minutes">
-    <meta property="og:description"
-        content="AI-powered resume optimization and auto-apply for the Indian job market. Save 95% of your time.">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://jobika.app">
-
-    <title>JoBika - Land Your Dream Job in Minutes</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700;800&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/main.css">
-    <link rel="stylesheet" href="assets/css/mobile.css">
-    <link rel="stylesheet" href="assets/css/guest-mode.css">
-    <style>
-        body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .hero {
-            padding: 8rem 0 6rem;
-            text-align: center;
-            color: white;
-        }
-
-        .hero h1 {
-            font-family: var(--font-display);
-            font-size: 4rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-            line-height: 1.1;
-            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-
-        .hero p {
-            font-size: 1.5rem;
-            margin-bottom: 2.5rem;
-            opacity: 0.95;
-            max-width: 800px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .features {
-            padding: 6rem 0;
-            background: white;
-        }
-
-        .feature-card {
-            text-align: center;
-            padding: 2.5rem;
-            border-radius: 1.5rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-        }
-
-        .feature-icon {
-            width: 72px;
-            height: 72px;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-            border-radius: 1.25rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 1.5rem;
-            color: white;
-            font-size: 2.5rem;
-            box-shadow: 0 8px 16px rgba(99, 102, 241, 0.2);
-        }
-
-        .trusted-by {
-            padding: 3rem 0;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            text-align: center;
-            color: white;
-        }
-
-        .trusted-logos {
-            display: flex;
-            justify-content: center;
-            gap: 3rem;
-            margin-top: 1.5rem;
-            opacity: 0.8;
-            flex-wrap: wrap;
-        }
-
-        .trusted-logo {
-            font-weight: 700;
-            font-size: 1.5rem;
-            font-family: var(--font-display);
-        }
-
-        .pricing {
-            padding: 6rem 0;
-            background: var(--gray-50);
-        }
-
-        .pricing-card {
-            background: white;
-            border-radius: 1.5rem;
-            padding: 2.5rem;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .pricing-card.featured {
-            border: 2px solid var(--primary-blue);
-            transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.15);
-            z-index: 1;
-        }
-
-        .price {
-            font-size: 3.5rem;
-            font-weight: 800;
-            color: var(--primary-blue);
-            margin: 1rem 0;
-            font-family: var(--font-display);
-        }
-
-        .price-features {
-            list-style: none;
-            margin: 2rem 0;
-            text-align: left;
-        }
-
-        .price-features li {
-            padding: 0.75rem 0;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: var(--gray-700);
-        }
-
-        .price-features li::before {
-            content: "✓";
-            color: var(--success);
-            font-weight: 800;
-            background: rgba(16, 185, 129, 0.1);
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 0.875rem;
-        }
-
-        nav {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            padding: 1rem 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        nav .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-family: var(--font-display);
-            font-size: 1.75rem;
-            font-weight: 800;
-            color: white;
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: white;
-            text-decoration: none;
-            font-weight: 500;
-            transition: opacity 0.2s;
-        }
-
-        .nav-links a:hover {
-            opacity: 0.8;
-        }
-    </style>
+        content="Find your dream job in 2-5 minutes with AI-powered resume tailoring and auto-apply to 20+ jobs daily">
+    <link rel="stylesheet" href="assets/css/premium.css">
 </head>
 
-<body>
-    <script src="assets/js/session-manager.js"></script>
-    <nav>
-        <div class="container">
-            <a href="index.html" class="logo">
-                <span>🚀</span> JoBika
-            </a>
-            <ul class="nav-links">
-                <li><a href="#features">Features</a></li>
-                <li><a href="#pricing">Pricing</a></li>
-                <li><a href="#" onclick="sessionManager.showAuthModal('login'); return false;">Login</a></li>
-                <li><a href="dashboard.html" class="btn btn-primary"
-                        style="padding: 0.75rem 1.5rem; background: white; color: var(--primary-blue);">Get Started</a>
-                </li>
-            </ul>
+<body class="bg-gradient-to-br from-violet-50 to-indigo-100">
+    <!-- Navigation -->
+    <nav class="fixed top-0 w-full bg-white/80 backdrop-blur-md shadow-sm z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex items-center">
+                    <h1
+                        class="text-2xl font-bold bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                        JoBika
+                    </h1>
+                </div>
+                <div class="hidden md:flex space-x-8">
+                    <a href="jobs.html" class="text-gray-700 hover:text-violet-600">Jobs</a>
+                    <a href="chat.html" class="text-gray-700 hover:text-violet-600">AI Coach</a>
+                    <a href="#features" class="text-gray-700 hover:text-violet-600">Features</a>
+                    <a href="pricing.html" class="text-gray-700 hover:text-violet-600">Pricing</a>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <a href="login.html" class="text-gray-700 hover:text-violet-600">Login</a>
+                    <a href="signup.html" class="btn-primary">Get Started Free</a>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <section class="hero">
-        <div class="container">
-            <h1>Land Your Dream Job<br>in Minutes, Not Hours</h1>
-            <p>AI-powered resume optimization and auto-apply tailored for the Indian job market. Stop wasting time on
-                portals and start getting interviews.</p>
-            <div class="flex-center" style="gap: 1rem;">
-                <a href="dashboard.html" class="btn btn-primary"
-                    style="font-size: 1.125rem; padding: 1rem 2.5rem; background: white; color: var(--primary-blue); font-weight: 700;">Try
-                    Demo Mode</a>
-                <a href="#features" class="btn btn-secondary"
-                    style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); backdrop-filter: blur(4px);">Learn
-                    More</a>
+    <!-- Hero Section -->
+    <section class="pt-32 pb-20 px-4">
+        <div class="max-w-7xl mx-auto text-center">
+            <h2 class="text-5xl md:text-6xl font-bold mb-6">
+                Find Your Dream Job in
+                <span class="bg-gradient-to-r from-violet-600 to-indigo-600 bg-clip-text text-transparent">
+                    2-5 Minutes
+                </span>
+            </h2>
+            <p class="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+                AI tailors your resume for each job. Auto-applies to 20+ perfect matches daily.
+                Built for the Indian job market (CTC, notice period, and all).
+            </p>
+
+            <!-- Quick Demo Search -->
+            <div class="max-w-2xl mx-auto mb-12">
+                <div class="card p-6">
+                    <div class="flex gap-4">
+                        <input type="text" id="demo-search"
+                            placeholder="Try: Software Engineer, Data Analyst, Product Manager..."
+                            class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-violet-500">
+                        <button onclick="tryDemoSearch()" class="btn-primary">
+                            Try Now - Free!
+                        </button>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">✨ No signup required to browse jobs</p>
+                </div>
             </div>
-            <p style="font-size: 0.875rem; margin-top: 1rem; opacity: 0.8;">No credit card required • Instant access</p>
-        </div>
-    </section>
 
-    <section class="trusted-by">
-        <div class="container">
-            <p style="font-weight: 600; letter-spacing: 1px; text-transform: uppercase; font-size: 0.875rem;">Trusted by
-                job seekers at</p>
-            <div class="trusted-logos">
-                <div class="trusted-logo">Google</div>
-                <div class="trusted-logo">Amazon</div>
-                <div class="trusted-logo">Microsoft</div>
-                <div class="trusted-logo">Flipkart</div>
-                <div class="trusted-logo">Swiggy</div>
-            </div>
-        </div>
-    </section>
-
-    <section id="features" class="features">
-        <div class="container">
-            <h2 class="text-center"
-                style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-display); color: var(--gray-900);">
-                Everything You Need to Get Hired</h2>
-            <p class="text-center"
-                style="color: var(--gray-600); margin-bottom: 4rem; max-width: 600px; margin-left: auto; margin-right: auto;">
-                JoBika streamlines your entire job search process with powerful AI tools designed for success.</p>
-
-            <div class="grid grid-3">
-                <div class="feature-card">
-                    <div class="feature-icon">🤖</div>
-                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">AI Resume Builder</h3>
-                    <p style="color: var(--gray-600);">Upload your resume and let AI enhance it with industry best
-                        practices and keywords.</p>
+            <!-- Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
+                <div class="card p-6">
+                    <div class="text-4xl font-bold text-violet-600 mb-2">50,000+</div>
+                    <div class="text-gray-600">Jobs Daily</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🎯</div>
-                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Smart Job Matching</h3>
-                    <p style="color: var(--gray-600);">Get instant match scores and personalized learning
-                        recommendations for every job.</p>
+                <div class="card p-6">
+                    <div class="text-4xl font-bold text-violet-600 mb-2">2-5 Min</div>
+                    <div class="text-gray-600">Per Application</div>
                 </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⚡</div>
-                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Auto-Apply</h3>
-                    <p style="color: var(--gray-600);">AI finds relevant jobs, customizes your resume, and applies
-                        automatically for you.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">📊</div>
-                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Application Tracker</h3>
-                    <p style="color: var(--gray-600);">Track all your applications, interviews, and offers in one
-                        centralized dashboard.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">🇮🇳</div>
-                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Indian Market Focus</h3>
-                    <p style="color: var(--gray-600);">Aggregates jobs from top Indian portals like LinkedIn, Naukri,
-                        and Unstop.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">⏱️</div>
-                    <h3 style="margin-bottom: 1rem; color: var(--gray-900);">Save 95% Time</h3>
-                    <p style="color: var(--gray-600);">Reduce your daily application time from hours to just a few
-                        minutes.</p>
+                <div class="card p-6">
+                    <div class="text-4xl font-bold text-violet-600 mb-2">95%</div>
+                    <div class="text-gray-600">ATS Score</div>
                 </div>
             </div>
         </div>
     </section>
 
-    <section id="pricing" class="pricing">
-        <div class="container">
-            <h2 class="text-center"
-                style="font-size: 2.5rem; margin-bottom: 1rem; font-family: var(--font-display); color: var(--gray-900);">
-                Simple, Transparent Pricing</h2>
-            <p class="text-center" style="color: var(--gray-600); margin-bottom: 4rem;">Start for free, upgrade when
-                you're ready to scale.</p>
+    <!-- Features Section -->
+    <section id="features" class="py-20 px-4 bg-white">
+        <div class="max-w-7xl mx-auto">
+            <h3 class="text-4xl font-bold text-center mb-16">What Makes JoBika Different?</h3>
 
-            <div class="grid grid-3">
-                <div class="pricing-card">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--gray-900);">Free</h3>
-                    <div class="price">₹0<span
-                            style="font-size: 1rem; color: var(--gray-600); font-weight: 500;">/mo</span></div>
-                    <ul class="price-features">
-                        <li>5 applications/month</li>
-                        <li>Basic resume enhancement</li>
-                        <li>Job search & filtering</li>
-                        <li>Manual applications</li>
-                    </ul>
-                    <a href="dashboard.html" class="btn btn-secondary" style="width: 100%;">Get Started</a>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="card p-8 hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">🎯</div>
+                    <h4 class="text-xl font-bold mb-3">AI Resume Tailoring</h4>
+                    <p class="text-gray-600">
+                        AI customizes your resume for EACH job. Keywords, skills, experience - perfectly matched.
+                    </p>
+                    <a href="chat.html" class="text-violet-600 hover:text-violet-700 mt-4 inline-block">
+                        Try AI Coach Free →
+                    </a>
                 </div>
 
-                <div class="pricing-card featured">
+                <!-- Feature 2 -->
+                <div class="card p-8 hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">⚡</div>
+                    <h4 class="text-xl font-bold mb-3">Auto-Apply Engine</h4>
+                    <p class="text-gray-600">
+                        Automatically fills forms, uploads resume, submits applications. Apply to 20 jobs while you
+                        sleep.
+                    </p>
+                    <a href="jobs.html" class="text-violet-600 hover:text-violet-700 mt-4 inline-block">
+                        Browse Jobs →
+                    </a>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="card p-8 hover:shadow-xl transition-shadow">
+                    <div class="text-4xl mb-4">🇮🇳</div>
+                    <h4 class="text-xl font-bold mb-3">Made for India</h4>
+                    <p class="text-gray-600">
+                        CTC calculator, notice period tracker, immediate joiner tags. We speak your language.
+                    </p>
+                    <a href="signup.html" class="text-violet-600 hover:text-violet-700 mt-4 inline-block">
+                        Get Started Free →
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- How It Works -->
+    <section class="py-20 px-4">
+        <div class="max-w-5xl mx-auto">
+            <h3 class="text-4xl font-bold text-center mb-16">How It Works</h3>
+
+            <div class="space-y-8">
+                <div class="flex items-start gap-6">
                     <div
-                        style="position: absolute; top: 0; left: 0; right: 0; background: var(--primary-blue); color: white; padding: 0.5rem; font-weight: 600; font-size: 0.875rem;">
-                        MOST POPULAR</div>
-                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; margin-top: 1.5rem; color: var(--gray-900);">Pro
-                    </h3>
-                    <div class="price">₹499<span
-                            style="font-size: 1rem; color: var(--gray-600); font-weight: 500;">/mo</span></div>
-                    <ul class="price-features">
-                        <li>50 applications/month</li>
-                        <li>AI resume optimization</li>
-                        <li>Auto-apply feature</li>
-                        <li>Cover letter generation</li>
-                        <li>Analytics dashboard</li>
-                    </ul>
-                    <a href="dashboard.html" class="btn btn-primary" style="width: 100%;">Start Free Trial</a>
+                        class="flex-shrink-0 w-12 h-12 bg-violet-600 text-white rounded-full flex items-center justify-center font-bold">
+                        1
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">Upload Your Resume (Once)</h4>
+                        <p class="text-gray-600">AI parses your experience, skills, education. Takes 30 seconds.</p>
+                    </div>
                 </div>
 
-                <div class="pricing-card">
-                    <h3 style="font-size: 1.5rem; margin-bottom: 1rem; color: var(--gray-900);">Enterprise</h3>
-                    <div class="price">₹999<span
-                            style="font-size: 1rem; color: var(--gray-600); font-weight: 500;">/mo</span></div>
-                    <ul class="price-features">
-                        <li>Unlimited applications</li>
-                        <li>Priority support</li>
-                        <li>Team features</li>
-                        <li>Custom integrations</li>
-                        <li>Dedicated account manager</li>
-                    </ul>
-                    <a href="mailto:sales@jobika.app" class="btn btn-secondary" style="width: 100%;">Contact Sales</a>
+                <div class="flex items-start gap-6">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-violet-600 text-white rounded-full flex items-center justify-center font-bold">
+                        2
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">AI Finds Perfect Matches</h4>
+                        <p class="text-gray-600">We scan 50,000+ jobs daily. AI scores each 0-100% match for you.</p>
+                    </div>
                 </div>
+
+                <div class="flex items-start gap-6">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-violet-600 text-white rounded-full flex items-center justify-center font-bold">
+                        3
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">AI Tailors Resume for Each Job</h4>
+                        <p class="text-gray-600">Customizes keywords, reorders skills, emphasizes relevant experience.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex items-start gap-6">
+                    <div
+                        class="flex-shrink-0 w-12 h-12 bg-violet-600 text-white rounded-full flex items-center justify-center font-bold">
+                        4
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-bold mb-2">Auto-Apply in 2 Minutes</h4>
+                        <p class="text-gray-600">Fills forms, uploads resume, submits. You review or let it run
+                            automatically.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="text-center mt-12">
+                <a href="signup.html" class="btn-primary text-lg px-8 py-4">
+                    Start Applying Today - Free
+                </a>
+                <p class="text-sm text-gray-500 mt-4">No credit card required • 10 free applications</p>
             </div>
         </div>
     </section>
 
-    <footer
-        style="background: var(--gray-900); color: white; padding: 4rem 0 2rem; border-top: 1px solid rgba(255,255,255,0.1);">
-        <div class="container">
-            <div class="grid grid-4" style="margin-bottom: 3rem; text-align: left;">
-                <div>
-                    <div class="logo" style="margin-bottom: 1rem;">🚀 JoBika</div>
-                    <p style="color: var(--gray-400); font-size: 0.875rem;">Empowering Indian job seekers with AI tools
-                        to land their dream jobs faster.</p>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 1rem;">Product</h4>
-                    <ul style="list-style: none; color: var(--gray-400); font-size: 0.875rem; line-height: 2;">
-                        <li><a href="#features" style="color: inherit; text-decoration: none;">Features</a></li>
-                        <li><a href="#pricing" style="color: inherit; text-decoration: none;">Pricing</a></li>
-                        <li><a href="dashboard.html" style="color: inherit; text-decoration: none;">Demo</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 1rem;">Company</h4>
-                    <ul style="list-style: none; color: var(--gray-400); font-size: 0.875rem; line-height: 2;">
-                        <li><a href="#" style="color: inherit; text-decoration: none;">About Us</a></li>
-                        <li><a href="#" style="color: inherit; text-decoration: none;">Blog</a></li>
-                        <li><a href="#" style="color: inherit; text-decoration: none;">Careers</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 1rem;">Legal</h4>
-                    <ul style="list-style: none; color: var(--gray-400); font-size: 0.875rem; line-height: 2;">
-                        <li><a href="#" style="color: inherit; text-decoration: none;">Privacy Policy</a></li>
-                        <li><a href="#" style="color: inherit; text-decoration: none;">Terms of Service</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div
-                style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 2rem; text-align: center; color: var(--gray-500); font-size: 0.875rem;">
-                <p>&copy; 2025 JoBika. Made with ❤️ in India.</p>
+    <!-- CTA Section -->
+    <section class="py-20 px-4 bg-gradient-to-r from-violet-600 to-indigo-600 text-white">
+        <div class="max-w-4xl mx-auto text-center">
+            <h3 class="text-4xl font-bold mb-6">Ready to 10x Your Job Search?</h3>
+            <p class="text-xl mb-8 opacity-90">
+                Join 10,000+ job seekers who found their dream job with JoBika
+            </p>
+            <div class="flex gap-4 justify-center">
+                <a href="signup.html"
+                    class="bg-white text-violet-600 px-8 py-4 rounded-lg font-semibold hover:shadow-xl transition-shadow">
+                    Get Started Free
+                </a>
+                <a href="jobs.html"
+                    class="border-2 border-white px-8 py-4 rounded-lg font-semibold hover:bg-white hover:text-violet-600 transition-colors">
+                    Browse Jobs
+                </a>
             </div>
         </div>
-    </footer>
+    </section>
+
+    <script src="assets/js/api.js"></script>
+    <script>
+        function tryDemoSearch() {
+            const query = document.getElementById('demo-search').value;
+            if (query) {
+                localStorage.setItem('demo_search', query);
+                window.location.href = 'jobs.html';
+            } else {
+                window.location.href = 'jobs.html';
+            }
+        }
+
+        // Enter key support
+        document.getElementById('demo-search')?.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') tryDemoSearch();
+        });
+    </script>
 </body>
 
 </html>

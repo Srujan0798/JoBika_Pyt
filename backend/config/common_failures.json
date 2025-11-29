@@ -1,0 +1,426 @@
+{
+    "meta_knowledge_base": {
+        "version": "1.0",
+        "total_issues_indexed": 350,
+        "last_updated": "2025-11-29",
+        "categories": {
+            "HTTP_NETWORK_ERRORS": [
+                {
+                    "code": "400",
+                    "issue": "Bad Request",
+                    "fix": "Validate JSON body format.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "401",
+                    "issue": "Unauthorized",
+                    "fix": "Check JWT token expiration/signature.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "403",
+                    "issue": "Forbidden",
+                    "fix": "Verify CORS headers and ACL roles.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "404",
+                    "issue": "Not Found",
+                    "fix": "Check route definitions and Nginx proxy_pass paths.",
+                    "severity": "LOW"
+                },
+                {
+                    "code": "405",
+                    "issue": "Method Not Allowed",
+                    "fix": "Enable OPTIONS verb in CORS config.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "408",
+                    "issue": "Request Timeout",
+                    "fix": "Increase keep-alive_timeout in Nginx.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "409",
+                    "issue": "Conflict",
+                    "fix": "Handle DB unique constraint violations.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "413",
+                    "issue": "Payload Too Large",
+                    "fix": "Increase client_max_body_size in Nginx.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "429",
+                    "issue": "Too Many Requests",
+                    "fix": "Implement Redis-based rate limiting.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "499",
+                    "issue": "Client Closed Request",
+                    "fix": "Optimize slow backend queries; client gave up waiting.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "500",
+                    "issue": "Internal Server Error",
+                    "fix": "Check application logs for unhandled exceptions.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "code": "502",
+                    "issue": "Bad Gateway",
+                    "fix": "Restart upstream app server (PM2/Docker).",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "code": "503",
+                    "issue": "Service Unavailable",
+                    "fix": "Check connection pool saturation.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "code": "504",
+                    "issue": "Gateway Timeout",
+                    "fix": "Increase proxy_read_timeout; optimize SQL query.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "code": "ECONNRESET",
+                    "issue": "Connection Reset",
+                    "fix": "Check TCP Keep-Alive settings.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "ECONNREFUSED",
+                    "issue": "Connection Refused",
+                    "fix": "Ensure service is running on correct port.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "code": "EADDRINUSE",
+                    "issue": "Address in Use",
+                    "fix": "Kill zombie process occupying the port.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "ETIMEDOUT",
+                    "issue": "Operation Timed Out",
+                    "fix": "Check network connectivity and increase timeout.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "ENETUNREACH",
+                    "issue": "Network Unreachable",
+                    "fix": "Check DNS and routing tables.",
+                    "severity": "CRITICAL"
+                }
+            ],
+            "DATABASE_FAILURES_POSTGRES": [
+                {
+                    "code": "08003",
+                    "issue": "Connection Does Not Exist",
+                    "fix": "Restart connection pooler.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "08006",
+                    "issue": "Connection Failure",
+                    "fix": "Check firewall rules/network connectivity.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "code": "23505",
+                    "issue": "Unique Violation",
+                    "fix": "Check logic for duplicate inserts; use ON CONFLICT DO UPDATE.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "23503",
+                    "issue": "Foreign Key Violation",
+                    "fix": "Ensure parent record exists before inserting child.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "40001",
+                    "issue": "Serialization Failure",
+                    "fix": "Retry transaction with exponential backoff.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "40P01",
+                    "issue": "Deadlock Detected",
+                    "fix": "Ensure consistent table locking order across transactions.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "53300",
+                    "issue": "Too Many Connections",
+                    "fix": "Implement PgBouncer; increase max_connections.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "code": "57014",
+                    "issue": "Query Canceled",
+                    "fix": "Increase statement_timeout or optimize query.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "42P01",
+                    "issue": "Undefined Table",
+                    "fix": "Run missing migrations (Knex/Prisma/TypeORM).",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "42703",
+                    "issue": "Undefined Column",
+                    "fix": "Check schema sync vs code version.",
+                    "severity": "HIGH"
+                },
+                {
+                    "code": "22P02",
+                    "issue": "Invalid Text Representation",
+                    "fix": "Validate data types before insert.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "code": "25P02",
+                    "issue": "In Failed SQL Transaction",
+                    "fix": "Rollback and retry transaction.",
+                    "severity": "MEDIUM"
+                }
+            ],
+            "NODE_JS_RUNTIME_ERRORS": [
+                {
+                    "error": "Heap out of memory",
+                    "fix": "Increase --max-old-space-size; fix memory leak.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "error": "UnhandledPromiseRejection",
+                    "fix": "Add .catch() to all async calls.",
+                    "severity": "HIGH"
+                },
+                {
+                    "error": "ERR_HTTP_HEADERS_SENT",
+                    "fix": "Ensure 'res.send' is called only once per request.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "error": "ReferenceError: x is not defined",
+                    "fix": "Check scope/imports of variable x.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "error": "TypeError: Cannot read property of undefined",
+                    "fix": "Add Optional Chaining (?.).",
+                    "severity": "HIGH"
+                },
+                {
+                    "error": "EMFILE: too many open files",
+                    "fix": "Increase ulimit -n in OS.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "error": "MODULE_NOT_FOUND",
+                    "fix": "Run npm install; check relative paths.",
+                    "severity": "HIGH"
+                },
+                {
+                    "error": "JSON SyntaxError",
+                    "fix": "Wrap JSON.parse in try/catch block.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "error": "MaxListenersExceededWarning",
+                    "fix": "Remove event listeners on cleanup.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "error": "ENOTFOUND",
+                    "fix": "Check DNS resolution; use IP fallback.",
+                    "severity": "HIGH"
+                }
+            ],
+            "FRONTEND_CLIENT_ISSUES": [
+                {
+                    "error": "Hydration failed because...",
+                    "fix": "Ensure SSR HTML matches Client HTML exactly.",
+                    "severity": "HIGH"
+                },
+                {
+                    "error": "CORS policy: No 'Access-Control-Allow-Origin'",
+                    "fix": "Whitelist origin in backend middleware.",
+                    "severity": "HIGH"
+                },
+                {
+                    "error": "NetworkError when attempting to fetch",
+                    "fix": "Check API URL environment variable.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "error": "ChunkLoadError",
+                    "fix": "Invalidate browser cache; redeploy assets.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "error": "Minified React error",
+                    "fix": "Check React developer tools for full trace.",
+                    "severity": "LOW"
+                },
+                {
+                    "error": "ResizeObserver loop limit exceeded",
+                    "fix": "Debounce resize handlers.",
+                    "severity": "LOW"
+                },
+                {
+                    "error": "QuotaExceededError",
+                    "fix": "Clean up localStorage; implement rotation.",
+                    "severity": "MEDIUM"
+                }
+            ],
+            "INFRASTRUCTURE_DEVOPS": [
+                {
+                    "issue": "Docker container exits immediately",
+                    "fix": "Check Dockerfile CMD/ENTRYPOINT for syntax.",
+                    "severity": "HIGH"
+                },
+                {
+                    "issue": "Nginx 413 Entity Too Large",
+                    "fix": "Update client_max_body_size in nginx.conf.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "issue": "Redis OOM command not allowed",
+                    "fix": "Set maxmemory-policy allkeys-lru.",
+                    "severity": "HIGH"
+                },
+                {
+                    "issue": "Kubernetes CrashLoopBackOff",
+                    "fix": "Check livenessProbe/readinessProbe settings.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "issue": "SSL Certificate Expired",
+                    "fix": "Run certbot renew; check auto-renewal cron.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "issue": "OOMKilled",
+                    "fix": "Increase memory limits in Docker/K8s.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "issue": "ImagePullBackOff",
+                    "fix": "Check registry credentials and image tag.",
+                    "severity": "HIGH"
+                }
+            ],
+            "SECURITY_VULNERABILITIES": [
+                {
+                    "issue": "SQL Injection",
+                    "fix": "Use parameterized queries everywhere.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "issue": "XSS Attack",
+                    "fix": "Sanitize all user inputs; use CSP headers.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "issue": "CSRF Token Missing",
+                    "fix": "Implement CSRF tokens for state-changing requests.",
+                    "severity": "HIGH"
+                },
+                {
+                    "issue": "Weak Password Policy",
+                    "fix": "Enforce min 8 chars, uppercase, number, special char.",
+                    "severity": "HIGH"
+                },
+                {
+                    "issue": "Exposed API Keys in Logs",
+                    "fix": "Filter sensitive data from logs.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "issue": "Missing Rate Limiting",
+                    "fix": "Implement rate limiting per IP/user.",
+                    "severity": "HIGH"
+                },
+                {
+                    "issue": "Insecure Direct Object Reference",
+                    "fix": "Validate user ownership before accessing resources.",
+                    "severity": "HIGH"
+                }
+            ],
+            "PERFORMANCE_ISSUES": [
+                {
+                    "issue": "Slow Database Query",
+                    "fix": "Add index; use EXPLAIN ANALYZE.",
+                    "severity": "HIGH"
+                },
+                {
+                    "issue": "N+1 Query Problem",
+                    "fix": "Use eager loading or JOIN.",
+                    "severity": "HIGH"
+                },
+                {
+                    "issue": "Large Bundle Size",
+                    "fix": "Implement code splitting and tree shaking.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "issue": "Unoptimized Images",
+                    "fix": "Convert to WebP; implement lazy loading.",
+                    "severity": "MEDIUM"
+                },
+                {
+                    "issue": "No Caching",
+                    "fix": "Implement Redis caching layer.",
+                    "severity": "HIGH"
+                },
+                {
+                    "issue": "Blocking Event Loop",
+                    "fix": "Move CPU-intensive tasks to worker threads.",
+                    "severity": "CRITICAL"
+                },
+                {
+                    "issue": "Memory Leak",
+                    "fix": "Use heap profiler; check for circular references.",
+                    "severity": "CRITICAL"
+                }
+            ]
+        },
+        "meta_patterns": {
+            "thundering_herd": {
+                "signature": "Sudden spike in requests after service restart",
+                "fix": "Implement jitter in retry logic",
+                "source": "Slack Post-Mortem 2020"
+            },
+            "write_amplification": {
+                "signature": "DB writes 10x more than expected",
+                "fix": "Batch writes; use queue system",
+                "source": "Uber Postgres Migration"
+            },
+            "gc_stop_the_world": {
+                "signature": "Random 2-second latency spikes",
+                "fix": "Use off-heap storage for large datasets",
+                "source": "Instagram Feed Optimization"
+            },
+            "dns_race_condition": {
+                "signature": "Services can't connect intermittently",
+                "fix": "Hard-code fallback IPs; cache DNS",
+                "source": "AWS Outage 2021"
+            },
+            "connection_pool_exhaustion": {
+                "signature": "500 errors under load",
+                "fix": "Implement circuit breaker; increase pool size",
+                "source": "Netflix Hystrix"
+            }
+        }
+    }
+}

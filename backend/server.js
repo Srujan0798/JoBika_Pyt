@@ -3,6 +3,10 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+// Import utilities
+const errorHandler = require('./utils/errorHandler');
+const security = require('./middleware/security');
+
 // Import services
 const DatabaseManager = require('./database/db');
 const AuthService = require('./services/AuthService');
@@ -15,10 +19,18 @@ const ApplicationFormFiller = require('./services/ApplicationFormFiller');
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Middleware
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.static('../app')); // Serve frontend files
+// Security Middleware (BEFORE other middleware)
+app.use(security.securityHeaders());
+app.use(security.xssProtection());
+app.use(security.requestTimeout());
+app.use(security.rateLimiter());
+
+// CORS
+app.use(cors(security.corsOptions()));
+
+// Body Parser with limits
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Initialize services
 const db = new DatabaseManager();
@@ -29,13 +41,76 @@ const atsService = new ATSService(process.env.GEMINI_API_KEY);
 const resumeTailoring = new ResumeTailoringService(process.env.GEMINI_API_KEY);
 const autoApply = new ApplicationFormFiller();
 
+// Serve static files
+app.use(express.static('../app'));
+
+// Import resilience patterns
+const { dbCircuitBreaker, apiRetry, gracefulDegradation } = require('./utils/resiliencePatterns');
+const { validate, validateQuery, jobSearchSchema, chatMessageSchema } = require('./middleware/validation');
+
+// Register graceful degradation fallbacks
+gracefulDegradation.registerFallback('jobs', async () => {
+    return { jobs: [], message: 'Job service temporarily unavailable' };
+});
+
+gracefulDegradation.registerFallback('chat', async () => {
+    return { message: "I'm temporarily unavailable. Please try again.", isFallback: true };
+});
+
 // Health check
 app.get('/health', (req, res) => {
     res.json({
-        status: 'ok',
-        database: db.db ? 'connected' : 'disconnected',
-        openai: process.env.OPENAI_API_KEY ? 'configured' : 'not configured'
+        status: 'healthy',
+        timestamp: new Date().toISOString(),
+        database: db.dbType,
+        gemini: process.env.GEMINI_API_KEY ? 'configured' : 'not_configured',
+        uptime: process.uptime()
     });
+});
+
+// ====== PUBLIC ROUTES (No Auth Required) ======
+
+// Public job search with graceful degradation
+app.get('/api/jobs/public', validateQuery(jobSearchSchema), async (req, res) => {
+    try {
+        const jobs = await gracefulDegradation.executeWithFallback(
+            'jobs',
+            async () => {
+                return await apiRetry.execute(async () => {
+                    return await db.searchJobs(req.validatedQuery);
+                }, 'job_search');
+            },
+            { cacheResult: true }
+        );
+
+        res.json({ jobs, count: jobs.length });
+    } catch (error) {
+        res.status(500).json({ error: 'Job search failed', jobs: [] });
+    }
+});
+
+// Public demo AI chat (limited, no history)
+app.post('/api/chat/demo', validate(chatMessageSchema), async (req, res) => {
+    try {
+        const { message } = req.validated;
+
+        const response = await gracefulDegradation.executeWithFallback(
+            'chat',
+            async () => {
+                return await apiRetry.execute(async () => {
+                    return await orionService.chatWithOrion(message, []);
+                }, 'demo_chat');
+            },
+            { cacheResult: false }
+        );
+
+        res.json({ response, isDemo: true, remainingMessages: 2 });
+    } catch (error) {
+        res.status(500).json({
+            error: 'Chat service unavailable',
+            response: 'I apologize, but I am temporarily unavailable. Please try again.'
+        });
+    }
 });
 
 // ====== AUTHENTICATION ROUTES ======

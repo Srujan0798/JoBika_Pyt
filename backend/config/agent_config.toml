@@ -1,0 +1,168 @@
+[agent]
+name = "JoBika_Meta_SRE_Bot"
+role = "Site_Reliability_Engineer"
+operating_mode = "CONTINUOUS_ASYNC"
+loop_interval_seconds = 300  # 5 minutes
+max_execution_time_minutes = 300
+confidence_threshold = 0.85
+max_autonomous_fixes_per_hour = 10
+
+[scope]
+# The Agent looks for these specific failure patterns
+monitored_components = ["postgres", "sqlite", "nginx", "node_process", "gemini_api", "frontend"]
+log_sources = ["server.log", "pm2 logs", "docker logs", "/var/log/nginx/error.log"]
+
+[safety_rails]
+# COMMANDS THE AGENT IS STRICTLY FORBIDDEN FROM RUNNING
+forbidden_commands = [
+    "DROP TABLE",
+    "DROP DATABASE", 
+    "rm -rf /",
+    "sudo shutdown",
+    "TRUNCATE TABLE",
+    "ALTER TABLE users DROP",
+    "iptables -F",
+    "kill -9 1"
+]
+
+require_human_approval_for = [
+    "schema_migrations",
+    "payment_gateway_changes",
+    "user_data_deletion",
+    "production_deploy",
+    "dns_change",
+    "security_policy_change"
+]
+
+[strategies]
+# Meta-Grade Strategies from Uber/Instagram/Slack/AWS
+
+# Database Performance (Uber Case: Write Amplification)
+db_performance = [
+    "analyze_query_plan",
+    "check_n_plus_one_queries",
+    "add_missing_indexes",
+    "implement_redis_caching",
+    "connection_pool_optimization",
+    "batch_write_operations",
+    "sharding_proposal"
+]
+
+# Memory Issues (Instagram Case: GC Pauses)
+memory_leak = [
+    "check_node_streams_unclosed",
+    "analyze_heap_snapshot",
+    "check_global_variables",
+    "event_listener_cleanup",
+    "implement_off_heap_storage",
+    "restart_policy_check"
+]
+
+# Network Issues (AWS Case: DNS Failures)
+network_failure = [
+    "check_dns_cache",
+    "implement_circuit_breaker",
+    "add_fallback_ips",
+    "retry_with_jitter",
+    "connection_timeout_tuning",
+    "tcp_keepalive_settings"
+]
+
+# Thundering Herd (Slack Case)
+thundering_herd = [
+    "implement_jitter_delays",
+    "rate_limit_retries",
+    "stagger_health_checks",
+    "circuit_breaker_pattern",
+    "connection_warming"
+]
+
+# On specific errors
+on_db_timeout = "implement_circuit_breaker"
+on_memory_leak = "trigger_graceful_restart"
+on_high_traffic = "enable_rate_limiting"
+
+[metrics]
+# SRE Golden Signals
+trigger_thresholds = { 
+    cpu_usage_percent = 85, 
+    memory_usage_percent = 80,
+    error_rate_percent = 1.0, 
+    p50_latency_ms = 200,
+    p95_latency_ms = 500,
+    p99_latency_ms = 1000,
+    database_pool_usage_percent = 80,
+    request_rate_per_second = 1000,
+    disk_usage_percent = 90
+}
+
+[resilience_patterns]
+# Circuit Breaker Settings (Netflix Pattern)
+circuit_breaker = {
+    failure_threshold = 5,
+    timeout_seconds = 30,
+    half_open_after_seconds = 60
+}
+
+# Retry Logic (Exponential Backoff with Jitter - Uber Pattern)
+retry = {
+    max_attempts = 3,
+    initial_delay_ms = 1000,
+    max_delay_ms = 10000,
+    backoff_multiplier = 2,
+    jitter_percent = 50
+}
+
+# Rate Limiting
+rate_limit = {
+    requests_per_minute = 100,
+    burst_size = 20
+}
+
+[monitoring]
+log_level = "INFO"
+log_style = "JSON_STRUCTURED"
+alert_channels = ["console", "file", "webhook"]
+metrics_export_interval_seconds = 60
+
+[output_format]
+fix_delivery = "GIT_PATCH"
+incident_report_format = "JSON"
+
+[auto_fix]
+# Which classes of problems can be auto-fixed
+auto_apply_confidence_threshold = 0.9
+auto_fix_categories = [
+    "missing_index",
+    "connection_timeout",
+    "rate_limit_config",
+    "input_validation",
+    "cache_config",
+    "retry_logic"
+]
+
+[incident_detection]
+# How often to check for issues
+check_interval_seconds = 30
+lookback_window_minutes = 5
+error_log_patterns = [
+    "Error:",
+    "Exception:",
+    "ECONNREFUSED",
+    "ETIMEDOUT",
+    "EADDRINUSE",
+    "ENETUNREACH",
+    "500 Internal Server Error",
+    "502 Bad Gateway",
+    "503 Service Unavailable",
+    "ConnectionPoolExhausted",
+    "UnhandledPromiseRejection",
+    "Heap out of memory",
+    "CORS policy",
+    "Hydration failed"
+]
+
+[knowledge_base]
+path = "backend/config/common_failures.json"
+version = "1.0"
+total_issues = 350
