@@ -1,4 +1,3 @@
-const OpenAI = require('openai');
 
 class AIServices {
     constructor(apiKey) {
@@ -215,4 +214,3 @@ RED FLAGS TO WATCH:
     }
 }
 
-module.exports = AIServices;
