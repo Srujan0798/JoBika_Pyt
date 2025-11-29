@@ -67,6 +67,18 @@ const autoApplySchema = z.object({
         expectedCTC: z.number().positive().optional(),
         noticePeriod: z.number().int().min(0).max(180).optional()
     })
+})
+});
+
+// Job Alert Schema
+const alertSchema = z.object({
+    name: z.string().min(1).max(100),
+    keywords: z.string().optional(),
+    locations: z.string().optional(),
+    jobTypes: z.string().optional(),
+    experienceMin: z.number().int().min(0).optional(),
+    experienceMax: z.number().int().min(0).optional(),
+    salaryMin: z.number().int().min(0).optional()
 });
 
 /**
@@ -152,6 +164,7 @@ module.exports = {
     chatMessageSchema,
     resumeUploadSchema,
     autoApplySchema,
+    alertSchema,
 
     // Middleware
     validate,

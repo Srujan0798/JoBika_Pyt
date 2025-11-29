@@ -47,7 +47,7 @@ app.use(express.static('../app'));
 
 // Import resilience patterns
 const { dbCircuitBreaker, apiRetry, gracefulDegradation } = require('./utils/resiliencePatterns');
-const { validate, validateQuery, jobSearchSchema, chatMessageSchema } = require('./middleware/validation');
+const { validate, validateQuery, jobSearchSchema, chatMessageSchema, alertSchema } = require('./middleware/validation');
 
 // Register graceful degradation fallbacks
 gracefulDegradation.registerFallback('jobs', async () => {
