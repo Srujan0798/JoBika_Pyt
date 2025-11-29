@@ -274,6 +274,20 @@ app.post('/api/compliance/delete', async (req, res) => {
     }
 });
 
+// 10. Orion AI Coach Endpoint
+const OrionCoachService = require('./services/OrionCoachService');
+const orionCoach = new OrionCoachService(process.env.OPENAI_API_KEY);
+
+app.post('/api/orion/chat', async (req, res) => {
+    try {
+        const { message, history } = req.body;
+        const response = await orionCoach.chat(message, history);
+        res.json({ response });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 // Start Server
 app.listen(port, () => {
     console.log('JoBika AI Backend running on port ' + port);
