@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Government job alerts - UPSC, SSC, Banking exams and recruitments">
+    <title>Government Jobs - JoBika</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/main.css">
+    <link rel="stylesheet" href="assets/css/mobile.css">
+    <link rel="stylesheet" href="assets/css/hamburger.css">
+    <style>
+        .govt-hero {
+            background: linear-gradient(135deg, #FF6B35 0%, #004E98 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .govt-hero h1 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .exam-categories {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .exam-category-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .exam-category-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .category-icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--gray-900);
+        }
+
+        .category-count {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .exam-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .exam-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+            border-left: 4px solid #FF6B35;
+        }
+
+        .exam-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .exam-title {
+            font-size: 1.125rem;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 0.25rem;
+        }
+
+        .exam-org {
+            color: var(--gray-600);
+            font-size: 0.875rem;
+        }
+
+        .exam-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge-upcoming {
+            background: #FFB400;
+            color: white;
+        }
+
+        .badge-open {
+            background: #06D6A0;
+            color: white;
+        }
+
+        .badge-closed {
+            background: var(--gray-400);
+            color: white;
+        }
+
+        .exam-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+        }
+
+        .detail-label {
+            color: var(--gray-600);
+        }
+
+        .detail-value {
+            font-weight: 600;
+            color: var(--gray-900);
+        }
+
+        .exam-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .filters-section {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-item {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        /* Dark mode */
+        body.dark-mode .exam-category-card,
+        body.dark-mode .exam-card,
+        body.dark-mode .filters-section {
+            background: #1f2937;
+        }
+
+        body.dark-mode .category-name,
+        body.dark-mode .exam-title,
+        body.dark-mode .detail-value {
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="logo">JoBika</div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a href="dashboard.html" class="nav-link"><span
+                        data-i18n="nav_dashboard">Dashboard</span></a>
+            </li>
+            <li class="nav-item"><a href="jobs.html" class="nav-link"><span data-i18n="nav_jobs">Find Jobs</span></a>
+            </li>
+            <li class="nav-item"><a href="govt-jobs.html" class="nav-link active"><span data-i18n="nav_govt">Govt
+                        Jobs</span></a></li>
+            <li class="nav-item"><a href="editor.html" class="nav-link"><span data-i18n="nav_editor">Resume
+                        Editor</span></a>
+            </li>
+            <li class="nav-item"><a href="tracker.html" class="nav-link"><span
+                        data-i18n="nav_tracker">Applications</span></a>
+            </li>
+            <li class="nav-item"><a href="career-coach.html" class="nav-link"><span data-i18n="nav_coach">AI
+                        Coach</span></a>
+            </li>
+            <li class="nav-item"><a href="settings.html" class="nav-link"><span
+                        data-i18n="nav_settings">Settings</span></a></li>
+        </ul>
+        <div class="user-profile">
+            <div class="user-avatar">👤</div>
+            <div class="user-info">
+                <div class="user-name">Guest User</div>
+                <div class="user-role">Job Seeker</div>
+            </div>
+        </div>
+        </ul>
+        <div style="padding: 1.5rem; border-top: 1px solid var(--gray-200);">
+            <button class="btn btn-secondary" onclick="window.languageManager.toggleLanguage()" style="width: 100%;">
+                🌐 English / हिंदी
+            </button>
+        </div>
+        <div style="padding: 1.5rem;">
+            <a href="#" class="nav-link" onclick="logout()"><span>🚪</span><span>Logout</span></a>
+        </div>
+    </aside>
+
+    <main class="main-content">
+        <div class="govt-hero">
+            <h1>Government Jobs & Competitive Exams 🏛️</h1>
+            <p>Track UPSC, SSC, Banking, and other government job notifications</p>
+        </div>
+
+        <!-- Exam Categories -->
+        <div class="exam-categories">
+            <div class="exam-category-card" onclick="filterByCategory('upsc')">
+                <div class="category-icon">🎯</div>
+                <div class="category-name">UPSC</div>
+                <div class="category-count">12 active exams</div>
+            </div>
+
+            <div class="exam-category-card" onclick="filterByCategory('ssc')">
+                <div class="category-icon">📚</div>
+                <div class="category-name">SSC</div>
+                <div class="category-count">8 active exams</div>
+            </div>
+
+            <div class="exam-category-card" onclick="filterByCategory('banking')">
+                <div class="category-icon">🏦</div>
+                <div class="category-name">Banking</div>
+                <div class="category-count">15 active exams</div>
+            </div>
+
+            <div class="exam-category-card" onclick="filterByCategory('railway')">
+                <div class="category-icon">🚂</div>
+                <div class="category-name">Railway</div>
+                <div class="category-count">6 active exams</div>
+            </div>
+
+            <div class="exam-category-card" onclick="filterByCategory('defence')">
+                <div class="category-icon">🛡️</div>
+                <div class="category-name">Defence</div>
+                <div class="category-count">4 active exams</div>
+            </div>
+
+            <div class="exam-category-card" onclick="filterByCategory('state')">
+                <div class="category-icon">🏛️</div>
+                <div class="category-name">State PSC</div>
+                <div class="category-count">25 active exams</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters-section">
+            <div class="filter-row">
+                <div class="filter-item">
+                    <label class="form-label">Category</label>
+                    <select class="form-input" id="categoryFilter" onchange="applyFilters()">
+                        <option value="all">All Categories</option>
+                        <option value="upsc">UPSC</option>
+                        <option value="ssc">SSC</option>
+                        <option value="banking">Banking</option>
+                        <option value="railway">Railway</option>
+                        <option value="defence">Defence</option>
+                        <option value="state">State PSC</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label class="form-label">Status</label>
+                    <select class="form-input" id="statusFilter" onchange="applyFilters()">
+                        <option value="all">All Status</option>
+                        <option value="open">Applications Open</option>
+                        <option value="upcoming">Upcoming</option>
+                        <option value="closed">Closed</option>
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label class="form-label">Qualification</label>
+                    <select class="form-input" id="qualificationFilter" onchange="applyFilters()">
+                        <option value="all">All Qualifications</option>
+                        <option value="10th">10th Pass</option>
+                        <option value="12th">12th Pass</option>
+                        <option value="graduate">Graduate</option>
+                        <option value="postgraduate">Post Graduate</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Exam Listings -->
+        <div class="exam-list" id="examList">
+            <!-- Sample Exams -->
+        </div>
+    </main>
+
+    <script src="assets/js/session-manager.js"></script>
+    <script src="assets/js/session-manager.js"></script>
+    <script src="assets/js/mobile-nav.js"></script>
+    <script src="assets/js/language-manager.js"></script>
+    <script>
+        // Government exams data
+        const govtExams = [
+            {
+                id: 1,
+                title: 'UPSC Civil Services Examination 2025',
+                organization: 'Union Public Service Commission',
+                category: 'upsc',
+                status: 'open',
+                posts: 1000,
+                qualification: 'graduate',
+                lastDate: '2025-03-15',
+                examDate: '2025-06-28',
+                applyLink: 'https://upsc.gov.in',
+                salary: '₹56,100 - ₹2,50,000/month',
+                requiredDocs: ['Degree Certificate', 'Caste Certificate', 'Domicile Certificate', 'Photo ID']
+            },
+            {
+                id: 2,
+                title: 'SSC CGL 2025',
+                organization: 'Staff Selection Commission',
+                category: 'ssc',
+                status: 'upcoming',
+                posts: 8500,
+                qualification: 'graduate',
+                lastDate: '2025-04-10',
+                examDate: '2025-07-15',
+                applyLink: 'https://ssc.nic.in',
+                salary: '₹25,000 - ₹81,000/month',
+                requiredDocs: ['Degree Certificate', 'Caste Certificate (if applicable)', 'Photo ID']
+            },
+            {
+                id: 3,
+                title: 'IBPS PO 2025',
+                organization: 'Institute of Banking Personnel Selection',
+                category: 'banking',
+                status: 'open',
+                posts: 4500,
+                qualification: 'graduate',
+                lastDate: '2025-02-28',
+                examDate: '2025-04-20',
+                applyLink: 'https://ibps.in',
+                salary: '₹53,000 - ₹69,000/month',
+                requiredDocs: ['Degree Certificate', 'Caste Certificate', 'Photo ID']
+            },
+            {
+                id: 4,
+                title: 'RRB NTPC 2025',
+                organization: 'Railway Recruitment Board',
+                category: 'railway',
+                status: 'open',
+                posts: 35000,
+                qualification: 'graduate',
+                lastDate: '2025-03-20',
+                examDate: '2025-05-10',
+                applyLink: 'https://rrbcdg.gov.in',
+                salary: '₹19,900 - ₹63,200/month',
+                requiredDocs: ['Degree/Diploma Certificate', 'Caste Certificate', 'Domicile', 'Photo ID']
+            },
+            {
+                id: 5,
+                title: 'SBI Clerk 2025',
+                organization: 'State Bank of India',
+                category: 'banking',
+                status: 'upcoming',
+                posts: 6000,
+                qualification: 'graduate',
+                lastDate: '2025-04-05',
+                examDate: '2025-06-10',
+                applyLink: 'https://sbi.co.in/careers',
+                salary: '₹19,900 - ₹42,020/month',
+                requiredDocs: ['Degree Certificate', 'Marks Sheets', 'Photo ID']
+            },
+            {
+                id: 6,
+                title: 'Indian Army Agniveer Recruitment 2025',
+                organization: 'Indian Army',
+                category: 'defence',
+                status: 'open',
+                posts: 20000,
+                qualification: '10th',
+                lastDate: '2025-02-15',
+                examDate: '2025-04-01',
+                applyLink: 'https://joinindianarmy.nic.in',
+                salary: '₹21,000 - ₹40,000/month',
+                requiredDocs: ['10th Certificate', 'Domicile Certificate', 'Physical Fitness Certificate']
+            }
+        ];
+
+        let filteredExams = [...govtExams];
+
+        function renderExams() {
+            const examList = document.getElementById('examList');
+
+            if (filteredExams.length === 0) {
+                examList.innerHTML = '<p style="text-align: center; color: var(--gray-600); padding: 2rem;">No exams found matching your filters.</p>';
+                return;
+            }
+
+            examList.innerHTML = filteredExams.map(exam => `
+                <div class="exam-card">
+                    <div class="exam-header">
+                        <div>
+                            <div class="exam-title">${exam.title}</div>
+                            <div class="exam-org">${exam.organization}</div>
+                        </div>
+                        <span class="exam-badge badge-${exam.status}">
+                            ${exam.status === 'open' ? 'Applications Open' : exam.status === 'upcoming' ? 'Upcoming' : 'Closed'}
+                        </span>
+                    </div>
+
+                    <div class="exam-details">
+                        <div class="detail-item">
+                            <span class="detail-label">Vacancies:</span>
+                            <span class="detail-value">${exam.posts}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Last Date:</span>
+                            <span class="detail-value">${new Date(exam.lastDate).toLocaleDateString('en-IN')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Exam Date:</span>
+                            <span class="detail-value">${new Date(exam.examDate).toLocaleDateString('en-IN')}</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">Salary:</span>
+                            <span class="detail-value">${exam.salary}</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-bottom: 1rem;">
+                        <strong style="font-size: 0.875rem;">Required Documents:</strong>
+                        <div style="margin-top: 0.5rem; display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${exam.requiredDocs.map(doc => `<span class="skill-tag">${doc}</span>`).join('')}
+                        </div>
+                    </div>
+
+                    <div class="exam-actions">
+                        <button class="btn btn-primary" onclick="applyExam(${exam.id})">Apply Now</button>
+                        <button class="btn btn-secondary" onclick="viewDetails(${exam.id})">View Details</button>
+                        <button class="btn btn-secondary" onclick="setReminder(${exam.id})">Set Reminder</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function filterByCategory(category) {
+            document.getElementById('categoryFilter').value = category;
+            apply Filters();
+        }
+
+        function applyFilters() {
+            const category = document.getElementById('categoryFilter').value;
+            const status = document.getElementById('statusFilter').value;
+            const qualification = document.getElementById('qualificationFilter').value;
+
+            filteredExams = govtExams.filter(exam => {
+                if (category !== 'all' && exam.category !== category) return false;
+                if (status !== 'all' && exam.status !== status) return false;
+                if (qualification !== 'all' && exam.qualification !== qualification) return false;
+                return true;
+            });
+
+            renderExams();
+        }
+
+        function applyExam(examId) {
+            const exam = govtExams.find(e => e.id === examId);
+            alert(`Application for ${exam.title}\n\nYou will be redirected to: ${exam.applyLink}\n\nRequired Documents:\n${exam.requiredDocs.join('\n')}\n\nLast Date: ${new Date(exam.lastDate).toLocaleDateString('en-IN')}`);
+            // In production, redirect to exam.applyLink
+        }
+
+        function viewDetails(examId) {
+            const exam = govtExams.find(e => e.id === examId);
+            alert(`${exam.title}\n\nOrganization: ${exam.organization}\nVacancies: ${exam.posts}\nSalary: ${exam.salary}\nQualification: ${exam.qualification.toUpperCase()}\n\nLast Date: ${new Date(exam.lastDate).toLocaleDateString('en-IN')}\nExam Date: ${new Date(exam.examDate).toLocaleDateString('en-IN')}`);
+        }
+
+        function setReminder(examId) {
+            const exam = govtExams.find(e => e.id === examId);
+            alert(`Reminder set for ${exam.title}!\n\nYou will be notified:\n• 7 days before last date\n• 1 day before last date\n• 1 day before exam date`);
+            // In production, save to database and send email/SMS
+        }
+
+        // Initial render
+        document.addEventListener('DOMContentLoaded', renderExams);
+    </script>
+</body>
+
+</html>

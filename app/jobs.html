@@ -194,48 +194,60 @@
             <li class="nav-item">
                 <a href="dashboard.html" class="nav-link">
                     <span>📊</span>
-                    <span>Dashboard</span>
+                    <span data-i18n="nav_dashboard">Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="jobs.html" class="nav-link active">
                     <span>🔍</span>
-                    <span>Find Jobs</span>
+                    <span data-i18n="nav_jobs">Find Jobs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="govt-jobs.html" class="nav-link">
+                    <span>🏛️</span>
+                    <span data-i18n="nav_govt">Govt Jobs</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="editor.html" class="nav-link">
                     <span>📝</span>
-                    <span>Resume Editor</span>
+                    <span data-i18n="nav_editor">Resume Editor</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="tracker.html" class="nav-link">
                     <span>📋</span>
-                    <span>Applications</span>
+                    <span data-i18n="nav_tracker">Applications</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link" onclick="createJobAlert()">
                     <span>🔔</span>
-                    <span>Job Alerts</span>
+                    <span data-i18n="nav_alerts">Job Alerts</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="settings.html" class="nav-link">
                     <span>⚙️</span>
-                    <span>Settings</span>
+                    <span data-i18n="nav_settings">Settings</span>
                 </a>
             </li>
         </ul>
+        <div style="padding: 1.5rem; border-top: 1px solid var(--gray-200);">
+            <button class="btn btn-secondary" onclick="window.languageManager.toggleLanguage()" style="width: 100%;">
+                🌐 English / हिंदी
+            </button>
+        </div>
     </aside>
 
     <main class="main-content">
-        <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;">Find Your Dream Job</h1>
+        <h1 style="font-family: var(--font-display); font-size: 2rem; margin-bottom: 2rem;" data-i18n="hero_title">Find
+            Your Dream Job</h1>
 
         <div class="search-bar">
             <input type="text" class="search-input" placeholder="🔍 Search by job title, company, or skills..."
-                id="searchInput">
+                id="searchInput" data-i18n="search_placeholder">
         </div>
 
         <div class="filters">
@@ -283,6 +295,18 @@
                         <option>70%+</option>
                         <option>60%+</option>
                     </select>
+                </div>
+
+                <div class="filter-group">
+                    <label class="filter-label" data-i18n="filter_visa">Visa Sponsorship</label>
+                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="filterH1B" onchange="renderJobs()"> H1B Sponsorship
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 0.5rem;">
+                            <input type="checkbox" id="filterGreenCard" onchange="renderJobs()"> Green Card Support
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>
@@ -438,7 +462,7 @@
                     <div
                         style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem;">
                         <div class="filter-group">
-                            <label class="filter-label">Location</label>
+                            <label class="filter-label" data-i18n="filter_location">Location</label>
                             <select class="input">
                                 <option>All Locations</option>
                                 <option>Bangalore</option>
@@ -450,7 +474,7 @@
                         </div>
 
                         <div class="filter-group">
-                            <label class="filter-label">Experience</label>
+                            <label class="filter-label" data-i18n="filter_exp">Experience</label>
                             <select class="input">
                                 <option>All Levels</option>
                                 <option>0-2 years</option>
@@ -498,6 +522,8 @@
 
             <script src="assets/js/session-manager.js"></script>
             <script src="assets/js/mobile-nav.js"></script>
+            <script src="assets/js/language-manager.js"></script>
+            <script src="assets/js/visa-sponsorship-helper.js"></script>
             <script src="assets/js/job-matching-engine.js"></script>
             <script src="assets/js/app.js"></script>
             <script>
@@ -507,7 +533,20 @@
 
                     jobCount.textContent = AppState.jobs.length;
 
-                    jobsGrid.innerHTML = AppState.jobs.map(job => `
+                    jobsGrid.innerHTML = AppState.jobs.map(job => {
+                        // Apply Visa Filters
+                        const h1bFilter = document.getElementById('filterH1B').checked;
+                        const gcFilter = document.getElementById('filterGreenCard').checked;
+
+                        if (h1bFilter || gcFilter) {
+                            const visaHelper = new VisaSponsorshipHelper();
+                            const sponsorship = visaHelper.checkSponsorship(job.company);
+
+                            if (h1bFilter && !sponsorship.h1b) return '';
+                            if (gcFilter && !sponsorship.greenCard) return '';
+                        }
+
+                        return `
                 <div class="job-card" onclick="viewJobDetails(${job.id})">
                     <div class="job-header">
                         <div class="company-logo">${job.company.charAt(0)}</div>
@@ -529,15 +568,20 @@
                     </div>
                     
                     <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
-                        <button class="btn btn-primary" onclick="event.stopPropagation(); quickApply(${job.id})">Quick Apply</button>
-                        <button class="btn btn-secondary" onclick="event.stopPropagation(); saveJob(${job.id})">Save</button>
+                        <button class="btn btn-primary" onclick="event.stopPropagation(); quickApply(${job.id})" data-i18n="quick_apply">Quick Apply</button>
+                        <button class="btn btn-secondary" onclick="event.stopPropagation(); saveJob(${job.id})" data-i18n="btn_save">Save</button>
                         <button class="btn btn-secondary" onclick="event.stopPropagation(); generateCoverLetterUI(${job.id})">Cover Letter</button>
                         <button class="btn btn-secondary" onclick="event.stopPropagation(); getInterviewPrepUI(${job.id})">Interview Prep</button>
                         <button class="btn btn-secondary" onclick="event.stopPropagation(); getSalaryInsightsUI('${job.title}', '${job.location}')">Salary Insights</button>
                         <button class="btn btn-secondary" onclick="event.stopPropagation(); customizeResumeUI(${job.id})">Customize Resume</button>
                     </div>
                 </div>
-            `).join('');
+            `}).join('');
+
+                    // Re-apply language translations
+                    if (window.languageManager) {
+                        window.languageManager.applyLanguage(window.languageManager.currentLang);
+                    }
                 }
 
                 function viewJobDetails(jobId) {

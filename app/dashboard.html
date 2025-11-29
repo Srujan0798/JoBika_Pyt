@@ -233,37 +233,43 @@
             <li class="nav-item">
                 <a href="dashboard.html" class="nav-link active">
                     <span>📊</span>
-                    <span>Dashboard</span>
+                    <span data-i18n="nav_dashboard">Dashboard</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="jobs.html" class="nav-link">
                     <span>🔍</span>
-                    <span>Find Jobs</span>
+                    <span data-i18n="nav_jobs">Find Jobs</span>
+                </a>
+            </li>
+            <li class="nav-item">
+                <a href="govt-jobs.html" class="nav-link">
+                    <span>🏛️</span>
+                    <span data-i18n="nav_govt">Govt Jobs</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="editor.html" class="nav-link">
                     <span>📝</span>
-                    <span>Resume Editor</span>
+                    <span data-i18n="nav_editor">Resume Editor</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="tracker.html" class="nav-link">
                     <span>📋</span>
-                    <span>Applications</span>
+                    <span data-i18n="nav_tracker">Applications</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="career-coach.html" class="nav-link">
                     <span>🤖</span>
-                    <span>AI Coach</span>
+                    <span data-i18n="nav_coach">AI Coach</span>
                 </a>
             </li>
             <li class="nav-item">
                 <a href="#" class="nav-link">
                     <span>⚙️</span>
-                    <span>Settings</span>
+                    <span data-i18n="nav_settings">Settings</span>
                 </a>
             </li>
             <li class="nav-item" style="margin-top: 2rem;">
@@ -273,6 +279,11 @@
                 </a>
             </li>
         </ul>
+        <div style="padding: 1.5rem; border-top: 1px solid var(--gray-200);">
+            <button class="btn btn-secondary" onclick="window.languageManager.toggleLanguage()" style="width: 100%;">
+                🌐 English / हिंदी
+            </button>
+        </div>
     </aside>
 
     <main class="main-content">
@@ -473,8 +484,8 @@
                     <main class="main-content">
                         <div class="header">
                             <div>
-                                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;">Welcome, <span
-                                        id="userName">User</span>!</h1>
+                                <h1 style="font-size: 2rem; margin-bottom: 0.5rem;"><span
+                                        data-i18n="welcome_back">Welcome,</span> <span id="userName">User</span>!</h1>
                                 <p style="color: var(--gray-600);" id="userRole">Ready to find your dream job?</p>
                             </div>
                             <div class="user-menu">
@@ -559,6 +570,7 @@
 
                     <script src="assets/js/session-manager.js"></script>
                     <script src="assets/js/mobile-nav.js"></script>
+                    <script src="assets/js/language-manager.js"></script>
                     <script src="assets/js/app.js"></script>
                     <script>
                         // Render recommended jobs
