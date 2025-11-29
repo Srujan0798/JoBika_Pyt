@@ -1,1282 +1,390 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="JoBika Dashboard - Manage your job search, track applications, and view analytics.">
-    <title>Dashboard - JoBika</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/index.css">
+    <title>Dashboard - JobSaathi</title>
+    <link rel="stylesheet" href="assets/css/premium.css">
     <style>
-        body {
-            background: var(--gray-50);
-            display: flex;
-            min-height: 100vh;
+        /* Modern Top Navigation */
+        .top-nav {
+            position: sticky;
+            top: 0;
+            z-index: var(--z-sticky);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-light);
+            box-shadow: var(--shadow-sm);
         }
 
-        .sidebar {
-            width: 250px;
-            background: white;
-            border-right: 1px solid var(--gray-200);
-            padding: 2rem 0;
-            position: fixed;
-            height: 100vh;
-            overflow-y: auto;
+        .top-nav-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--space-4) var(--space-6);
+            max-width: 1440px;
+            margin: 0 auto;
         }
 
         .logo {
-            font-family: var(--font-display);
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary-blue);
-            padding: 0 1.5rem;
-            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
-        .nav-menu {
-            list-style: none;
-        }
-
-        .nav-item {
-            margin-bottom: 0.5rem;
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: var(--space-2);
         }
 
         .nav-link {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1.5rem;
-            color: var(--gray-700);
+            padding: var(--space-2) var(--space-4);
+            border-radius: var(--radius-md);
+            color: var(--text-secondary);
+            font-weight: var(--font-medium);
+            font-size: var(--text-sm);
             text-decoration: none;
+            transition: all var(--transition-fast);
+        }
+
+        .nav-link:hover, .nav-link.active {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+        }
+
+        .search-bar {
+            position: relative;
+            width: 400px;
+        }
+
+        .search-bar input {
+            width: 100%;
+            padding: 0.625rem 1rem 0.625rem 2.5rem;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
             transition: all var(--transition-base);
         }
 
-        .nav-link:hover,
-        .nav-link.active {
-            background: var(--gray-100);
-            color: var(--primary-blue);
+        .search-bar input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            outline: none;
         }
 
-        .main-content {
-            margin-left: 250px;
-            flex: 1;
-            padding: 2rem;
+        .search-icon {
+            position: absolute;
+            left: 0.875rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-tertiary);
         }
 
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 2rem;
+        /* Hero Section */
+        .hero {
+            background: var(--gradient-primary);
+            color: var(--text-inverse);
+            padding: var(--space-12) 0;
+            margin-bottom: var(--space-8);
         }
 
-        .user-menu {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+        .hero-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
         }
 
-        .user-avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, var(--primary-blue), var(--primary-purple));
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
+        .hero h1 {
+            font-size: var(--text-4xl);
+            font-weight: var(--font-bold);
+            margin-bottom: var(--space-3);
         }
 
+        .hero p {
+            font-size: var(--text-lg);
+            opacity: 0.95;
+        }
+
+        /* Stats Grid */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-bottom: 2rem;
+            grid-template-columns: repeat(4, 1fr);
+            gap: var(--space-6);
+            margin-bottom: var(--space-8);
         }
 
         .stat-card {
-            background: white;
-            padding: 1.5rem;
-            border-radius: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .stat-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-        }
-
-        .stat-value {
-            font-size: 2rem;
-            font-weight: 700;
-            color: var(--gray-900);
-        }
-
-        .stat-label {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        .stat-trend {
-            font-size: 0.875rem;
-            color: var(--success);
-            margin-top: 0.5rem;
-        }
-
-        .job-card {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            background: var(--surface);
+            padding: var(--space-6);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
             transition: all var(--transition-base);
         }
 
+        .stat-card:hover {
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .stat-value {
+            font-size: var(--text-3xl);
+            font-weight: var(--font-bold);
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: var(--space-2);
+        }
+
+        .stat-label {
+            font-size: var(--text-sm);
+            color: var(--text-secondary);
+            font-weight: var(--font-medium);
+        }
+
+        /* Job Card - Modern Design */
+        .job-card {
+            position: relative;
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: var(--space-6);
+            box-shadow: var(--shadow-sm);
+            transition: all var(--transition-base);
+            border: 1px solid transparent;
+        }
+
         .job-card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            box-shadow: var(--shadow-lg);
             transform: translateY(-2px);
+            border-color: var(--primary);
         }
 
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
-        }
-
-        .company-logo {
-            width: 48px;
-            height: 48px;
-            border-radius: 0.5rem;
-            background: var(--gray-100);
+        .company-badge {
+            width: 3.5rem;
+            height: 3.5rem;
+            border-radius: var(--radius-lg);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 600;
-            color: var(--gray-600);
+            font-size: var(--text-xl);
+            font-weight: var(--font-bold);
+            color: var(--text-inverse);
+            margin-bottom: var(--space-4);
         }
 
-        .job-info {
-            flex: 1;
-            margin-left: 1rem;
+        .match-badge {
+            position: absolute;
+            top: var(--space-4);
+            right: var(--space-4);
+            padding: 0.375rem 0.875rem;
+            background: var(--gradient-success);
+            color: var(--text-inverse);
+            font-size: var(--text-xs);
+            font-weight: var(--font-semibold);
+            border-radius: var(--radius-full);
         }
 
-        .job-title {
-            font-size: 1.125rem;
-            font-weight: 600;
-            color: var(--gray-900);
-            margin-bottom: 0.25rem;
-        }
-
-        .job-company {
-            color: var(--gray-600);
-            font-size: 0.875rem;
-        }
-
-        .job-meta {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 1rem;
-            font-size: 0.875rem;
-            color: var(--gray-600);
-        }
-
-        .job-meta span {
+        /* Floating AI Chat Button */
+        .ai-chat-fab {
+            position: fixed;
+            bottom: var(--space-8);
+            right: var(--space-8);
+            width: 3.5rem;
+            height: 3.5rem;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-full);
+            box-shadow: var(--shadow-xl);
             display: flex;
             align-items: center;
-            gap: 0.25rem;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+            z-index: var(--z-sticky);
         }
 
-        .skills {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
-            margin-top: 1rem;
+        .ai-chat-fab:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-premium);
         }
 
-        .skill-tag {
-            padding: 0.25rem 0.75rem;
-            background: var(--gray-100);
-            border-radius: 9999px;
-            font-size: 0.75rem;
-            color: var(--gray-700);
+        @media (max-width: 768px) {
+            .search-bar {
+                width: 100%;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
     </style>
 </head>
-
 <body>
-    <aside class="sidebar">
-        <div class="logo">JoBika</div>
-        <ul class="nav-menu">
-            <li class="nav-item">
-                <a href="dashboard.html" class="nav-link active">
-                    <span>📊</span>
-                    <span data-i18n="nav_dashboard">Dashboard</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="jobs.html" class="nav-link">
-                    <span>🔍</span>
-                    <span data-i18n="nav_jobs">Find Jobs</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="ats-checker.html" class="nav-link">
-                    <span>📝</span>
-                    <span data-i18n="nav_ats">ATS Checker</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="skills.html" class="nav-link">
-                    <span>🧠</span>
-                    <span data-i18n="nav_skills">Skill Advisor</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="interview.html" class="nav-link">
-                    <span>🎤</span>
-                    <span data-i18n="nav_interview">Interview Prep</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="salary.html" class="nav-link">
-                    <span>💰</span>
-                    <span data-i18n="nav_salary">Salary Predictor</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="govt-jobs.html" class="nav-link">
-                    <span>🏛️</span>
-                    <span data-i18n="nav_govt">Govt Jobs</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="editor.html" class="nav-link">
-                    <span>📝</span>
-                    <span data-i18n="nav_editor">Resume Editor</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="tracker.html" class="nav-link">
-                    <span>📋</span>
-                    <span data-i18n="nav_tracker">Applications</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="career-coach.html" class="nav-link">
-                    <span>🤖</span>
-                    <span data-i18n="nav_coach">AI Coach</span>
-                </a>
-            </li>
-            <li class="nav-item">
-                <a href="#" class="nav-link">
-                    <span>⚙️</span>
-                    <span data-i18n="nav_settings">Settings</span>
-                </a>
-            </li>
-            <li class="nav-item" style="margin-top: 2rem;">
-                <a href="#" class="nav-link" onclick="logout()">
-                    <span>🚪</span>
-                    <span>Logout</span>
-                </a>
-            </li>
-        </ul>
-        <div style="padding: 1rem; margin-top: auto;">
-            <div
-                style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                    <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary-blue);">Free Plan</span>
-                    <a href="pricing.html"
-                        style="font-size: 0.75rem; color: var(--primary-blue); text-decoration: none;">Upgrade</a>
-                </div>
-                <div style="font-size: 0.8rem; color: var(--gray-600);">
-                    Credits: <strong id="userCredits">Loading...</strong>
-                </div>
+    <!-- Modern Top Navigation -->
+    <nav class="top-nav">
+        <div class="top-nav-content">
+            <div class="logo">
+                <span>🚀</span> JobSaathi
+            </div>
+
+            <div class="search-bar">
+                <span class="search-icon">🔍</span>
+                <input type="text" placeholder="Search jobs, companies, skills...">
+            </div>
+
+            <div class="nav-links">
+                <a href="dashboard.html" class="nav-link active">Dashboard</a>
+                <a href="jobs.html" class="nav-link">Jobs</a>
+                <a href="tracker.html" class="nav-link">Tracker</a>
+                <a href="pricing.html" class="nav-link">Premium</a>
+                <div class="avatar avatar-md" style="margin-left: var(--space-4);">RR</div>
             </div>
         </div>
-        <div style="padding: 1.5rem; border-top: 1px solid var(--gray-200);">
-            <button class="btn btn-secondary" onclick="window.languageManager.toggleLanguage()" style="width: 100%;">
-                🌐 English / हिंदी
-            </button>
-        </div>
-    </aside>
+    </nav>
 
-    <main class="main-content">
-        <div class="header">
-            <div>
-                <div class="stat-value">142</div>
-                <div class="stat-label">Total Applications</div>
-                <div class="stat-header">
-                    <div>
-                        <div class="stat-value">2</div>
-                        <div class="stat-label">Offers Received</div>
-                    </div>
-                    <div class="stat-icon" style="background: rgba(34, 197, 94, 0.1); color: var(--success);">🎉
-                    </div>
-                </div>
-                <div class="stat-trend">Congratulations!</div>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="animate-fade-in">Welcome back, Roshwin! 👋</h1>
+            <p class="animate-fade-in" style="animation-delay: 100ms;">You have 12 new job matches and 3 interview invites</p>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Stats Grid -->
+        <div class="stats-grid animate-fade-in" style="animation-delay: 200ms;">
+            <div class="stat-card">
+                <div class="stat-value">127</div>
+                <div class="stat-label">Applications Sent</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">23</div>
+                <div class="stat-label">In Review</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Interviews</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">94%</div>
+                <div class="stat-label">Match Score</div>
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 2rem;">
-            <div>
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
-                    <h2 style="font-size: 1.5rem; font-weight: 600;">Recommended Jobs</h2>
-                    <a href="jobs.html"
-                        style="color: var(--primary-blue); text-decoration: none; font-weight: 500;">View All
-                        →</a>
-                </div>
-
-                <div id="jobsList"></div>
+        <!-- Top Job Matches -->
+        <div style="margin-bottom: var(--space-8);">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-2xl font-bold">Top Job Matches</h2>
+                <a href="jobs.html" class="btn btn-ghost">View All →</a>
             </div>
 
-            <div>
-                <h2 style="font-size: 1.5rem; font-weight: 600; margin-bottom: 1.5rem;">Recent Activity</h2>
-                <div class="card" style="padding: 1rem;">
-                    <div style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gray-200);">
-                        <div
-                            style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); margin-top: 0.5rem;">
-                        </div>
-                        <div>
-                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Interview scheduled</p>
-                            <p style="font-size: 0.875rem; color: var(--gray-600);">Google India - Senior
-                                Developer</p>
-                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">2 hours
-                                ago</p>
-                        </div>
+            <div class="grid grid-cols-2 gap-6">
+                <div class="job-card animate-scale-in" style="animation-delay: 300ms;">
+                    <span class="match-badge">94% Match</span>
+                    <div class="company-badge">S</div>
+                    <h3 class="text-xl font-semibold mb-2">Senior React Developer</h3>
+                    <p class="text-secondary mb-4">Swiggy • Bangalore • ₹25-35 LPA</p>
+                    <div class="flex gap-2 mb-4">
+                        <span class="badge">React</span>
+                        <span class="badge">Node.js</span>
+                        <span class="badge">AWS</span>
                     </div>
-
-                    <div style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gray-200);">
-                        <div
-                            style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-blue); margin-top: 0.5rem;">
-                        </div>
-                        <div>
-                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Application submitted</p>
-                            <p style="font-size: 0.875rem; color: var(--gray-600);">Amazon - Backend Engineer
-                            </p>
-                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">5 hours
-                                ago</p>
-                        </div>
-                    </div>
-
-                    <div style="display: flex; gap: 1rem; padding: 1rem 0;">
-                        <div
-                            style="width: 8px; height: 8px; border-radius: 50%; background: var(--warning); margin-top: 0.5rem;">
-                        </div>
-                        <div>
-                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Profile viewed</p>
-                            <p style="font-size: 0.875rem; color: var(--gray-600);">Microsoft recruiter</p>
-                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">1 day
-                                ago</p>
-                        </div>
+                    <div class="flex gap-3">
+                        <button class="btn btn-primary flex-1">Quick Apply</button>
+                        <button class="btn btn-outline">Details</button>
                     </div>
                 </div>
 
-                .job-card {
-                background: white;
-                border-radius: 1rem;
-                padding: 1.5rem;
-                margin-bottom: 1rem;
-                box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-                transition: all var(--transition-base);
-                }
-
-                .job-card:hover {
-                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-                transform: translateY(-2px);
-                }
-
-                .job-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: start;
-                margin-bottom: 1rem;
-                }
-
-                .company-logo {
-                width: 48px;
-                height: 48px;
-                border-radius: 0.5rem;
-                background: var(--gray-100);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-weight: 600;
-                color: var(--gray-600);
-                }
-
-                .job-info {
-                flex: 1;
-                margin-left: 1rem;
-                }
-
-                .job-title {
-                font-size: 1.125rem;
-                font-weight: 600;
-                color: var(--gray-900);
-                margin-bottom: 0.25rem;
-                }
-
-                .job-company {
-                color: var(--gray-600);
-                font-size: 0.875rem;
-                }
-
-                .job-meta {
-                display: flex;
-                gap: 1.5rem;
-                margin-top: 1rem;
-                font-size: 0.875rem;
-                color: var(--gray-600);
-                }
-
-                .job-meta span {
-                display: flex;
-                align-items: center;
-                gap: 0.25rem;
-                }
-
-                .skills {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 0.5rem;
-                margin-top: 1rem;
-                }
-
-                .skill-tag {
-                padding: 0.25rem 0.75rem;
-                background: var(--gray-100);
-                border-radius: 9999px;
-                font-size: 0.75rem;
-                color: var(--gray-700);
-                }
-                /* Advanced Analytics & Community Styles */
-                .section-title {
-                font-family: var(--font-display);
-                font-size: 1.5rem;
-                font-weight: 700;
-                color: var(--gray-900);
-                margin-bottom: 1.5rem;
-                display: flex;
-                align-items: center;
-                gap: 0.75rem;
-                }
-
-                .analytics-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-                gap: 1.5rem;
-                margin-bottom: 3rem;
-                }
-
-                .premium-card {
-                background: white;
-                border-radius: 1.25rem;
-                padding: 1.75rem;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
-                border: 1px solid rgba(229, 231, 235, 0.5);
-                transition: transform 0.2s, box-shadow 0.2s;
-                height: 100%;
-                display: flex;
-                flex-direction: column;
-                }
-
-                .premium-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025);
-                }
-
-                .card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                margin-bottom: 1.5rem;
-                }
-
-                .card-title {
-                font-size: 1.125rem;
-                font-weight: 600;
-                color: var(--gray-800);
-                }
-
-                .card-icon {
-                width: 36px;
-                height: 36px;
-                border-radius: 10px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.25rem;
-                background: var(--gray-50);
-                }
-
-                /* Response Rate Circle */
-                .progress-circle-container {
-                display: flex;
-                align-items: center;
-                gap: 1.5rem;
-                }
-
-                .progress-circle {
-                position: relative;
-                width: 100px;
-                height: 100px;
-                border-radius: 50%;
-                background: conic-gradient(var(--primary-blue) 0%, var(--gray-100) 0%);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                }
-
-                .progress-circle::before {
-                content: '';
-                position: absolute;
-                width: 84px;
-                height: 84px;
-                border-radius: 50%;
-                background: white;
-                }
-
-                .progress-value {
-                position: relative;
-                font-size: 1.5rem;
-                font-weight: 700;
-                color: var(--gray-900);
-                }
-
-                .stat-detail {
-                display: flex;
-                flex-direction: column;
-                gap: 0.25rem;
-                }
-
-                .stat-label {
-                font-size: 0.875rem;
-                color: var(--gray-500);
-                }
-
-                .stat-highlight {
-                font-size: 0.875rem;
-                font-weight: 600;
-                color: var(--success);
-                background: #dcfce7;
-                padding: 0.25rem 0.75rem;
-                border-radius: 999px;
-                display: inline-block;
-                width: fit-content;
-                }
-
-                /* Skill Gaps */
-                .skill-gap-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 0.75rem 0;
-                border-bottom: 1px solid var(--gray-100);
-                }
-
-                .skill-gap-item:last-child {
-                border-bottom: none;
-                }
-
-                .skill-name {
-                font-weight: 500;
-                color: var(--gray-700);
-                display: flex;
-                align-items: center;
-                gap: 0.5rem;
-                }
-
-                .skill-demand-bar {
-                width: 80px;
-                height: 6px;
-                background: var(--gray-100);
-                border-radius: 3px;
-                overflow: hidden;
-                }
-
-                .skill-demand-fill {
-                height: 100%;
-                background: var(--warning);
-                border-radius: 3px;
-                }
-
-                /* Community List */
-                .community-list {
-                display: flex;
-                flex-direction: column;
-                gap: 1rem;
-                }
-
-                .community-item {
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding: 1rem;
-                background: var(--gray-50);
-                border-radius: 1rem;
-                transition: background 0.2s;
-                }
-
-                .community-item:hover {
-                background: white;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                }
-
-                .community-info {
-                display: flex;
-                align-items: center;
-                gap: 1rem;
-                }
-
-                .community-avatar {
-                width: 48px;
-                height: 48px;
-                border-radius: 12px;
-                background: white;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 1.5rem;
-                box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-                }
-
-                .referral-box {
-                background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-                border-radius: 1.25rem;
-                padding: 2rem;
-                color: white;
-                position: relative;
-                overflow: hidden;
-                }
-
-                .referral-box::after {
-                content: '';
-                position: absolute;
-                top: 0;
-                right: 0;
-                width: 150px;
-                height: 150px;
-                background: rgba(255,255,255,0.1);
-                border-radius: 50%;
-                transform: translate(30%, -30%);
-                }
-
-                .search-input-group {
-                background: rgba(255, 255, 255, 0.2);
-                backdrop-filter: blur(10px);
-                padding: 0.5rem;
-                border-radius: 0.75rem;
-                display: flex;
-                gap: 0.5rem;
-                border: 1px solid rgba(255, 255, 255, 0.3);
-                margin-top: 1.5rem;
-                }
-
-                .search-input-group input {
-                background: transparent;
-                border: none;
-                color: white;
-                width: 100%;
-                outline: none;
-                padding: 0.5rem;
-                font-size: 0.95rem;
-                }
-
-                .search-input-group input::placeholder {
-                color: rgba(255, 255, 255, 0.7);
-                }
-
-                .search-input-group button {
-                background: white;
-                color: #6366f1;
-                border: none;
-                padding: 0.5rem 1.25rem;
-                border-radius: 0.5rem;
-                font-weight: 600;
-                cursor: pointer;
-                transition: transform 0.1s;
-                }
-
-                .search-input-group button:hover {
-                transform: scale(1.05);
-                }
-                </style>
-                </head>
-
-                <body>
-                    style="background: #dcfce7; color: #166534; padding: 0.25rem 0.75rem; border-radius: 9999px;
-                    font-size: 0.75rem; font-weight: 500;"
-                    id="alertsStatus">Active</span>
-            </div>
-            <p style="color: var(--gray-600); font-size: 0.875rem; margin-bottom: 1rem;">
-                You will receive email notifications for new jobs matching your preferences.
-            </p>
-            <button class="btn btn-secondary" onclick="testJobAlertUI()" style="width: 100%;">Send
-                Test Alert Now</button>
-        </div>
-        </div>
-
-        <!-- Advanced Analytics Section -->
-        <div style="margin-top: 3rem;">
-            <h2 class="section-title">
-                <span>📈</span> Advanced Analytics
-            </h2>
-            <div class="analytics-grid">
-
-                <!-- Response Rate Card -->
-                <div class="premium-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Response Rate</h3>
-                        <div class="card-icon">📊</div>
+                <div class="job-card animate-scale-in" style="animation-delay: 400ms;">
+                    <span class="match-badge">91% Match</span>
+                    <div class="company-badge" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">F</div>
+                    <h3 class="text-xl font-semibold mb-2">Data Scientist</h3>
+                    <p class="text-secondary mb-4">Flipkart • Bangalore • ₹30-45 LPA</p>
+                    <div class="flex gap-2 mb-4">
+                        <span class="badge">Python</span>
+                        <span class="badge">ML</span>
+                        <span class="badge">SQL</span>
                     </div>
-                    <div class="progress-circle-container">
-                        <div class="progress-circle" id="responseRateCircle">
-                            <span class="progress-value" id="responseRateValue">--%</span>
-                        </div>
-                        <div class="stat-detail">
-                            <span class="stat-label">Industry Average: 12%</span>
-                            <span class="stat-highlight" id="responseRateText">Loading...</span>
-                        </div>
+                    <div class="flex gap-3">
+                        <button class="btn btn-primary flex-1">Quick Apply</button>
+                        <button class="btn btn-outline">Details</button>
                     </div>
-                    <p style="margin-top: 1.5rem; font-size: 0.875rem; color: var(--gray-600); line-height: 1.5;">
-                        Your profile is performing well. Consider optimizing your headline to boost this
-                        further.
-                    </p>
                 </div>
 
-                <!-- Skill Gaps Card -->
-                <div class="premium-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Skill Gaps</h3>
-                        <div class="card-icon">⚡</div>
+                <div class="job-card animate-scale-in" style="animation-delay: 500ms;">
+                    <span class="match-badge">87% Match</span>
+                    <div class="company-badge" style="background: linear-gradient(135deg, #0cebeb 0%, #20e3b2 100%);">Z</div>
+                    <h3 class="text-xl font-semibold mb-2">Product Manager</h3>
+                    <p class="text-secondary mb-4">Zomato • Gurgaon • ₹18-28 LPA</p>
+                    <div class="flex gap-2 mb-4">
+                        <span class="badge">Product</span>
+                        <span class="badge">Analytics</span>
+                        <span class="badge">Agile</span>
                     </div>
-                    <div id="skillGapsList" style="flex: 1;">
-                        <p style="color:var(--gray-500);font-size:0.9rem;">Analyzing job descriptions...
-                        </p>
+                    <div class="flex gap-3">
+                        <button class="btn btn-primary flex-1">Quick Apply</button>
+                        <button class="btn btn-outline">Details</button>
                     </div>
-                    <button class="btn btn-secondary" style="width: 100%; margin-top: 1rem; justify-content: center;">
-                        View Learning Resources
-                    </button>
                 </div>
 
-                <!-- Success Patterns -->
-                <div class="premium-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Success Patterns</h3>
-                        <div class="card-icon">🎯</div>
+                <div class="job-card animate-scale-in" style="animation-delay: 600ms;">
+                    <span class="match-badge">82% Match</span>
+                    <div class="company-badge" style="background: linear-gradient(135deg, #feca57 0%, #ee5a6f 100%);">C</div>
+                    <h3 class="text-xl font-semibold mb-2">Frontend Engineer</h3>
+                    <p class="text-secondary mb-4">Cred • Bangalore • ₹20-30 LPA</p>
+                    <div class="flex gap-2 mb-4">
+                        <span class="badge">Vue.js</span>
+                        <span class="badge">JavaScript</span>
+                        <span class="badge">CSS</span>
                     </div>
-                    <div style="flex: 1;">
-                        <p id="successPatternText"
-                            style="font-size: 0.95rem; color: var(--gray-700); margin-bottom: 1rem; line-height: 1.6;">
-                            Loading patterns...
-                        </p>
-                        <div id="successPatternTags" style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
-                        </div>
-                    </div>
-                    <div style="margin-top: 1.5rem; padding: 1rem; background: var(--gray-50); border-radius: 0.75rem;">
-                        <p style="font-size: 0.8rem; color: var(--gray-600);">
-                            <strong>💡 Pro Tip:</strong> Focus your applications on these areas to
-                            maximize interview calls.
-                        </p>
+                    <div class="flex gap-3">
+                        <button class="btn btn-primary flex-1">Quick Apply</button>
+                        <button class="btn btn-outline">Details</button>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Community & Referrals Section -->
-        <div style="margin-top: 1rem; margin-bottom: 4rem;">
-            <h2 class="section-title">
-                <span>🤝</span> Community & Referrals
-            </h2>
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1.5rem;">
-
-                <!-- Active Groups -->
-                <div class="premium-card">
-                    <div class="card-header">
-                        <h3 class="card-title">Your Communities</h3>
-                        <a href="#"
-                            style="font-size: 0.875rem; color: var(--primary-blue); text-decoration: none; font-weight: 500;">Explore
-                            All</a>
-                    </div>
-                    <div id="communityGroupsList" class="community-list">
-                        <p style="color:var(--gray-500);font-size:0.9rem;">Loading communities...</p>
-                    </div>
-                </div>
-
-                <!-- Referral Quick Action -->
-                <div class="referral-box">
-                    <h3 style="font-size: 1.5rem; font-weight: 700; margin-bottom: 0.5rem;">Need a
-                        Referral?</h3>
-                    <p style="font-size: 0.95rem; opacity: 0.9; line-height: 1.5;">
-                        Leverage your network. Find alumni or connections at your target companies
-                        instantly.
-                    </p>
-                    <div class="search-input-group">
-                        <input type="text" placeholder="Company (e.g. Google)">
-                        <button>Find</button>
-                    </div>
-                </div>
-
-                <!-- Company Insights (Premium) -->
-                <div class="premium-card" style="grid-column: span 2;">
-                    <div class="card-header">
-                        <h3 class="card-title">Company Insider Intel 🕵️‍♂️</h3>
-                        <span
-                            style="background: var(--gray-900); color: white; padding: 0.25rem 0.75rem; border-radius: 999px; font-size: 0.75rem;">Premium</span>
-                    </div>
-                    <div style="display: flex; gap: 1rem; margin-bottom: 1.5rem;">
-                        <input type="text" id="insightCompanyInput" placeholder="Enter company name (e.g. Google)"
-                            style="flex: 1; padding: 0.75rem; border: 1px solid var(--gray-200); border-radius: 0.5rem; outline: none;">
-                        <button class="btn btn-primary" onclick="fetchCompanyInsights()">Get
-                            Intel</button>
-                    </div>
-                    <div id="companyInsightsResult"
-                        style="display: none; background: var(--gray-50); padding: 1.5rem; border-radius: 1rem;">
-                        <!-- Dynamic Content -->
-                    </div>
-                </div>
+        <!-- Quick Actions -->
+        <div style="margin-bottom: var(--space-12);">
+            <h2 class="text-2xl font-bold mb-6">Quick Actions</h2>
+            <div class="grid grid-cols-4 gap-4">
+                <a href="chat.html" class="card card-flat text-center hover:shadow-md transition-all">
+                    <div style="font-size: 2rem; margin-bottom: var(--space-3);">🤖</div>
+                    <div class="font-semibold">Ask Orion AI</div>
+                </a>
+                <a href="ats-checker.html" class="card card-flat text-center hover:shadow-md transition-all">
+                    <div style="font-size: 2rem; margin-bottom: var(--space-3);">📝</div>
+                    <div class="font-semibold">Check ATS Score</div>
+                </a>
+                <a href="interview.html" class="card card-flat text-center hover:shadow-md transition-all">
+                    <div style="font-size: 2rem; margin-bottom: var(--space-3);">🎤</div>
+                    <div class="font-semibold">Practice Interview</div>
+                </a>
+                <a href="skills.html" class="card card-flat text-center hover:shadow-md transition-all">
+                    <div style="font-size: 2rem; margin-bottom: var(--space-3);">🧠</div>
+                    <div class="font-semibold">Skill Roadmap</div>
+                </a>
             </div>
         </div>
     </main>
 
-    <script src="assets/js/session-manager.js"></script>
-    <script src="assets/js/mobile-nav.js"></script>
-    <script src="assets/js/language-manager.js"></script>
-    <script src="assets/js/analytics.js"></script>
+    <!-- Floating AI Chat Button -->
+    <div class="ai-chat-fab" onclick="window.location.href='chat.html'">
+        <span style="font-size: 1.5rem; color: white;">💬</span>
+    </div>
+
     <script src="assets/js/app.js"></script>
-    <script>
-        // Render recommended jobs
-        function renderJobs() {
-            const jobsList = document.getElementById('jobsList');
-            const topJobs = AppState.jobs.slice(0, 3);
-
-            jobsList.innerHTML = topJobs.map(job => `
-                <div class="job-card">
-                    <div class="job-header">
-                        <div class="company-logo">${job.company.charAt(0)}</div>
-                        <div class="job-info">
-                            <div class="job-title">${job.title}</div>
-                            <div class="job-company">${job.company}</div>
-                        </div>
-                        <div class="match-score ${getMatchScoreClass(job.matchScore)}">${job.matchScore}% Match</div>
-                    </div>
-                    <div class="job-meta">
-                        <span>📍 ${job.location}</span>
-                        <span>💰 ${job.salary}</span>
-                        <span>🕒 ${job.posted}</span>
-                    </div>
-                    <div class="skills">
-                        ${job.skills.map(skill => `<span class="skill-tag">${skill}</span>`).join('')}
-                    </div>
-                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
-                        <button class="btn btn-primary" onclick="quickApply(${job.id})">Quick Apply</button>
-                        <button class="btn btn-secondary" onclick="viewJob(${job.id})">View Details</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        async function quickApply(jobId) {
-            const btn = event.target;
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = 'Applying...';
-
-            try {
-                await window.JoBikaAPI.createApplication(jobId);
-                btn.textContent = 'Applied ✅';
-                btn.classList.remove('btn-primary');
-                btn.classList.add('btn-success');
-                alert('Application submitted successfully! Our AI has customized your resume for this role.');
-            } catch (error) {
-                console.error('Application failed:', error);
-                alert('Failed to apply: ' + error.message);
-                btn.disabled = false;
-                btn.textContent = originalText;
-            }
-        }
-
-        function viewJob(jobId) {
-            window.location.href = `jobs.html?id=${jobId}`;
-        }
-
-        function logout() {
-            if (confirm('Are you sure you want to logout?')) {
-                localStorage.clear();
-                window.location.href = 'index.html';
-            }
-        }
-
-        async function testJobAlertUI() {
-            const btn = event.target;
-            const originalText = btn.textContent;
-            btn.disabled = true;
-            btn.textContent = 'Sending...';
-
-            try {
-                const result = await window.JoBikaAPI.testJobAlert();
-                if (result.success) {
-                    alert(`Alert sent! ${result.jobs_sent} jobs found.`);
-                } else {
-                    alert('Alert check complete: ' + (result.message || result.error));
-                }
-            } catch (error) {
-                alert('Failed to send alert: ' + error.message);
-            } finally {
-                btn.textContent = originalText;
-                btn.disabled = false;
-            }
-        }
-
-        async function loadUserStatus() {
-            try {
-                const response = await fetch(`${API_BASE_URL}/user/status?userId=demo-user`);
-                const data = await response.json();
-                document.getElementById('userCredits').textContent = data.credits;
-            } catch (e) { console.error(e); }
-        }
-
-        async function fetchCompanyInsights() {
-            const company = document.getElementById('insightCompanyInput').value;
-            if (!company) return;
-
-            const resultDiv = document.getElementById('companyInsightsResult');
-            resultDiv.style.display = 'block';
-            resultDiv.innerHTML = '<p>Fetching intel...</p>';
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/company/insights?userId=demo-user&company=${company}`);
-                const data = await response.json();
-
-                if (response.status === 403) {
-                    resultDiv.innerHTML = `<p style="color: var(--warning);">⚠️ Upgrade to Premium to view full insights!</p>`;
-                    return;
-                }
-
-                resultDiv.innerHTML = `
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                                        <div>
-                                            <h4 style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 0.5rem;">Salary Insights</h4>
-                                            ${Object.entries(data.salaryInsights).map(([role, salary]) => `
-                                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem; font-size: 0.9rem;">
-                                                    <span>${role}</span>
-                                                    <strong>${salary}</strong>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                        <div>
-                                            <h4 style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 0.5rem;">Interview Process</h4>
-                                            <p style="font-size: 0.9rem;"><strong>Duration:</strong> ${data.interviewProcess.avgDuration}</p>
-                                            <p style="font-size: 0.9rem;"><strong>Difficulty:</strong> ${data.interviewProcess.difficulty}</p>
-                                        </div>
-                                    </div>
-                                `;
-            } catch (e) {
-                resultDiv.innerHTML = '<p style="color: var(--error);">Failed to fetch insights.</p>';
-            }
-        }
-
-        // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
-            loadUserStatus();
-            // Check if guest
-            if (sessionManager.isGuest) {
-                document.getElementById('userName').textContent = 'Guest User';
-                document.getElementById('userRole').textContent = 'Exploring Demo Mode';
-
-                // Populate Demo Data
-                const stats = document.querySelectorAll('.stat-value');
-                if (stats.length >= 3) {
-                    stats[0].textContent = '142'; // Applications
-                    stats[1].textContent = '8';   // Interviews
-                    stats[2].textContent = '2';   // Offers
-                }
-
-                // Add "Demo Mode" badge
-                const header = document.querySelector('.header');
-                const badge = document.createElement('span');
-                badge.className = 'skill-tag';
-                badge.style.background = '#e0f2fe';
-                badge.style.color = '#0284c7';
-                badge.style.marginLeft = '1rem';
-                badge.textContent = 'Demo Mode';
-                header.querySelector('h1').appendChild(badge);
-
-                // Update sidebar login link
-                const logoutLink = document.querySelector('a[onclick="logout()"]');
-                if (logoutLink) {
-                    logoutLink.innerHTML = '<span>🔑</span><span>Login</span>';
-                    logoutLink.onclick = (e) => {
-                        e.preventDefault();
-                        sessionManager.showAuthModal('login');
-                    };
-                }
-            }
-
-            renderJobs();
-            renderRecentActivity();
-        });
-
-        // Render Recent Activity
-        function renderRecentActivity() {
-            const container = document.getElementById('recentActivity');
-            if (!container) return;
-
-            if (sessionManager.isGuest) {
-                container.innerHTML = `
-                                    <div style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gray-200);">
-                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--success); margin-top: 0.5rem;"></div>
-                                        <div>
-                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Interview scheduled</p>
-                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Google India - Senior Developer</p>
-                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">2 hours ago</p>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid var(--gray-200);">
-                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--primary-blue); margin-top: 0.5rem;"></div>
-                                        <div>
-                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Application submitted</p>
-                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Amazon - Backend Engineer</p>
-                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">5 hours ago</p>
-                                        </div>
-                                    </div>
-                                    <div style="display: flex; gap: 1rem; padding: 1rem 0;">
-                                        <div style="width: 8px; height: 8px; border-radius: 50%; background: var(--warning); margin-top: 0.5rem;"></div>
-                                        <div>
-                                            <p style="font-weight: 500; margin-bottom: 0.25rem;">Profile viewed</p>
-                                            <p style="font-size: 0.875rem; color: var(--gray-600);">Microsoft recruiter</p>
-                                            <p style="font-size: 0.75rem; color: var(--gray-500); margin-top: 0.25rem;">1 day ago</p>
-                                        </div>
-                                    </div>
-                                `;
-            } else {
-                container.innerHTML = `
-                                    <div style="text-align: center; padding: 2rem; color: var(--gray-600);">
-                                        <p>No recent activity.</p>
-                                        <a href="jobs.html" style="color: var(--primary-blue); text-decoration: none; font-size: 0.875rem;">Start applying →</a>
-                                    </div>
-                                `;
-            }
-        }
-
-        function testJobAlertUI() {
-            if (sessionManager.isGuest) {
-                // Show realistic toast
-                const toast = document.createElement('div');
-                toast.style.cssText = 'position:fixed;bottom:2rem;right:2rem;background:#10b981;color:white;padding:1rem 2rem;border-radius:0.5rem;box-shadow:0 4px 6px rgba(0,0,0,0.1);z-index:10000;animation:slideIn 0.3s forwards;display:flex;align-items:center;gap:0.5rem;';
-                toast.innerHTML = `
-                                    <span style="font-size:1.25rem;">🔔</span>
-                                    <div>
-                                        <div style="font-weight:600;">Test Alert Sent!</div>
-                                        <div style="font-size:0.875rem;">Check your email inbox. (Demo)</div>
-                                    </div>
-                                `;
-                document.body.appendChild(toast);
-
-                // Add animation styles if not present
-                if (!document.getElementById('toastStyles')) {
-                    const style = document.createElement('style');
-                    style.id = 'toastStyles';
-                    style.textContent = `
-                                        @keyframes slideIn { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-                                        @keyframes slideOut { from { transform: translateY(0); opacity: 1; } to { transform: translateY(100%); opacity: 0; } }
-                                    `;
-                    document.head.appendChild(style);
-                }
-
-                setTimeout(() => {
-                    toast.style.animation = 'slideOut 0.3s forwards';
-                    setTimeout(() => toast.remove(), 300);
-                }, 3000);
-            } else {
-                async function loadDashboardData() {
-                    const userId = 1; // Mock user ID
-
-                    // Load Analytics
-                    try {
-                        const analytics = await window.JoBikaAPI.getAnalytics(userId);
-                        if (analytics) {
-                            updateAnalyticsUI(analytics);
-                        }
-                    } catch (e) {
-                        console.error('Failed to load analytics', e);
-                    }
-
-                    // Load Community
-                    try {
-                        const data = await window.JoBikaAPI.getCommunityGroups();
-                        if (data && data.groups) {
-                            updateCommunityUI(data.groups);
-                        }
-                    } catch (e) {
-                        console.error('Failed to load community', e);
-                    }
-                }
-
-                document.addEventListener('DOMContentLoaded', () => {
-                    // ... existing init ...
-                    loadDashboardData();
-                });
-
-                async function loadUserStatus() {
-                    try {
-                        const response = await fetch(`${API_BASE_URL}/user/status?userId=demo-user`);
-                        const data = await response.json();
-                        document.getElementById('userCredits').textContent = data.credits;
-                        // Update badge if needed
-                    } catch (e) { console.error(e); }
-                }
-
-                async function fetchCompanyInsights() {
-                    const company = document.getElementById('insightCompanyInput').value;
-                    if (!company) return;
-
-                    const resultDiv = document.getElementById('companyInsightsResult');
-                    resultDiv.style.display = 'block';
-                    resultDiv.innerHTML = '<p>Fetching intel...</p>';
-
-                    try {
-                        const response = await fetch(`${API_BASE_URL}/company/insights?userId=demo-user&company=${company}`);
-                        const data = await response.json();
-
-                        if (response.status === 403) {
-                            resultDiv.innerHTML = `<p style="color: var(--warning);">⚠️ Upgrade to Premium to view full insights!</p>`;
-                            return;
-                        }
-
-                        resultDiv.innerHTML = `
-                                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
-                                        <div>
-                                            <h4 style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 0.5rem;">Salary Insights</h4>
-                                            ${Object.entries(data.salaryInsights).map(([role, salary]) => `
-                                                <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem; font-size: 0.9rem;">
-                                                    <span>${role}</span>
-                                                    <strong>${salary}</strong>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                        <div>
-                                            <h4 style="font-size: 0.9rem; color: var(--gray-500); margin-bottom: 0.5rem;">Interview Process</h4>
-                                            <p style="font-size: 0.9rem;"><strong>Duration:</strong> ${data.interviewProcess.avgDuration}</p>
-                                            <p style="font-size: 0.9rem;"><strong>Difficulty:</strong> ${data.interviewProcess.difficulty}</p>
-                                        </div>
-                                    </div>
-                                `;
-                    } catch (e) {
-                        resultDiv.innerHTML = '<p style="color: var(--error);">Failed to fetch insights.</p>';
-                    }
-                }
-
-                document.addEventListener('DOMContentLoaded', () => {
-                    // ... existing init ...
-                    loadDashboardData();
-                    loadUserStatus();
-                });
-
-                function updateAnalyticsUI(data) {
-                    // Response Rate
-                    const rate = parseFloat(data.applicationStats.responseRate);
-                    document.getElementById('responseRateValue').textContent = rate + '%';
-                    document.getElementById('responseRateText').textContent = rate > 12 ? 'Top 20% of applicants' : 'Keep applying!';
-
-                    // Update Circle Gradient
-                    const circle = document.getElementById('responseRateCircle');
-                    if (circle) {
-                        circle.style.background = `conic-gradient(var(--primary-blue) ${rate}%, var(--gray-100) ${rate}%)`;
-                    }
-
-                    // Skill Gaps
-                    const skillsList = document.getElementById('skillGapsList');
-                    if (data.skillGaps && data.skillGaps.length > 0) {
-                        skillsList.innerHTML = data.skillGaps.map(gap => `
-                                    <div class="skill-gap-item">
-                                        <div class="skill-name">
-                                            <span>${gap.skill}</span>
-                                        </div>
-                                        <div style="text-align: right;">
-                                            <div class="skill-demand-bar">
-                                                <div class="skill-demand-fill" style="width: ${Math.min(gap.appearanceCount * 20, 100)}%"></div>
-                                            </div>
-                                            <span style="font-size: 0.75rem; color: var(--gray-500);">${gap.appearanceCount} jobs</span>
-                                        </div>
-                                    </div>
-                                `).join('');
-                    } else {
-                        skillsList.innerHTML = '<p style="color: var(--success); font-size: 0.9rem;">No major skill gaps found! 🎉</p>';
-                    }
-
-                    // Success Patterns
-                    if (data.successPatterns) {
-                        document.getElementById('successPatternText').innerHTML = data.successPatterns.insight.replace('40% more', '<strong style="color:var(--success)">40% more</strong>');
-                        const tagsContainer = document.getElementById('successPatternTags');
-                        tagsContainer.innerHTML = '';
-
-                        if (data.successPatterns.mostResponsiveIndustry !== 'N/A') {
-                            tagsContainer.innerHTML += `<span class="skill-tag" style="background: #e0e7ff; color: #4338ca; padding: 0.5rem 1rem; font-size: 0.85rem;">🏢 ${data.successPatterns.mostResponsiveIndustry}</span>`;
-                        }
-                        if (data.successPatterns.mostResponsiveCompanySize !== 'N/A') {
-                            tagsContainer.innerHTML += `<span class="skill-tag" style="background: #f3e8ff; color: #7e22ce; padding: 0.5rem 1rem; font-size: 0.85rem;">👥 ${data.successPatterns.mostResponsiveCompanySize}</span>`;
-                        }
-                    }
-                }
-
-                function updateCommunityUI(groups) {
-                    const container = document.getElementById('communityGroupsList');
-                    if (groups && groups.length > 0) {
-                        container.innerHTML = groups.map(group => `
-                                    <div class="community-item">
-                                        <div class="community-info">
-                                            <div class="community-avatar">
-                                                ${group.name.charAt(0)}
-                                            </div>
-                                            <div>
-                                                <div style="font-weight: 600; color: var(--gray-900);">${group.name}</div>
-                                                <div style="padding: 1rem; border-top: 1px solid var(--gray-200); margin-top: auto;">
-                    <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); padding: 1rem; border-radius: 0.75rem; margin-bottom: 1rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
-                            <span style="font-size: 0.8rem; font-weight: 600; color: var(--primary-blue);">Free Plan</span>
-                            <a href="pricing.html" style="font-size: 0.75rem; color: var(--primary-blue); text-decoration: none;">Upgrade</a>
-                        </div>
-                        <div style="font-size: 0.8rem; color: var(--gray-600);">
-                            Credits: <strong id="userCredits">Loading...</strong>
-                        </div>
-                    </div>
-                    <div class="user-profile" style="display: flex; align-items: center; gap: 0.75rem;">
-                                                    <span>👥 ${group.members.toLocaleString()} members</span>
-                                                    <span style="width: 4px; height: 4px; background: var(--gray-300); border-radius: 50%;"></span>
-                                                    <span style="color: var(--success);">● Active now</span>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <button class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.875rem;">Join</button>
-                                    </div>
-                                `).join('');
-                    } else {
-                        container.innerHTML = '<p style="color:var(--gray-500);">No active communities found.</p>';
-                    }
-                }
-            }
-        }
-    </script>
 </body>
-
 </html>

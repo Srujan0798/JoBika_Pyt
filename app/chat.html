@@ -5,155 +5,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Orion AI Coach - JobSaathi</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
-        rel="stylesheet">
-    <link rel="stylesheet" href="assets/css/index.css">
+    <link rel="stylesheet" href="assets/css/premium.css">
     <style>
+        body {
+            overflow: hidden;
+            height: 100vh;
+        }
+
+        /* Full-screen Chat Layout */
         .chat-container {
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 140px);
-            background: white;
-            border-radius: var(--radius-lg);
-            border: 1px solid #E2E8F0;
-            overflow: hidden;
+            height: 100vh;
+            background: var(--bg-secondary);
         }
 
-        .chat-messages {
-            flex: 1;
-            padding: var(--spacing-lg);
-            overflow-y: auto;
+        /* Top Header */
+        .chat-header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border-light);
+            padding: var(--space-4) var(--space-6);
             display: flex;
-            flex-direction: column;
-            gap: var(--spacing-md);
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: var(--space-3);
+        }
+
+        .orion-avatar {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius-full);
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: var(--text-lg);
+        }
+
+        /* Messages Area */
+        .messages-area {
+            flex: 1;
+            overflow-y: auto;
+            padding: var(--space-8) 0;
+        }
+
+        .messages-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 var(--space-6);
         }
 
         .message {
-            max-width: 80%;
-            padding: var(--spacing-md);
-            border-radius: var(--radius-lg);
-            line-height: 1.5;
+            display: flex;
+            gap: var(--space-4);
+            margin-bottom: var(--space-6);
+            animation: slideIn var(--transition-base) ease-out;
         }
 
-        .message.user {
-            align-self: flex-end;
-            background: var(--primary-color);
+        .message-avatar {
+            width: 2.25rem;
+            height: 2.25rem;
+            border-radius: var(--radius-full);
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: var(--font-semibold);
+            font-size: var(--text-sm);
+        }
+
+        .message.user .message-avatar {
+            background: var(--gradient-secondary);
             color: white;
-            border-bottom-right-radius: 2px;
         }
 
-        .message.ai {
-            align-self: flex-start;
-            background: #F1F5F9;
-            color: var(--neutral-color);
-            border-bottom-left-radius: 2px;
+        .message.ai .message-avatar {
+            background: var(--gradient-primary);
+            color: white;
         }
 
-        .quick-actions {
-            padding: var(--spacing-md);
-            border-top: 1px solid #E2E8F0;
+        .message-content {
+            flex: 1;
+            padding: var(--space-4) var(--space-5);
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-sm);
+            line-height: var(--leading-relaxed);
+        }
+
+        .message.user .message-content {
+            background: rgba(102, 126, 234, 0.08);
+        }
+
+        /* Quick Prompts */
+        .quick-prompts {
             display: flex;
-            gap: var(--spacing-sm);
-            overflow-x: auto;
+            gap: var(--space-3);
+            padding: 0 var(--space-6);
+            margin-bottom: var(--space-6);
+            flex-wrap: wrap;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
+        .quick-prompt {
+            padding: 0.75rem 1.25rem;
+            background: var(--surface);
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            font-size: var(--text-sm);
+            font-weight: var(--font-medium);
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .quick-prompt:hover {
+            border-color: var(--primary);
+            background: rgba(102, 126, 234, 0.05);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        /* Input Area */
         .input-area {
-            padding: var(--spacing-md);
-            border-top: 1px solid #E2E8F0;
+            background: var(--surface);
+            border-top: 1px solid var(--border-light);
+            padding: var(--space-6);
+            box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .input-container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .chat-input {
+            width: 100%;
+            padding: 1.125rem 3.5rem 1.125rem 1.5rem;
+            border: 2px solid var(--border-light);
+            border-radius: var(--radius-xl);
+            font-size: var(--text-base);
+            resize: none;
+            max-height: 200px;
+            transition: all var(--transition-base);
+            background: var(--bg-secondary);
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .send-button {
+            position: absolute;
+            right: var(--space-3);
+            bottom: var(--space-3);
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: var(--radius-full);
+            background: var(--gradient-primary);
+            border: none;
             display: flex;
-            gap: var(--spacing-md);
-            background: #F8FAFC;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all var(--transition-base);
+        }
+
+        .send-button:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* Welcome State */
+        .welcome-state {
+            text-align: center;
+            padding: var(--space-16) var(--space-6);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .welcome-icon {
+            font-size: 4rem;
+            margin-bottom: var(--space-6);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
     </style>
 </head>
 
 <body>
-    <div class="app-container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="brand">
-                <span>🚀</span> JobSaathi
+    <div class="chat-container">
+        <!-- Header -->
+        <div class="chat-header">
+            <div class="chat-title">
+                <a href="dashboard.html" class="text-secondary" style="text-decoration: none; font-size: 1.25rem;">←</a>
+                <div class="orion-avatar">🤖</div>
+                <div>
+                    <div class="font-bold">Orion AI Coach</div>
+                    <div class="text-sm text-secondary">Your intelligent career assistant</div>
+                </div>
             </div>
+            <button class="btn btn-ghost" onclick="clearChat()">Clear Chat</button>
+        </div>
 
-            <nav>
-                <a href="dashboard.html" class="nav-item">
-                    <span class="nav-icon">📊</span> Dashboard
-                </a>
-                <a href="jobs.html" class="nav-item">
-                    <span class="nav-icon">💼</span> Job Matches
-                </a>
-                <a href="tracker.html" class="nav-item">
-                    <span class="nav-icon">📌</span> Tracker
-                </a>
-                <div style="margin: 20px 0; border-top: 1px solid #E2E8F0;"></div>
-                <div class="text-gray text-sm font-bold mb-2 px-4">AI TOOLS</div>
-                <a href="chat.html" class="nav-item active">
-                    <span class="nav-icon">🤖</span> Orion Coach
-                </a>
-                <a href="ats-checker.html" class="nav-item">
-                    <span class="nav-icon">📝</span> ATS Checker
-                </a>
-                <a href="skills.html" class="nav-item">
-                    <span class="nav-icon">🧠</span> Skill Advisor
-                </a>
-                <a href="interview.html" class="nav-item">
-                    <span class="nav-icon">🎤</span> Interview Prep
-                </a>
-                <a href="salary.html" class="nav-item">
-                    <span class="nav-icon">💰</span> Salary Predictor
-                </a>
-                <div style="margin: 20px 0; border-top: 1px solid #E2E8F0;"></div>
-                <a href="pricing.html" class="nav-item">
-                    <span class="nav-icon">💎</span> Premium
-                </a>
-                <a href="settings.html" class="nav-item">
-                    <span class="nav-icon">⚙️</span> Settings
-                </a>
-            </nav>
-        </aside>
-
-        <!-- Main Content -->
-        <main class="main-content">
-            <header class="mb-6">
-                <h1 class="text-2xl font-bold mb-2">Orion AI Coach</h1>
-                <p class="text-gray">Your personal career assistant. Ask anything!</p>
-            </header>
-
-            <div class="chat-container">
-                <div class="chat-messages" id="messages">
-                    <div class="message ai">
-                        Hi Roshwin! I'm Orion, your AI career copilot. I can help you with resume reviews, interview
-                        prep, or salary negotiation. What would you like to work on today?
+        <!-- Messages Area -->
+        <div class="messages-area" id="messagesArea">
+            <div id="messagesContainer" class="messages-container">
+                <!-- Welcome State -->
+                <div class="welcome-state" id="welcomeState">
+                    <div class="welcome-icon">👋</div>
+                    <h1 class="text-3xl font-bold mb-4">Hi, I'm Orion!</h1>
+                    <p class="text-lg text-secondary mb-8">
+                        Your AI career coach. I can help you with resume reviews, interview prep,
+                        salary negotiation, and career advice tailored for the Indian job market.
+                    </p>
+                    <div class="quick-prompts">
+                        <button class="quick-prompt" onclick="sendQuickPrompt('Review my resume')">
+                            📝 Review my resume
+                        </button>
+                        <button class="quick-prompt" onclick="sendQuickPrompt('Practice mock interview')">
+                            🎤 Practice interview
+                        </button>
+                        <button class="quick-prompt" onclick="sendQuickPrompt('How to negotiate salary')">
+                            💰 Salary negotiation
+                        </button>
+                        <button class="quick-prompt" onclick="sendQuickPrompt('Career advice for switching')">
+                            🚀 Career advice
+                        </button>
                     </div>
                 </div>
-
-                <div class="quick-actions">
-                    <button class="btn btn-secondary text-sm" onclick="sendPrompt('Review my resume')">📝 Resume
-                        Review</button>
-                    <button class="btn btn-secondary text-sm" onclick="sendPrompt('Start mock interview')">🎤 Mock
-                        Interview</button>
-                    <button class="btn btn-secondary text-sm" onclick="sendPrompt('Analyze skill gaps')">🧠 Skill Gap
-                        Analysis</button>
-                    <button class="btn btn-secondary text-sm" onclick="sendPrompt('Salary insights for SDE')">💰 Salary
-                        Insights</button>
-                </div>
-
-                <div class="input-area">
-                    <input type="text" id="chatInput" class="flex-1 p-3 border rounded-lg"
-                        placeholder="Ask me anything about your job search..." onkeypress="handleEnter(event)">
-                    <button class="btn btn-primary" onclick="sendMessage()">Send</button>
-                </div>
             </div>
-        </main>
+        </div>
+
+        <!-- Input Area -->
+        <div class="input-area">
+            <div class="input-container">
+                <textarea id="chatInput" class="chat-input" placeholder="Ask me anything about your career..." rows="1"
+                    onkeypress="if(event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); sendMessage(); }"></textarea>
+                <button class="send-button" onclick="sendMessage()" id="sendBtn">
+                    <span style="font-size: 1.25rem; color: white;">→</span>
+                </button>
+            </div>
+        </div>
     </div>
 
     <script src="assets/js/app.js"></script>
     <script>
-        function handleEnter(e) {
-            if (e.key === 'Enter') sendMessage();
-        }
+        let conversationHistory = [];
 
-        function sendPrompt(text) {
+        function sendQuickPrompt(text) {
             document.getElementById('chatInput').value = text;
             sendMessage();
         }
@@ -163,48 +288,128 @@
             const text = input.value.trim();
             if (!text) return;
 
-            // Add User Message
+            // Hide welcome state
+            document.getElementById('welcomeState').style.display = 'none';
+
+            // Add user message
             addMessage(text, 'user');
             input.value = '';
+            input.style.height = 'auto';
 
-            // Show Typing
+            // Disable input while processing
+            input.disabled = true;
+            document.getElementById('sendBtn').disabled = true;
+
+            // Show typing indicator
             showTyping();
 
             try {
+                // Add to history
+                conversationHistory.push({ role: 'user', content: text });
+
                 // Call API
-                const response = await window.JoBikaAPI.chatWithOrion(text);
+                const response = await window.JoBikaAPI.chatWithOrion(text, conversationHistory);
+
+                // Add to history
+                conversationHistory.push({ role: 'assistant', content: response });
+
                 removeTyping();
                 addMessage(response, 'ai');
             } catch (error) {
                 removeTyping();
-                addMessage("Sorry, I'm having trouble connecting. Please check your internet.", 'ai');
+                addMessage("Sorry, I'm having trouble connecting. Please check your internet and try again.", 'ai');
             }
+
+            // Re-enable input
+            input.disabled = false;
+            document.getElementById('sendBtn').disabled = false;
+            input.focus();
         }
 
         function addMessage(text, sender) {
-            const container = document.getElementById('messages');
+            const container = document.getElementById('messagesContainer');
             const div = document.createElement('div');
-            div.className = `message ${sender} animate-fade-in`;
-            // Simple markdown parsing for bold/lists if needed, or just text
-            div.innerHTML = text.replace(/\n/g, '<br>'); 
+            div.className = `message ${sender}`;
+
+            const avatar = document.createElement('div');
+            avatar.className = 'message-avatar';
+            avatar.textContent = sender === 'user' ? 'RR' : '🤖';
+
+            const content = document.createElement('div');
+            content.className = 'message-content';
+            content.innerHTML = formatMessage(text);
+
+            div.appendChild(avatar);
+            div.appendChild(content);
             container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+
+            // Scroll to bottom
+            document.getElementById('messagesArea').scrollTop = document.getElementById('messagesArea').scrollHeight;
+        }
+
+        function formatMessage(text) {
+            // Simple markdown-like formatting
+            return text
+                .replace(/\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\*(.*?)\*/g, '<em>$1</em>');
         }
 
         function showTyping() {
-            const container = document.getElementById('messages');
+            const container = document.getElementById('messagesContainer');
             const div = document.createElement('div');
             div.id = 'typing';
             div.className = 'message ai';
-            div.textContent = 'Orion is thinking...';
+            div.innerHTML = `
+                <div class="message-avatar">🤖</div>
+                <div class="message-content" style="opacity: 0.7;">
+                    <em>Thinking...</em>
+                </div>
+            `;
             container.appendChild(div);
-            container.scrollTop = container.scrollHeight;
+            document.getElementById('messagesArea').scrollTop = document.getElementById('messagesArea').scrollHeight;
         }
 
         function removeTyping() {
             const el = document.getElementById('typing');
             if (el) el.remove();
         }
+
+        function clearChat() {
+            if (confirm('Clear conversation history?')) {
+                conversationHistory = [];
+                document.getElementById('messagesContainer').innerHTML = `
+                    <div class="welcome-state" id="welcomeState">
+                        <div class="welcome-icon">👋</div>
+                        <h1 class="text-3xl font-bold mb-4">Hi, I'm Orion!</h1>
+                        <p class="text-lg text-secondary mb-8">
+                            Your AI career coach. I can help you with resume reviews, interview prep, 
+                            salary negotiation, and career advice tailored for the Indian job market.
+                        </p>
+                        <div class="quick-prompts">
+                            <button class="quick-prompt" onclick="sendQuickPrompt('Review my resume')">
+                                📝 Review my resume
+                            </button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('Practice mock interview')">
+                                🎤 Practice interview
+                            </button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('How to negotiate salary')">
+                                💰 Salary negotiation
+                            </button>
+                            <button class="quick-prompt" onclick="sendQuickPrompt('Career advice for switching')">
+                                🚀 Career advice
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-resize textarea
+        document.getElementById('chatInput').addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+        });
     </script>
 </body>
 
