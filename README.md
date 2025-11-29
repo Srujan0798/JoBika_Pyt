@@ -153,19 +153,19 @@ ALLOWED_ORIGINS=https://jobika.vercel.app
 
 ## 📚 **Documentation**
 
-- [Deployment Guide](./DEPLOYMENT_FINAL.md) - Complete deployment instructions
-- [Startup Workflow](./STARTUP_WORKFLOW.md) - Launch strategy
-- [Production Checklist](./PRODUCTION_CHECKLIST.md) - Pre-launch checklist
-- [Credentials](./CREDENTIALS.md) - Your saved credentials
+- [Quick Start Guide](./a_START_HERE.md) - Deploy in 20 minutes
+- [Startup Workflow](./a_JoBika_STARTUP_WORKFLOW.md) - Launch strategy
+- [Audit Report](./a_AUDIT_REPORT.md) - Project analysis
+- [Credentials](./a_CREDENTIALS.md) - Your saved credentials
 
 ---
 
 ## 🆘 **Support**
 
 **Issues?**
-1. Check [DEPLOYMENT_FINAL.md](./DEPLOYMENT_FINAL.md)
-2. Run `./backend/scripts/diagnostics.sh`
-3. Check Railway/Vercel logs
+1. Check [a_START_HERE.md](./a_START_HERE.md)
+2. Check Railway/Vercel logs
+3. Review backend health: `curl https://jobika-backend-production.up.railway.app/health`
 
 **Questions?**
 - GitHub Issues
