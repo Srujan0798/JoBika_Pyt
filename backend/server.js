@@ -6,6 +6,7 @@ const bodyParser = require('body-parser');
 // Import utilities
 const errorHandler = require('./utils/errorHandler');
 const security = require('./middleware/security');
+const authMiddleware = require('./middleware/auth');
 
 // Import services
 const DatabaseManager = require('./database/db');
