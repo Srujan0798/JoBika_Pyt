@@ -6,6 +6,8 @@ node_modules/
 .env.local
 .env.production
 server.log
+*.sqlite
+*.db
 *.db-journal
 .vscode/
 .idea/

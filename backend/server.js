@@ -9,7 +9,7 @@ const security = require('./middleware/security');
 const authMiddleware = require('./middleware/auth');
 
 // Import services
-const DatabaseManager = require('./database/db');
+const db = require('./database/db');
 const AuthService = require('./services/AuthService');
 const OrionCoachService = require('./services/OrionCoachService');
 const JobScraper = require('./services/JobScraper');
@@ -36,7 +36,7 @@ app.use(bodyParser.json({ limit: '10mb' }));
 app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Initialize services
-const db = new DatabaseManager();
+// db is imported as singleton
 const authService = new AuthService();
 const orionService = new OrionCoachService(process.env.GEMINI_API_KEY);
 const jobScraper = new JobScraper();
@@ -78,47 +78,14 @@ app.use((err, req, res, next) => {
 
 
 // ====== AUTH ROUTES ======
+app.use('/api/auth', require('./routes/auth'));
 
-app.post('/api/auth/register', async (req, res) => {
-    try {
-        const { email, password, name, ...profileData } = req.body;
-        const result = await authService.register(email, password, name, profileData);
-        res.json(result);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-app.post('/api/auth/login', async (req, res) => {
-    try {
-        const { email, password } = req.body;
-        const result = await authService.login(email, password);
-        res.json(result);
-    } catch (error) {
-        res.status(401).json({ error: error.message });
-    }
-});
-
-app.get('/api/auth/me', authService.authMiddleware.bind(authService), async (req, res) => {
-    try {
-        const user = db.getUserById(req.userId);
-        if (!user) return res.status(404).json({ error: 'User not found' });
-        res.json({
-            user: {
-                id: user.id,
-                email: user.email,
-                name: user.name,
-                profileData: JSON.parse(user.profile_data || '{}')
-            }
-        });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
+// ====== USER ROUTES ======
+app.use('/api', authMiddleware, require('./routes/user'));
 
 // ====== ORION AI CHAT ROUTES ======
 
-app.post('/api/orion/chat', authService.authMiddleware.bind(authService), async (req, res) => {
+app.post('/api/orion/chat', authMiddleware, async (req, res) => {
     try {
         const { message, folder } = req.body;
 
@@ -144,7 +111,7 @@ app.post('/api/orion/chat', authService.authMiddleware.bind(authService), async 
     }
 });
 
-app.get('/api/orion/history', authService.authMiddleware.bind(authService), (req, res) => {
+app.get('/api/orion/history', authMiddleware, (req, res) => {
     try {
         const { folder, limit } = req.query;
         const history = db.getChatHistory(req.userId, folder, parseInt(limit) || 100);
@@ -156,7 +123,7 @@ app.get('/api/orion/history', authService.authMiddleware.bind(authService), (req
 
 // ====== ATS RESUME CHECKER ROUTES ======
 
-app.post('/api/ats-check', authService.authMiddleware.bind(authService), async (req, res) => {
+app.post('/api/ats-check', authMiddleware, async (req, res) => {
     try {
         const { resumeText } = req.body;
 
@@ -183,7 +150,7 @@ app.post('/api/ats-check', authService.authMiddleware.bind(authService), async (
 
 // ====== ANALYTICS ROUTES ======
 
-app.get('/api/analytics', authService.authMiddleware.bind(authService), (req, res) => {
+app.get('/api/analytics', authMiddleware, (req, res) => {
     try {
         const stats = db.getApplicationStats(req.userId);
         res.json({ stats });
@@ -194,7 +161,7 @@ app.get('/api/analytics', authService.authMiddleware.bind(authService), (req, re
 
 // ====== COVER LETTER GENERATION ======
 
-app.post('/api/cover-letter', authService.authMiddleware.bind(authService), async (req, res) => {
+app.post('/api/cover-letter', authMiddleware, async (req, res) => {
     try {
         const { userProfile, jobDescription, companyInfo } = req.body;
 
@@ -216,7 +183,7 @@ Job Description: ${jobDescription.full}`;
 
 // ====== INTERVIEW PREP ======
 
-app.post('/api/interview-prep', authService.authMiddleware.bind(authService), async (req, res) => {
+app.post('/api/interview-prep', authMiddleware, async (req, res) => {
     try {
         const { jobDescription, companyName, userProfile } = req.body;
 
@@ -242,7 +209,7 @@ Provide:
 
 // ====== RESUME TAILORING (CORE FEATURE) ======
 
-app.post('/api/tailor-resume', authService.authMiddleware.bind(authService), async (req, res) => {
+app.post('/api/tailor-resume', authMiddleware, async (req, res) => {
     try {
         const { resumeId, jobId } = req.body;
 
@@ -300,7 +267,7 @@ app.post('/api/tailor-resume', authService.authMiddleware.bind(authService), asy
 
 // ====== AUTO-APPLY (CORE FEATURE) ======
 
-app.post('/api/auto-apply', authService.authMiddleware.bind(authService), async (req, res) => {
+app.post('/api/auto-apply', authMiddleware, async (req, res) => {
     try {
         const { jobId, supervised = true } = req.body;
 
@@ -373,7 +340,7 @@ app.post('/api/auto-apply', authService.authMiddleware.bind(authService), async 
 
 // ====== BATCH AUTO-APPLY ======
 
-app.post('/api/batch-auto-apply', authService.authMiddleware.bind(authService), async (req, res) => {
+app.post('/api/batch-auto-apply', authMiddleware, async (req, res) => {
     try {
         const { minMatchScore = 75, maxApplications = 20, supervised = false } = req.body;
 
@@ -424,21 +391,53 @@ async function getTailoredResumeForJob(userId, jobId) {
     return null;
 }
 
-// Start server
-const server = app.listen(port, () => {
-    console.log(`\n🚀 JoBika Backend Server Running`);
-    console.log(`📍 Port: ${port}`);
-    console.log(`💾 Database: ${db.dbPath}`);
-    console.log(`🤖 Gemini AI: ${process.env.GEMINI_API_KEY ? '✅ Configured (FREE!)' : '❌ Not configured - Get FREE key: https://aistudio.google.com/app/apikey'}`);
-    console.log(`\n✨ All systems ready!\n`);
+
+
+// ============================================================
+// SUBSCRIPTION & USAGE ENDPOINTS
+// ============================================================
+
+const { SubscriptionManager } = require('./middleware/subscription');
+
+app.get('/api/subscription/status', authMiddleware, async (req, res) => {
+    try {
+        const stats = await SubscriptionManager.getUsageStats(req.user.id);
+        res.json(stats);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
 });
+
+app.get('/api/subscription/limits', authMiddleware, async (req, res) => {
+    try {
+        const user = await db.query('SELECT subscription_tier FROM users WHERE id = $1', [req.user.id]);
+        const tier = user.rows[0]?.subscription_tier || 'free';
+        const limits = SubscriptionManager.getLimits(tier);
+        res.json(limits);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// Use error handling middleware as the last middleware
+app.use(errorHandler.errorMiddleware());
+
+// Start server (Only if not running in test mode)
+let server;
+if (require.main === module) {
+    server = app.listen(port, () => {
+        console.log(`\n🚀 JoBika Backend Server Running`);
+        console.log(`📍 Port: ${port}`);
+        console.log(`💾 Database: ${db.dbPath}`);
+        console.log(`🤖 Gemini AI: ${process.env.GEMINI_API_KEY ? '✅ Configured (FREE!)' : '❌ Not configured - Get FREE key: https://aistudio.google.com/app/apikey'}`);
+        console.log(`\n✨ All systems ready!\n`);
+    });
+}
 
 // Store server globally for graceful shutdown
 global.server = server;
 
 // Setup Graceful Shutdown
-// Graceful Shutdown handled by utils/errorHandler.js
-// We add a listener to close the DB connection when the server closes
 if (global.server) {
     global.server.on('close', async () => {
         console.log('Closing database connections...');
@@ -470,218 +469,7 @@ app.post('/api/log-error', (req, res) => {
     }
 });
 
-// ============================================================
-// SAVED JOBS ENDPOINTS
-// ============================================================
-
-app.post('/api/saved-jobs', authMiddleware, async (req, res) => {
-    try {
-        const { jobId } = req.body;
-        await db.query(
-            'INSERT INTO saved_jobs (user_id, job_id) VALUES (?, ?) ON CONFLICT DO NOTHING',
-            [req.user.id, jobId]
-        );
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.get('/api/saved-jobs', authMiddleware, async (req, res) => {
-    try {
-        const saved = await db.query(`
-            SELECT j.*, s.created_at as saved_at, s.notes
-            FROM saved_jobs s
-            JOIN jobs j ON s.job_id = j.id
-            WHERE s.user_id = ?
-            ORDER BY s.created_at DESC
-        `, [req.user.id]);
-        res.json(saved);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.delete('/api/saved-jobs/:jobId', authMiddleware, async (req, res) => {
-    try {
-        await db.query(
-            'DELETE FROM saved_jobs WHERE user_id = ? AND job_id = ?',
-            [req.user.id, req.params.jobId]
-        );
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// ============================================================
-// DASHBOARD STATS ENDPOINT
-// ============================================================
-
-app.get('/api/users/dashboard-stats', authMiddleware, async (req, res) => {
-    try {
-        const stats = {
-            totalApplications: 0,
-            inProgress: 0,
-            interviews: 0,
-            offers: 0,
-            responseRate: 0,
-            savedJobs: 0,
-            applicationsByStatus: {},
-            recentActivity: []
-        };
-
-        // Total applications
-        const appCount = await db.query(
-            'SELECT COUNT(*) as count FROM applications WHERE user_id = ?',
-            [req.user.id]
-        );
-        stats.totalApplications = appCount[0]?.count || 0;
-
-        // Applications by status
-        const statusCounts = await db.query(`
-            SELECT status, COUNT(*) as count 
-            FROM applications 
-            WHERE user_id = ? 
-            GROUP BY status
-        `, [req.user.id]);
-
-        statusCounts.forEach(row => {
-            stats.applicationsByStatus[row.status] = row.count;
-
-            if (['viewed', 'phone_screen', 'interview_scheduled'].includes(row.status)) {
-                stats.inProgress += row.count;
-            }
-            if (row.status === 'interview_scheduled') {
-                stats.interviews += row.count;
-            }
-            if (row.status === 'offer') {
-                stats.offers += row.count;
-            }
-        });
-
-        // Response rate
-        const responded = await db.query(`
-            SELECT COUNT(*) as count 
-            FROM applications 
-            WHERE user_id = ? AND status != 'applied'
-        `, [req.user.id]);
-        stats.responseRate = stats.totalApplications > 0
-            ? Math.round((responded[0]?.count / stats.totalApplications) * 100)
-            : 0;
-
-        // Saved jobs count
-        const savedCount = await db.query(
-            'SELECT COUNT(*) as count FROM saved_jobs WHERE user_id = ?',
-            [req.user.id]
-        );
-        stats.savedJobs = savedCount[0]?.count || 0;
-
-        // Recent activity
-        const recent = await db.query(`
-            SELECT * FROM application_events 
-            WHERE application_id IN (
-                SELECT id FROM applications WHERE user_id = ?
-            )
-            ORDER BY created_at DESC
-            LIMIT 10
-        `, [req.user.id]);
-        stats.recentActivity = recent;
-
-        res.json(stats);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// ============================================================
-// JOB ALERTS ENDPOINTS
-// ============================================================
-
-app.post('/api/alerts', authMiddleware, validate(alertSchema), async (req, res) => {
-    try {
-        const { name, keywords, locations, jobTypes, experienceMin, experienceMax, salaryMin } = req.validated;
-
-        const alertId = await db.query(`
-            INSERT INTO job_alerts 
-            (user_id, name, keywords, locations, job_types, experience_min, experience_max, salary_min)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-            RETURNING id
-        `, [req.user.id, name, keywords, locations, jobTypes, experienceMin, experienceMax, salaryMin]);
-
-        res.json({ success: true, alertId: alertId[0]?.id });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.get('/api/alerts', authMiddleware, async (req, res) => {
-    try {
-        const alerts = await db.query(
-            'SELECT * FROM job_alerts WHERE user_id = ? ORDER BY created_at DESC',
-            [req.user.id]
-        );
-        res.json(alerts);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.put('/api/alerts/:id', authMiddleware, async (req, res) => {
-    try {
-        const { isActive } = req.body;
-        await db.query(
-            'UPDATE job_alerts SET is_active = ? WHERE id = ? AND user_id = ?',
-            [isActive, req.params.id, req.user.id]
-        );
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.delete('/api/alerts/:id', authMiddleware, async (req, res) => {
-    try {
-        await db.query(
-            'DELETE FROM job_alerts WHERE id = ? AND user_id = ?',
-            [req.params.id, req.user.id]
-        );
-        res.json({ success: true });
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// ============================================================
-// SUBSCRIPTION & USAGE ENDPOINTS
-// ============================================================
-
-const { SubscriptionManager } = require('./middleware/subscription');
-
-app.get('/api/subscription/status', authMiddleware, async (req, res) => {
-    try {
-        const stats = await SubscriptionManager.getUsageStats(req.user.id);
-        res.json(stats);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-app.get('/api/subscription/limits', authMiddleware, async (req, res) => {
-    try {
-        const user = await db.query('SELECT subscription_tier FROM users WHERE id = ?', [req.user.id]);
-        const tier = user[0]?.subscription_tier || 'free';
-        const limits = SubscriptionManager.getLimits(tier);
-        res.json(limits);
-    } catch (error) {
-        res.status(500).json({ error: error.message });
-    }
-});
-
-// Use error handling middleware as the last middleware
-app.use(errorHandler.errorMiddleware());
-
-module.exports = { app, server };
+module.exports = { app, server, db };
 
 // Graceful shutdown
 process.on('SIGINT', () => {

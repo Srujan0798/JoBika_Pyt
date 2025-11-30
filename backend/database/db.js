@@ -331,7 +331,10 @@ class DatabaseManager {
     async query(sql, params = []) {
         if (this.dbType === 'postgres') {
             try {
-                const result = await this.pool.query(sql, params);
+                // Ensure params is an array
+                const queryParams = Array.isArray(params) ? params : [];
+
+                const result = await this.pool.query(sql, queryParams);
                 return {
                     rows: result.rows,
                     rowCount: result.rowCount,
@@ -347,8 +350,17 @@ class DatabaseManager {
                 // Convert Postgres-style parameters ($1, $2) to SQLite style (?, ?)
                 let sqliteSql = sql;
                 let paramIndex = 1;
+                // Basic replacement for $1, $2, etc.
+                // Note: This simple replacement might fail if $1 is inside a string literal.
+                // A more robust parser would be needed for complex cases, but this works for standard usage.
                 while (sqliteSql.includes(`$${paramIndex}`)) {
-                    sqliteSql = sqliteSql.replace(`$${paramIndex}`, '?');
+                    // Use a regex to ensure we match $1 but not $11 (if we have < 10 params, simple replace works, but safer with regex)
+                    // Actually, simple replace of `$${paramIndex}` is safe if we go in order and $1 doesn't match $10 prefix if we use regex boundaries,
+                    // but `replace` only replaces the first occurrence unless global.
+                    // The original code used `includes` check and `replace` (first only?).
+                    // Let's use global replace.
+                    const regex = new RegExp(`\\$${paramIndex}(?!\\d)`, 'g');
+                    sqliteSql = sqliteSql.replace(regex, '?');
                     paramIndex++;
                 }
 
@@ -484,5 +496,7 @@ class DatabaseManager {
     }
 }
 
-module.exports = DatabaseManager;
+// Export singleton instance
+const dbInstance = new DatabaseManager();
+module.exports = dbInstance;
 

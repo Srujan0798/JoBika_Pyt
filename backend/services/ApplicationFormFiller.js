@@ -1,5 +1,5 @@
 const puppeteer = require('puppeteer');
-const DatabaseManager = require('../database/db');
+const db = require('../database/db');
 
 /**
  * ApplicationFormFiller - The AUTO-APPLY engine
@@ -8,7 +8,7 @@ const DatabaseManager = require('../database/db');
 class ApplicationFormFiller {
     constructor() {
         this.browser = null;
-        this.db = new DatabaseManager();
+        this.db = db;
     }
 
     async init() {

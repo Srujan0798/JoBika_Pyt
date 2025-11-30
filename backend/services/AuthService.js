@@ -1,17 +1,17 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const DatabaseManager = require('../database/db');
+const db = require('../database/db');
 
 class AuthService {
     constructor() {
-        this.db = new DatabaseManager();
+        this.db = db;
         this.saltRounds = 10;
     }
 
     async register(email, password, name, profileData = {}) {
         try {
             // Check if user exists
-            const existingUser = this.db.getUserByEmail(email);
+            const existingUser = await this.db.getUserByEmail(email);
             if (existingUser) {
                 throw new Error('User already exists');
             }
@@ -39,7 +39,7 @@ class AuthService {
 
     async login(email, password) {
         try {
-            const user = this.db.getUserByEmail(email);
+            const user = await this.db.getUserByEmail(email);
 
             if (!user) {
                 throw new Error('User not found');
