@@ -63,7 +63,7 @@ app.get('/health', (req, res) => {
     res.json({
         status: 'healthy',
         timestamp: new Date().toISOString(),
-        database: db.dbType,
+        database: db.dbType || 'postgres', // Default to postgres if not exposed
         gemini: process.env.GEMINI_API_KEY ? 'configured' : 'not_configured',
         uptime: process.uptime()
     });
@@ -476,8 +476,8 @@ app.post('/api/saved-jobs', authMiddleware, async (req, res) => {
     try {
         const { jobId } = req.body;
         await db.query(
-            'INSERT INTO saved_jobs (user_id, job_id) VALUES (?, ?) ON CONFLICT DO NOTHING',
-            [req.user.id, jobId]
+            'INSERT INTO saved_jobs (user_id, job_id) VALUES ($1, $2) ON CONFLICT DO NOTHING',
+            [req.userId, jobId]
         );
         res.json({ success: true });
     } catch (error) {
@@ -491,9 +491,9 @@ app.get('/api/saved-jobs', authMiddleware, async (req, res) => {
             SELECT j.*, s.created_at as saved_at, s.notes
             FROM saved_jobs s
             JOIN jobs j ON s.job_id = j.id
-            WHERE s.user_id = ?
+            WHERE s.user_id = $1
             ORDER BY s.created_at DESC
-        `, [req.user.id]);
+        `, [req.userId]);
         res.json(saved);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -503,8 +503,8 @@ app.get('/api/saved-jobs', authMiddleware, async (req, res) => {
 app.delete('/api/saved-jobs/:jobId', authMiddleware, async (req, res) => {
     try {
         await db.query(
-            'DELETE FROM saved_jobs WHERE user_id = ? AND job_id = ?',
-            [req.user.id, req.params.jobId]
+            'DELETE FROM saved_jobs WHERE user_id = $1 AND job_id = $2',
+            [req.userId, req.params.jobId]
         );
         res.json({ success: true });
     } catch (error) {
@@ -531,20 +531,20 @@ app.get('/api/users/dashboard-stats', authMiddleware, async (req, res) => {
 
         // Total applications
         const appCount = await db.query(
-            'SELECT COUNT(*) as count FROM applications WHERE user_id = ?',
-            [req.user.id]
+            'SELECT COUNT(*) as count FROM applications WHERE user_id = $1',
+            [req.userId]
         );
-        stats.totalApplications = appCount[0]?.count || 0;
+        stats.totalApplications = appCount.rows[0]?.count || 0;
 
         // Applications by status
         const statusCounts = await db.query(`
             SELECT status, COUNT(*) as count 
             FROM applications 
-            WHERE user_id = ? 
+            WHERE user_id = $1
             GROUP BY status
-        `, [req.user.id]);
+        `, [req.userId]);
 
-        statusCounts.forEach(row => {
+        statusCounts.rows.forEach(row => {
             stats.applicationsByStatus[row.status] = row.count;
 
             if (['viewed', 'phone_screen', 'interview_scheduled'].includes(row.status)) {
@@ -562,29 +562,29 @@ app.get('/api/users/dashboard-stats', authMiddleware, async (req, res) => {
         const responded = await db.query(`
             SELECT COUNT(*) as count 
             FROM applications 
-            WHERE user_id = ? AND status != 'applied'
-        `, [req.user.id]);
+            WHERE user_id = $1 AND status != 'applied'
+        `, [req.userId]);
         stats.responseRate = stats.totalApplications > 0
-            ? Math.round((responded[0]?.count / stats.totalApplications) * 100)
+            ? Math.round((responded.rows[0]?.count / stats.totalApplications) * 100)
             : 0;
 
         // Saved jobs count
         const savedCount = await db.query(
-            'SELECT COUNT(*) as count FROM saved_jobs WHERE user_id = ?',
-            [req.user.id]
+            'SELECT COUNT(*) as count FROM saved_jobs WHERE user_id = $1',
+            [req.userId]
         );
-        stats.savedJobs = savedCount[0]?.count || 0;
+        stats.savedJobs = savedCount.rows[0]?.count || 0;
 
         // Recent activity
+        // Check if application_events table exists or if it was a mistake in the code.
+        // Assuming it exists or using applications for now as it wasn't in db.js schema
         const recent = await db.query(`
-            SELECT * FROM application_events 
-            WHERE application_id IN (
-                SELECT id FROM applications WHERE user_id = ?
-            )
-            ORDER BY created_at DESC
+            SELECT * FROM applications
+            WHERE user_id = $1
+            ORDER BY applied_at DESC
             LIMIT 10
-        `, [req.user.id]);
-        stats.recentActivity = recent;
+        `, [req.userId]);
+        stats.recentActivity = recent.rows;
 
         res.json(stats);
     } catch (error) {
@@ -603,11 +603,11 @@ app.post('/api/alerts', authMiddleware, validate(alertSchema), async (req, res) 
         const alertId = await db.query(`
             INSERT INTO job_alerts 
             (user_id, name, keywords, locations, job_types, experience_min, experience_max, salary_min)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING id
-        `, [req.user.id, name, keywords, locations, jobTypes, experienceMin, experienceMax, salaryMin]);
+        `, [req.userId, name, keywords, locations, jobTypes, experienceMin, experienceMax, salaryMin]);
 
-        res.json({ success: true, alertId: alertId[0]?.id });
+        res.json({ success: true, alertId: alertId.rows[0]?.id });
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -616,10 +616,10 @@ app.post('/api/alerts', authMiddleware, validate(alertSchema), async (req, res) 
 app.get('/api/alerts', authMiddleware, async (req, res) => {
     try {
         const alerts = await db.query(
-            'SELECT * FROM job_alerts WHERE user_id = ? ORDER BY created_at DESC',
-            [req.user.id]
+            'SELECT * FROM job_alerts WHERE user_id = $1 ORDER BY created_at DESC',
+            [req.userId]
         );
-        res.json(alerts);
+        res.json(alerts.rows);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }
@@ -629,8 +629,8 @@ app.put('/api/alerts/:id', authMiddleware, async (req, res) => {
     try {
         const { isActive } = req.body;
         await db.query(
-            'UPDATE job_alerts SET is_active = ? WHERE id = ? AND user_id = ?',
-            [isActive, req.params.id, req.user.id]
+            'UPDATE job_alerts SET is_active = $1 WHERE id = $2 AND user_id = $3',
+            [isActive, req.params.id, req.userId]
         );
         res.json({ success: true });
     } catch (error) {
@@ -641,8 +641,8 @@ app.put('/api/alerts/:id', authMiddleware, async (req, res) => {
 app.delete('/api/alerts/:id', authMiddleware, async (req, res) => {
     try {
         await db.query(
-            'DELETE FROM job_alerts WHERE id = ? AND user_id = ?',
-            [req.params.id, req.user.id]
+            'DELETE FROM job_alerts WHERE id = $1 AND user_id = $2',
+            [req.params.id, req.userId]
         );
         res.json({ success: true });
     } catch (error) {
@@ -658,7 +658,7 @@ const { SubscriptionManager } = require('./middleware/subscription');
 
 app.get('/api/subscription/status', authMiddleware, async (req, res) => {
     try {
-        const stats = await SubscriptionManager.getUsageStats(req.user.id);
+        const stats = await SubscriptionManager.getUsageStats(req.userId);
         res.json(stats);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -667,8 +667,8 @@ app.get('/api/subscription/status', authMiddleware, async (req, res) => {
 
 app.get('/api/subscription/limits', authMiddleware, async (req, res) => {
     try {
-        const user = await db.query('SELECT subscription_tier FROM users WHERE id = ?', [req.user.id]);
-        const tier = user[0]?.subscription_tier || 'free';
+        const user = await db.query('SELECT subscription_tier FROM users WHERE id = $1', [req.userId]);
+        const tier = user.rows[0]?.subscription_tier || 'free';
         const limits = SubscriptionManager.getLimits(tier);
         res.json(limits);
     } catch (error) {

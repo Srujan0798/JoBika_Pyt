@@ -90,11 +90,11 @@ class PerformanceMonitor {
         if (!threshold) return;
 
         if (value > threshold.poor) {
-            console.warn(`⚠️ ${metric.toUpperCase()} is POOR: ${value.toFixed(2)}`);
+            // console.warn(`⚠️ ${metric.toUpperCase()} is POOR: ${value.toFixed(2)}`);
         } else if (value > threshold.good) {
-            console.log(`⚡ ${metric.toUpperCase()} needs improvement: ${value.toFixed(2)}`);
+            // console.log(`⚡ ${metric.toUpperCase()} needs improvement: ${value.toFixed(2)}`);
         } else {
-            console.log(`✅ ${metric.toUpperCase()} is GOOD: ${value.toFixed(2)}`);
+            // console.log(`✅ ${metric.toUpperCase()} is GOOD: ${value.toFixed(2)}`);
         }
     }
 
@@ -102,11 +102,11 @@ class PerformanceMonitor {
         // Send to backend analytics
         if (window.JoBikaAPI) {
             window.JoBikaAPI.logPerformance(this.metrics).catch(e => {
-                console.error('Failed to log performance:', e);
+                // console.error('Failed to log performance:', e);
             });
         }
 
-        console.log('Performance Metrics:', this.metrics);
+        // console.log('Performance Metrics:', this.metrics);
     }
 
     getMetrics() {

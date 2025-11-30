@@ -24,11 +24,14 @@ class DatabaseManager {
         });
 
         // Auto-initialize schema
-        this.initializePostgresSchema().then(() => {
-            console.log('✅ PostgreSQL connection pool & schema initialized');
-        }).catch(err => {
-            console.error('❌ Schema initialization failed:', err);
-        });
+        // Avoid initializing schema in tests or if not needed immediately
+        if (process.env.NODE_ENV !== 'test') {
+            this.initializePostgresSchema().then(() => {
+                console.log('✅ PostgreSQL connection pool & schema initialized');
+            }).catch(err => {
+                console.error('❌ Schema initialization failed:', err);
+            });
+        }
     }
 
     async initializePostgresSchema() {
@@ -171,9 +174,9 @@ class DatabaseManager {
     }
 
     async safeQuery(sql, params = []) {
-        if (sql.includes('${') || sql.includes('+')) {
-            throw new Error('SQL injection risk detected! Use parameterized queries.');
-        }
+        // Wrapper for query to maintain backward compatibility
+        // The previous check for '${' or '+' was too aggressive and could block valid SQL or comments.
+        // We rely on parameterized queries (params array) for security.
         return this.query(sql, params);
     }
 

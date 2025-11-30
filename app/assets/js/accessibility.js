@@ -244,7 +244,7 @@
         improveModalAccessibility();
         addHighContrastSupport();
 
-        console.log('✅ Accessibility features initialized');
+        // console.log('✅ Accessibility features initialized');
     }
 
     // Run on DOM ready

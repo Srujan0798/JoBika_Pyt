@@ -1,6 +1,6 @@
 class Analytics {
     static init() {
-        console.log('[Analytics] Initialized');
+        // console.log('[Analytics] Initialized');
         // In a real app, we would init Mixpanel/GA here
         // mixpanel.init(process.env.MIXPANEL_TOKEN);
     }
@@ -17,7 +17,7 @@ class Analytics {
         };
 
         // 1. Log to Console (for debugging)
-        console.log(`[Analytics] Track: ${eventName}`, payload);
+        // console.log(`[Analytics] Track: ${eventName}`, payload);
 
         // 2. Send to Backend
         try {
@@ -34,7 +34,7 @@ class Analytics {
     }
 
     static identify(userId, traits = {}) {
-        console.log(`[Analytics] Identify: ${userId}`, traits);
+        // console.log(`[Analytics] Identify: ${userId}`, traits);
         this.track('user_identified', { userId, ...traits });
     }
 

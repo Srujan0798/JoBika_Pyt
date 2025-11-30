@@ -142,7 +142,7 @@ class NetworkErrorRecovery {
 
     retryPendingRequests() {
         // Implement retry logic for failed requests
-        console.log('Retrying pending requests...');
+        // console.log('Retrying pending requests...');
     }
 
     checkConnection() {

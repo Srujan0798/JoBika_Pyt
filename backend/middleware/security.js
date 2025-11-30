@@ -36,9 +36,26 @@ function decrypt(hash) {
     return decrypted;
 }
 
+const helmet = require('helmet');
+const xss = require('xss-clean');
+const cors = require('cors');
+
 module.exports = {
     apiLimiter,
     authLimiter,
     encrypt,
-    decrypt
+    decrypt,
+    securityHeaders: () => helmet(),
+    xssProtection: () => xss(),
+    requestTimeout: () => (req, res, next) => {
+        req.setTimeout(30000, () => {
+            res.status(408).send('Request Timeout');
+        });
+        next();
+    },
+    rateLimiter: () => apiLimiter,
+    corsOptions: () => ({
+        origin: process.env.ALLOWED_ORIGINS || '*',
+        optionsSuccessStatus: 200
+    })
 };

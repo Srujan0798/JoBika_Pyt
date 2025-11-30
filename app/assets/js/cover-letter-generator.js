@@ -30,7 +30,7 @@ class CoverLetterGenerator {
                 }
             }
         } catch (error) {
-            console.log('Using fallback cover letter generation:', error);
+            console.error('Using fallback cover letter generation:', error);
         }
 
         // Fallback to template-based generation

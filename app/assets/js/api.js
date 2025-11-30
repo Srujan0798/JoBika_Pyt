@@ -9,7 +9,7 @@ class JoBikaAPI {
         // Production API URL
         const API_URL = 'https://jobika-backend-production.up.railway.app';
 
-        console.log('🔗 API URL:', API_URL);
+        // console.log('🔗 API URL:', API_URL);
         this.baseURL = API_URL;
         this.token = localStorage.getItem('jobika_token');
     }

@@ -168,11 +168,11 @@ class SimpleJobScraper {
 
                 await db.query(`
                     INSERT INTO jobs (
-                        title, company_name, location, source_platform,
-                        source_url, min_experience_months, max_experience_months,
-                        salary_min, salary_max, required_skills, posted_date
-                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                    ON CONFLICT DO NOTHING
+                        title, company, location, source,
+                        source_url, experience_min, experience_max,
+                        salary_min, salary_max, requirements, posted_date
+                    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
+                    ON CONFLICT (source_url) DO NOTHING
                 `, [
                     job.title,
                     job.company,

@@ -155,7 +155,7 @@ ALLOWED_ORIGINS=https://jobika.vercel.app
 
 - [Quick Start Guide](./a_START_HERE.md) - Deploy in 20 minutes
 - [Startup Workflow](./a_JoBika_STARTUP_WORKFLOW.md) - Launch strategy
-- [Audit Report](./a_AUDIT_REPORT.md) - Project analysis
+- [Audit Report](./AUDIT_SUMMARY.md) - Project analysis
 - [Credentials](./a_CREDENTIALS.md) - Your saved credentials
 
 ---

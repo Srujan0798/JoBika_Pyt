@@ -29,7 +29,7 @@ class ABTest {
                 userId
             });
         } else {
-            console.log('[ABTest] Analytics not initialized', { experimentName, variant });
+            // console.log('[ABTest] Analytics not initialized', { experimentName, variant });
         }
     }
 }
