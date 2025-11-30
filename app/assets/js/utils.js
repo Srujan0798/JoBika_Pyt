@@ -293,5 +293,16 @@ function downloadFile(content, filename, type = 'text/plain') {
 
 // Export for use in other scripts
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { toast, loading, ProgressBar, ToastManager, LoadingOverlay };
+    module.exports = {
+        toast,
+        loading,
+        ProgressBar,
+        ToastManager,
+        LoadingOverlay,
+        formatDate,
+        debounce,
+        throttle,
+        copyToClipboard,
+        downloadFile
+    };
 }

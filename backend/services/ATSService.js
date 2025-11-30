@@ -1,8 +1,14 @@
 const GeminiService = require('./GeminiService');
+const OpenAI = require('openai');
 
 class ATSService {
     constructor(apiKey) {
         this.gemini = new GeminiService(apiKey);
+        // Initialize OpenAI (assuming API key is provided or in env)
+        // If apiKey is passed, we might assume it's for Gemini, but OpenAI usually needs OPENAI_API_KEY env var
+        this.openai = new OpenAI({
+            apiKey: process.env.OPENAI_API_KEY
+        });
     }
 
     async calculateATSScore(resumeText, jobDescription) {
@@ -87,13 +93,22 @@ class ATSService {
     extractKeywords(text) {
         // Simple mock extraction logic
         const commonKeywords = ['javascript', 'react', 'node.js', 'aws', 'python', 'java', 'sql', 'agile', 'communication', 'leadership'];
-        return commonKeywords.filter(kw => text.toLowerCase().includes(kw));
+        return commonKeywords.filter(kw => {
+            // Escape special regex characters
+            const escapedKw = kw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b${escapedKw}\\b`, 'i');
+            return regex.test(text);
+        });
     }
 
     extractSkills(text) {
         // Mock skill extraction
         const skills = ['JavaScript', 'React', 'Node.js', 'Python', 'Java', 'SQL', 'AWS', 'Docker'];
-        return skills.filter(s => text.toLowerCase().includes(s.toLowerCase()));
+        return skills.filter(s => {
+            const escapedS = s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const regex = new RegExp(`\\b${escapedS}\\b`, 'i');
+            return regex.test(text);
+        });
     }
 
     checkStandardSections(text) {
