@@ -115,12 +115,8 @@ class ATSService {
             Rate relevance 0-25. Return just the number.
             `;
 
-            const response = await this.openai.chat.completions.create({
-                model: 'gpt-4',
-                messages: [{ role: 'user', content: prompt }]
-            });
-
-            return { score: parseInt(response.choices[0].message.content) || 15 };
+            const responseText = await this.gemini.chat(prompt);
+            return { score: parseInt(responseText) || 15 };
         } catch (error) {
             console.error('ATS Experience Analysis Error:', error);
             return { score: 15 }; // Fallback
