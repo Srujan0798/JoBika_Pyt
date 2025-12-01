@@ -436,6 +436,24 @@ class DatabaseManager {
         }
     }
 
+    async createUser(email, passwordHash, name, profileData = {}) {
+        try {
+            const result = await this.safeQuery(`
+                INSERT INTO users (email, password_hash, name, profile_data)
+                VALUES ($1, $2, $3, $4)
+                RETURNING id
+            `, [email, passwordHash, name, JSON.stringify(profileData)]);
+
+            return {
+                lastInsertRowid: result.rows[0].id,
+                rows: result.rows
+            };
+        } catch (error) {
+            console.error('Error creating user:', error);
+            throw error;
+        }
+    }
+
     async createApplication(userId, jobData) {
         const { job_id, company, role, location, job_url, status = 'Applied' } = jobData;
 

@@ -11,7 +11,7 @@ class AuthService {
     async register(email, password, name, profileData = {}) {
         try {
             // Check if user exists
-            const existingUser = this.db.getUserByEmail(email);
+            const existingUser = await this.db.getUserByEmail(email);
             if (existingUser) {
                 throw new Error('User already exists');
             }
@@ -20,7 +20,7 @@ class AuthService {
             const passwordHash = await bcrypt.hash(password, this.saltRounds);
 
             // Create user
-            const result = this.db.createUser(email, passwordHash, name, profileData);
+            const result = await this.db.createUser(email, passwordHash, name, profileData);
 
             // Generate token
             const token = this.generateToken(result.lastInsertRowid);
@@ -39,7 +39,7 @@ class AuthService {
 
     async login(email, password) {
         try {
-            const user = this.db.getUserByEmail(email);
+            const user = await this.db.getUserByEmail(email);
 
             if (!user) {
                 throw new Error('User not found');
