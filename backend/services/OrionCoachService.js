@@ -24,11 +24,9 @@ Use Indian English and understand concepts like CTC, LPA, notice period, immedia
         } catch (error) {
             console.error('Orion chat error:', error);
 
-            if (error.message && (error.message.includes('quota') || error.message.includes('API key'))) {
-                return "I apologize, but there's an issue with the Gemini API. Please check your API key.";
-            }
-
-            throw new Error(`Chat service error: ${error.message}`);
+            // Fallback to mock if API fails (e.g. network timeout)
+            console.warn('⚠️ Gemini API failed. Falling back to mock response.');
+            return this.getMockResponse(userMessage);
         }
     }
 

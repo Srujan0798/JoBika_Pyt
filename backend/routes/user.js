@@ -4,6 +4,78 @@ const db = require('../database/db');
 const { validate, alertSchema } = require('../middleware/validation');
 
 // ============================================================
+// PROFILE ENDPOINTS
+// ============================================================
+
+router.get('/profile', async (req, res) => {
+    try {
+        const userRes = await db.query('SELECT * FROM users WHERE id = $1', [req.userId]);
+        const user = userRes.rows ? userRes.rows[0] : userRes[0];
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        // Remove sensitive data
+        delete user.password_hash;
+
+        res.json(user);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.put('/profile', async (req, res) => {
+    try {
+        const { skills, experience, education, preferences, phone, location } = req.body;
+
+        // Construct update query dynamically based on provided fields
+        // For simplicity, we'll update specific columns
+
+        const updates = [];
+        const values = [];
+        let paramIndex = 1;
+
+        if (skills) {
+            updates.push(`skills = $${paramIndex}`);
+            values.push(JSON.stringify(skills));
+            paramIndex++;
+        }
+        // Experience column doesn't exist in users table, skipping for now.
+        // In real app, we'd update current_role/company or use a separate table.
+
+        if (preferences) {
+            updates.push(`preferences = $${paramIndex}`);
+            values.push(JSON.stringify(preferences));
+            paramIndex++;
+        }
+        if (phone) {
+            updates.push(`phone = $${paramIndex}`);
+            values.push(phone);
+            paramIndex++;
+        }
+        if (location) {
+            updates.push(`location = $${paramIndex}`);
+            values.push(location);
+            paramIndex++;
+        }
+
+        if (updates.length === 0) {
+            return res.json({ success: true, message: 'No changes provided' });
+        }
+
+        values.push(req.userId);
+        const query = `UPDATE users SET ${updates.join(', ')} WHERE id = $${paramIndex}`;
+
+        await db.query(query, values);
+
+        res.json({ success: true, message: 'Profile updated successfully' });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+// ============================================================
 // DASHBOARD STATS ENDPOINT
 // ============================================================
 

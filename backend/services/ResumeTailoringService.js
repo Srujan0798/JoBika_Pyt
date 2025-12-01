@@ -1,193 +1,146 @@
-const GeminiService = require('./GeminiService');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 const PDFDocument = require('pdfkit');
 const fs = require('fs');
 const path = require('path');
 
 class ResumeTailoringService {
     constructor(apiKey) {
-        this.gemini = new GeminiService(apiKey);
+        this.apiKey = apiKey;
+        this.genAI = null;
+        this.model = null;
+        this.init();
     }
 
-    /**
-     * Core function: Tailor resume for specific job
-     * This is the heart of JoBika - making resume match each job perfectly
-     */
+    init() {
+        if (this.apiKey) {
+            this.genAI = new GoogleGenerativeAI(this.apiKey);
+            this.model = this.genAI.getGenerativeModel({ model: "gemini-pro" });
+            console.log("✨ ResumeTailoringService: Gemini Pro initialized");
+        } else {
+            console.warn("⚠️ ResumeTailoringService: API Key missing. AI features disabled.");
+        }
+    }
+
     async tailorResumeForJob(userResume, jobDescription, jobDetails) {
-        if (!this.gemini.isConfigured()) {
+        if (!this.model) {
+            console.warn("Using mock tailoring due to missing AI model");
             return this.getMockTailoredResume(userResume, jobDetails);
         }
 
+        const prompt = `
+            You are an expert Resume Writer for the Indian job market.
+            
+            Target Role: ${jobDetails.title} at ${jobDetails.company}
+            Job Description:
+            ${jobDescription}
+            
+            Candidate Resume (JSON):
+            ${JSON.stringify(userResume)}
+            
+            Task:
+            Rewrite the candidate's resume to perfectly match the job description.
+            1. **Summary**: Write a compelling 3-line summary highlighting experience relevant to the JD.
+            2. **Skills**: Reorder and refine skills to match JD keywords. Add missing relevant skills if inferred from experience.
+            3. **Experience**: Rewrite bullet points to emphasize impact and relevance to the JD. Use action verbs.
+            4. **ATS Score**: Estimate an ATS match score (0-100).
+            
+            Output strictly in JSON format with this structure:
+            {
+                "summary": "...",
+                "skills": ["..."],
+                "experience": [{ "company": "...", "role": "...", "duration": "...", "highlights": ["..."] }],
+                "education": [{ "degree": "...", "institution": "...", "year": "..." }],
+                "projects": [{ "name": "...", "description": "...", "impact": "..." }],
+                "atsScore": 85
+            }
+            Do not include markdown formatting like \`\`\`json.
+        `;
+
         try {
-            const prompt = `You are an expert resume writer for the Indian job market.
+            const result = await this.model.generateContent(prompt);
+            const response = await result.response;
+            const text = response.text();
 
-ORIGINAL RESUME:
-${JSON.stringify(userResume, null, 2)}
-
-TARGET JOB:
-Company: ${jobDetails.company}
-Role: ${jobDetails.title}
-Location: ${jobDetails.location}
-
-JOB DESCRIPTION:
-${jobDescription}
-
-TASK: Tailor this resume to perfectly match the job. 
-
-RULES:
-1. Keep ALL information truthful - no fabrication
-2. Reorder skills to put relevant ones first
-3. Emphasize relevant experience and projects
-4. Add keywords from job description naturally
-5. Quantify achievements where possible
-6. Keep format ATS-friendly
-7. Maintain professional tone for Indian market
-8. Include notice period if applicable
-
-Return JSON with this EXACT structure:
-{
-  "summary": "2-3 line professional summary highlighting relevant experience",
-  "skills": ["skill1", "skill2", "skill3"],
-  "experience": [
-    {
-      "company": "Company Name",
-      "role": "Job Title",
-      "duration": "Jan 2020 - Present",
-      "highlights": ["Achievement 1", "Achievement 2", "Achievement 3"]
-    }
-  ],
-  "education": [
-    {
-      "degree": "degree name",
-      "institution": "institution name",
-      "year": "year",
-      "gpa": "gpa if relevant"
-    }
-  ],
-  "projects": [
-    {
-      "name": "project name",
-      "description": "description emphasizing relevant tech/skills",
-      "impact": "quantified impact"
-    }
-  ],
-  "keywords": ["keyword1", "keyword2"],
-  "atsScore": 85
-}`;
-
-            const tailoredResume = await this.gemini.generateJSON(prompt);
+            const cleanText = text.replace(/```json/g, '').replace(/```/g, '').trim();
+            const tailoredData = JSON.parse(cleanText);
 
             return {
-                ...tailoredResume,
+                ...tailoredData,
                 originalResumeId: userResume.id,
                 targetJobId: jobDetails.id,
                 tailoredAt: new Date().toISOString()
             };
         } catch (error) {
-            console.error('Resume tailoring error:', error);
-            throw new Error(`Failed to tailor resume: ${error.message}`);
+            console.error("Resume tailoring error:", error);
+            return this.getMockTailoredResume(userResume, jobDetails);
         }
     }
 
-    /**
-     * Generate multiple resume variations
-     * For different job types (AI Engineer, Full Stack, etc.)
-     */
-    async generateResumeVariations(userResume, targetRoles) {
-        const variations = [];
-
-        for (const role of targetRoles) {
-            const variation = await this.tailorResumeForJob(
-                userResume,
-                `Looking for ${role} position`,
-                { title: role, company: 'Any', location: 'Any' }
-            );
-
-            variations.push({
-                roleType: role,
-                resume: variation
-            });
-        }
-
-        return variations;
-    }
-
-    /**
-     * Generate PDF from tailored resume
-     */
-    async generateResumePDF(tailoredResume, outputPath) {
+    async generateResumePDF(resumeData, outputPath) {
         return new Promise((resolve, reject) => {
-            const doc = new PDFDocument({
-                size: 'A4',
-                margins: { top: 50, bottom: 50, left: 50, right: 50 }
-            });
-
+            const doc = new PDFDocument({ margin: 50, size: 'A4' });
             const stream = fs.createWriteStream(outputPath);
+
             doc.pipe(stream);
 
-            // Header - Name and Contact
-            doc.fontSize(24).font('Helvetica-Bold').text(tailoredResume.name || 'Candidate Name', { align: 'center' });
+            // Colors
+            const primaryColor = '#004E98'; // Deep Blue
+            const secondaryColor = '#333333';
+
+            // Header
+            doc.fontSize(24).fillColor(primaryColor).font('Helvetica-Bold').text(resumeData.name || 'Candidate Name', { align: 'center' });
             doc.moveDown(0.5);
-            doc.fontSize(10).font('Helvetica')
-                .text(`${tailoredResume.email || ''} | ${tailoredResume.phone || ''} | ${tailoredResume.location || ''}`, { align: 'center' });
+            doc.fontSize(10).fillColor(secondaryColor).font('Helvetica')
+                .text(`${resumeData.email || ''} | ${resumeData.phone || ''} | ${resumeData.location || ''}`, { align: 'center' });
+            doc.moveDown(0.5);
+
+            // Divider
+            doc.moveTo(50, doc.y).lineTo(545, doc.y).strokeColor('#E0E0E0').stroke();
             doc.moveDown(1);
 
-            // Professional Summary
-            if (tailoredResume.summary) {
-                doc.fontSize(14).font('Helvetica-Bold').text('PROFESSIONAL SUMMARY');
+            // Summary
+            if (resumeData.summary) {
+                doc.fontSize(14).fillColor(primaryColor).font('Helvetica-Bold').text('PROFESSIONAL SUMMARY');
                 doc.moveDown(0.3);
-                doc.fontSize(10).font('Helvetica').text(tailoredResume.summary);
+                doc.fontSize(10).fillColor(secondaryColor).font('Helvetica').text(resumeData.summary, { align: 'justify', lineGap: 2 });
                 doc.moveDown(1);
             }
 
             // Skills
-            if (tailoredResume.skills && tailoredResume.skills.length > 0) {
-                doc.fontSize(14).font('Helvetica-Bold').text('SKILLS');
+            if (resumeData.skills && resumeData.skills.length > 0) {
+                doc.fontSize(14).fillColor(primaryColor).font('Helvetica-Bold').text('SKILLS');
                 doc.moveDown(0.3);
-                doc.fontSize(10).font('Helvetica').text(tailoredResume.skills.join(' • '));
+                doc.fontSize(10).fillColor(secondaryColor).font('Helvetica').text(resumeData.skills.join(' • '), { lineGap: 2 });
                 doc.moveDown(1);
             }
 
             // Experience
-            if (tailoredResume.experience && tailoredResume.experience.length > 0) {
-                doc.fontSize(14).font('Helvetica-Bold').text('PROFESSIONAL EXPERIENCE');
+            if (resumeData.experience && resumeData.experience.length > 0) {
+                doc.fontSize(14).fillColor(primaryColor).font('Helvetica-Bold').text('EXPERIENCE');
                 doc.moveDown(0.5);
 
-                tailoredResume.experience.forEach(exp => {
-                    doc.fontSize(12).font('Helvetica-Bold').text(exp.role);
-                    doc.fontSize(10).font('Helvetica-Oblique')
-                        .text(`${exp.company} | ${exp.duration}`);
+                resumeData.experience.forEach(exp => {
+                    doc.fontSize(12).fillColor('#000000').font('Helvetica-Bold').text(exp.role);
+                    doc.fontSize(10).fillColor('#666666').font('Helvetica-Oblique').text(`${exp.company} | ${exp.duration}`);
                     doc.moveDown(0.3);
 
-                    exp.highlights.forEach(highlight => {
-                        doc.fontSize(10).font('Helvetica').text(`• ${highlight}`, { indent: 20 });
-                    });
-                    doc.moveDown(0.7);
+                    if (exp.highlights) {
+                        exp.highlights.forEach(point => {
+                            doc.fontSize(10).fillColor(secondaryColor).font('Helvetica').text(`• ${point}`, { indent: 15, lineGap: 2 });
+                        });
+                    }
+                    doc.moveDown(0.8);
                 });
             }
 
             // Education
-            if (tailoredResume.education && tailoredResume.education.length > 0) {
-                doc.fontSize(14).font('Helvetica-Bold').text('EDUCATION');
+            if (resumeData.education && resumeData.education.length > 0) {
+                doc.fontSize(14).fillColor(primaryColor).font('Helvetica-Bold').text('EDUCATION');
                 doc.moveDown(0.5);
 
-                tailoredResume.education.forEach(edu => {
-                    doc.fontSize(11).font('Helvetica-Bold').text(edu.degree);
-                    doc.fontSize(10).font('Helvetica').text(`${edu.institution} | ${edu.year}`);
-                    doc.moveDown(0.5);
-                });
-            }
-
-            // Projects
-            if (tailoredResume.projects && tailoredResume.projects.length > 0) {
-                doc.fontSize(14).font('Helvetica-Bold').text('PROJECTS');
-                doc.moveDown(0.5);
-
-                tailoredResume.projects.forEach(project => {
-                    doc.fontSize(11).font('Helvetica-Bold').text(project.name);
-                    doc.fontSize(10).font('Helvetica').text(project.description);
-                    if (project.impact) {
-                        doc.fontSize(9).font('Helvetica-Oblique').text(`Impact: ${project.impact}`);
-                    }
+                resumeData.education.forEach(edu => {
+                    doc.fontSize(11).fillColor('#000000').font('Helvetica-Bold').text(edu.degree);
+                    doc.fontSize(10).fillColor('#666666').font('Helvetica').text(`${edu.institution} | ${edu.year}`);
                     doc.moveDown(0.5);
                 });
             }
@@ -199,61 +152,18 @@ Return JSON with this EXACT structure:
         });
     }
 
-    /**
-     * Mock response when OpenAI API not available
-     */
     getMockTailoredResume(userResume, jobDetails) {
         return {
-            summary: `Experienced professional with ${userResume.totalYears || 'X'} years in ${jobDetails.title}. Mock tailoring - add OpenAI API key for real customization.`,
-            skills: userResume.skills || ['Skill 1', 'Skill 2', 'Skill 3'],
-            experience: userResume.experience || [{
-                company: 'Current Company',
-                role: 'Current Role',
-                duration: '2020-Present',
-                highlights: ['Achievement 1', 'Achievement 2']
-            }],
-            education: userResume.education || [{
-                degree: 'Bachelor of Technology',
-                institution: 'University Name',
-                year: '2020'
-            }],
-            projects: [],
-            keywords: ['keyword1', 'keyword2'],
-            atsScore: 75,
-            isMock: true
+            name: userResume.name || "Candidate Name",
+            email: userResume.email || "email@example.com",
+            phone: userResume.phone || "9876543210",
+            location: userResume.location || "India",
+            summary: `Experienced professional tailored for ${jobDetails.title} at ${jobDetails.company}. (Mock Data)`,
+            skills: [...(userResume.skills || []), "Tailored Skill 1", "Tailored Skill 2"],
+            experience: userResume.experience || [],
+            education: userResume.education || [],
+            atsScore: 75
         };
-    }
-
-    /**
-     * Compare resume versions
-     */
-    compareResumeVersions(original, tailored) {
-        return {
-            changes: {
-                skillsReordered: true,
-                keywordsAdded: tailored.keywords.length,
-                achievementsQuantified: this.countQuantifications(tailored),
-                sectionsReordered: true
-            },
-            improvements: {
-                atsScore: `+${tailored.atsScore - (original.atsScore || 65)}`,
-                keywordMatch: `+${tailored.keywords.length} keywords`,
-                relevance: 'High'
-            }
-        };
-    }
-
-    countQuantifications(resume) {
-        let count = 0;
-        const text = JSON.stringify(resume);
-        const patterns = [/\d+%/, /\d+\s*(users|customers|projects|employees)/gi];
-
-        patterns.forEach(pattern => {
-            const matches = text.match(pattern);
-            if (matches) count += matches.length;
-        });
-
-        return count;
     }
 }
 

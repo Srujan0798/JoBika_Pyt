@@ -1,94 +1,88 @@
-const db = require('../database/db');
-
 class MatchingEngine {
     constructor() {
-        this.db = new db();
-    }
-
-    async calculateMatchScore(userId, jobId) {
-        const user = await this.db.getUserById(userId);
-        const job = (await this.db.query('SELECT * FROM jobs WHERE id = $1', [jobId])).rows[0];
-
-        if (!user || !job) return 0;
-
-        let score = 0;
-        const weights = {
-            skills: 0.4,
+        // Weights for the matching algorithm
+        this.weights = {
+            skills: 0.40,
             experience: 0.25,
             location: 0.15,
-            salary: 0.1,
-            culture: 0.1
+            salary: 0.10,
+            culture: 0.10
         };
-
-        // 1. Skills Match
-        const userSkills = (user.skills || []).map(s => s.toLowerCase());
-        const jobSkills = (job.skills_required || []).map(s => s.toLowerCase());
-
-        if (jobSkills.length > 0) {
-            const matched = jobSkills.filter(s => userSkills.includes(s));
-            score += (matched.length / jobSkills.length) * 100 * weights.skills;
-        } else {
-            score += 100 * weights.skills; // No skills required?
-        }
-
-        // 2. Experience Match
-        const userExp = parseFloat(user.total_years || 0);
-        const minExp = job.experience_min || 0;
-        const maxExp = job.experience_max || 100;
-
-        if (userExp >= minExp && userExp <= maxExp) {
-            score += 100 * weights.experience;
-        } else if (userExp < minExp) {
-            const diff = minExp - userExp;
-            score += Math.max(0, 100 - (diff * 20)) * weights.experience;
-        } else {
-            score += 100 * weights.experience; // Overqualified is usually fine
-        }
-
-        // 3. Location Match
-        if (!job.location || (user.location && job.location.toLowerCase().includes(user.location.toLowerCase()))) {
-            score += 100 * weights.location;
-        } else if (job.location.toLowerCase() === 'remote') {
-            score += 100 * weights.location;
-        }
-
-        // 4. Salary Match
-        if (user.expected_ctc && job.salary_max) {
-            if (job.salary_max >= user.expected_ctc) {
-                score += 100 * weights.salary;
-            } else {
-                const diff = user.expected_ctc - job.salary_max;
-                // Penalize if budget is lower than expected
-                score += Math.max(0, 100 - (diff / 100000 * 10)) * weights.salary;
-            }
-        } else {
-            score += 100 * weights.salary;
-        }
-
-        // 5. Culture (Placeholder for AI analysis)
-        score += 80 * weights.culture; // Default assumption
-
-        return Math.round(score);
     }
 
-    async matchForUser(userId) {
-        const jobs = await this.db.searchJobs({ limit: 100 });
-        const matches = [];
+    calculateScore(userProfile, job) {
+        const skillsScore = this.matchSkills(userProfile.skills, job.skills_required);
+        const expScore = this.matchExperience(userProfile.totalYears, job.experience_min, job.experience_max);
+        const locScore = this.matchLocation(userProfile.location, job.location);
+        const salaryScore = this.matchSalary(userProfile.expectedCtc, job.salary_min, job.salary_max);
 
-        for (const job of jobs) {
-            const score = await this.calculateMatchScore(userId, job.id);
-            if (score > 60) {
-                matches.push({ job, score });
-                // Save match
-                await this.db.query(`
-                    INSERT INTO job_matches (user_id, job_id, match_score)
-                    VALUES ($1, $2, $3)
-                    ON CONFLICT (user_id, job_id) DO UPDATE SET match_score = $3
-                `, [userId, job.id, score]);
-            }
+        // Culture fit is hard to determine without more data, assuming neutral (50%) or based on company type if available
+        const cultureScore = 50;
+
+        const totalScore = (
+            skillsScore * this.weights.skills +
+            expScore * this.weights.experience +
+            locScore * this.weights.location +
+            salaryScore * this.weights.salary +
+            cultureScore * this.weights.culture
+        );
+
+        return Math.round(totalScore);
+    }
+
+    matchSkills(userSkills, jobSkills) {
+        if (!userSkills || !jobSkills) return 0;
+
+        // Parse if strings (SQLite storage)
+        const uSkills = typeof userSkills === 'string' ? JSON.parse(userSkills) : userSkills;
+        const jSkills = typeof jobSkills === 'string' ? JSON.parse(jobSkills) : jobSkills;
+
+        if (!Array.isArray(uSkills) || !Array.isArray(jSkills) || jSkills.length === 0) return 0;
+
+        const userSkillSet = new Set(uSkills.map(s => s.toLowerCase()));
+        const matchedCount = jSkills.filter(s => userSkillSet.has(s.toLowerCase())).length;
+
+        return (matchedCount / jSkills.length) * 100;
+    }
+
+    matchExperience(userYears, minExp, maxExp) {
+        if (!userYears) return 0;
+        if (!minExp) return 100; // No requirement
+
+        if (userYears >= minExp && (!maxExp || userYears <= maxExp)) {
+            return 100;
+        } else if (userYears < minExp) {
+            // Penalize for being underqualified
+            const diff = minExp - userYears;
+            return Math.max(0, 100 - (diff * 20));
+        } else {
+            // Slight penalty for being overqualified (optional)
+            return 90;
         }
+    }
 
-        return matches.sort((a, b) => b.score - a.score);
+    matchLocation(userLoc, jobLoc) {
+        if (!userLoc || !jobLoc) return 0;
+        if (jobLoc.toLowerCase().includes('remote')) return 100;
+        if (userLoc.toLowerCase().includes(jobLoc.toLowerCase()) || jobLoc.toLowerCase().includes(userLoc.toLowerCase())) {
+            return 100;
+        }
+        return 0;
+    }
+
+    matchSalary(userExpected, jobMin, jobMax) {
+        if (!userExpected || !jobMin) return 50; // Neutral if unknown
+
+        // If job pays more than expected, great!
+        if (jobMin >= userExpected) return 100;
+
+        // If job max is less than expected, bad match
+        if (jobMax && jobMax < userExpected) return 0;
+
+        // If range overlaps
+        if (jobMax && jobMax >= userExpected) return 80;
+
+        return 50;
     }
 }
 

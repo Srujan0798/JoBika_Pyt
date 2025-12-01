@@ -1,18 +1,30 @@
-# 🚀 JoBika - AI-Powered Job Application Platform
+# 🚀 JobSaathi - AI-Powered Job Platform for India
 
-**India's first AI-powered job search platform with resume tailoring and auto-apply.**
+**India's first AI-powered job search platform with resume tailoring, auto-apply, and career coaching.**
 
 ---
 
 ## 🎯 **Tech Stack**
 
 ```
-Frontend:  React + Vite + TailwindCSS (Vercel)
-Backend:   Node.js + Express (Railway)
+Frontend:  Next.js 14 (App Router) + TailwindCSS + Lucide Icons (Vercel)
+Backend:   Node.js + Express (Railway/Render)
 Database:  PostgreSQL (Supabase) + SQLite Fallback
 AI:        Google Gemini (Free Tier)
-Automation: Puppeteer (Auto-Apply)
+Automation: Puppeteer (Auto-Apply Agent)
 ```
+
+---
+
+## ✨ **Key Features**
+
+- **🤖 AI Job Matching:** Smart algorithm matches your skills to jobs (Score 0-100%).
+- **📄 AI Resume Builder:** Tailors your resume for specific job descriptions using Gemini.
+- **⚡ Auto-Apply Agent:** Automates job applications with a single click.
+- **🧠 Orion Career Coach:** AI chatbot for interview prep and career advice.
+- **📊 Application Tracker:** Kanban board to track your job search progress.
+- **🤝 Networking:** Find connections and generate referral messages.
+- **💰 Monetization:** Subscription plans (Free/Pro) with mock payment gateway.
 
 ---
 
@@ -27,53 +39,54 @@ cd JoBika_Pyt
 cd backend && npm install
 
 # Install Frontend
-cd ../frontend && npm install
+cd ../frontend-next && npm install
 ```
 
 ### 2. Setup Environment
 Create `backend/.env`:
 ```bash
-DATABASE_TYPE=postgres
-DATABASE_URL=your_supabase_connection_string
+DATABASE_TYPE=sqlite  # or postgres
+DATABASE_URL=./database/local.sqlite
 GEMINI_API_KEY=your_gemini_api_key
 JWT_SECRET=your_secret_key
-NODE_ENV=development
-FRONTEND_URL=http://localhost:5173
+PORT=3000
 ```
 
-### 3. Run Locally
+### 3. Seed Data (Optional)
+Populate the database with realistic jobs and a demo user:
+```bash
+cd backend
+node scripts/seed.js
+```
+
+### 4. Run Locally
 **Backend:**
 ```bash
 cd backend
-npm run dev
-# Runs on http://localhost:8080
+npm start
+# Runs on http://localhost:3000
 ```
 
 **Frontend:**
 ```bash
-cd frontend
+cd frontend-next
 npm run dev
-# Runs on http://localhost:5173
+# Runs on http://localhost:3001
 ```
 
 ---
 
 ## 📦 **Deployment**
 
-### Backend → Railway
-1. Connect GitHub repo to Railway.
-2. Set Root Directory to `backend`.
-3. Add Variables:
-   - `DATABASE_URL`, `GEMINI_API_KEY`, `JWT_SECRET`, `NODE_ENV=production`
-   - `FRONTEND_URL` (Your Vercel URL)
-   - `ALLOWED_ORIGINS` (Your Vercel URL)
-   - `PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium`
+### Backend → Railway / Render
+1. Push `backend` folder.
+2. Set Environment Variables (`GEMINI_API_KEY`, `DATABASE_URL`, etc.).
+3. `Procfile` is included for automatic configuration.
 
 ### Frontend → Vercel
-1. Connect GitHub repo to Vercel.
-2. Set Root Directory to `frontend`.
-3. Framework Preset: `Vite`.
-4. Deploy!
+1. Push `frontend-next` folder.
+2. Framework Preset: `Next.js`.
+3. `vercel.json` is included for configuration.
 
 ---
 
@@ -81,17 +94,18 @@ npm run dev
 
 ```
 JoBika_Pyt/
-├── frontend/               # React + Vite App
-│   ├── src/
-│   ├── public/
-│   └── vite.config.js
+├── frontend-next/          # Next.js 14 App
+│   ├── src/app/           # App Router Pages
+│   ├── public/            # Static Assets
+│   └── vercel.json        # Deployment Config
 │
 ├── backend/                # Node.js API
-│   ├── server.js          # Main entry point
-│   ├── database/          # DB Manager (Postgres/SQLite)
-│   ├── services/          # AI & Scraper Services
-│   ├── middleware/        # Security & Auth
-│   └── Dockerfile         # Deployment config
+│   ├── server.js          # Entry Point
+│   ├── routes/            # API Routes (Jobs, User, Resumes...)
+│   ├── services/          # AI & Automation Services
+│   ├── database/          # DB Logic (Postgres/SQLite)
+│   ├── scripts/           # Seed & Migration Scripts
+│   └── Procfile           # Deployment Config
 │
 └── README.md              # This file
 ```
@@ -100,22 +114,19 @@ JoBika_Pyt/
 
 ## 🔐 **Environment Variables**
 
-### Backend (Railway)
+### Backend
 ```bash
 # Database
 DATABASE_TYPE=postgres
 DATABASE_URL=postgresql://...
-DATABASE_SSL=require
 
 # AI
 GEMINI_API_KEY=AIzaSy...
 
 # Security
 JWT_SECRET=...
-ALLOWED_ORIGINS=https://jobika-pyt.vercel.app,http://localhost:5173
-FRONTEND_URL=https://jobika-pyt.vercel.app
 
-# Puppeteer
+# Puppeteer (Optional for Cloud)
 PUPPETEER_EXECUTABLE_PATH=/usr/bin/chromium
 ```
 

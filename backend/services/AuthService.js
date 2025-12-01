@@ -8,7 +8,8 @@ class AuthService {
         this.saltRounds = 10;
     }
 
-    async register(email, password, name, profileData = {}) {
+    async register(userData) {
+        const { email, password, name } = userData;
         try {
             // Check if user exists
             const existingUser = await this.db.getUserByEmail(email);
@@ -19,17 +20,20 @@ class AuthService {
             // Hash password
             const passwordHash = await bcrypt.hash(password, this.saltRounds);
 
-            // Create user
-            const result = await this.db.createUser(email, passwordHash, name, profileData);
+            // Create user with all fields
+            const result = await this.db.createUser({
+                ...userData,
+                passwordHash
+            });
 
             // Generate token
-            const token = this.generateToken(result.lastInsertRowid);
+            const token = this.generateToken(result.id);
 
             return {
                 success: true,
-                userId: result.lastInsertRowid,
+                userId: result.id,
                 token,
-                user: { id: result.lastInsertRowid, email, name }
+                user: { id: result.id, email, name }
             };
         } catch (error) {
             console.error('Registration error:', error);

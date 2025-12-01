@@ -2,6 +2,7 @@ const { Pool } = require('pg');
 const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const fs = require('fs');
+const crypto = require('crypto');
 
 /**
  * Database Manager - Supports PostgreSQL with SQLite Fallback
@@ -78,74 +79,90 @@ class DatabaseManager {
     async initializePostgresSchema() {
         const schema = `
             CREATE TABLE IF NOT EXISTS users (
-                id SERIAL PRIMARY KEY,
-                email VARCHAR(255) UNIQUE NOT NULL,
-                password_hash VARCHAR(255) NOT NULL,
-                name VARCHAR(255),
-                phone VARCHAR(50),
-                current_company VARCHAR(255),
-                current_role VARCHAR(255),
-                total_years INTEGER,
-                current_ctc DECIMAL(10, 2),
-                expected_ctc DECIMAL(10, 2),
+                id TEXT PRIMARY KEY,
+                email TEXT UNIQUE NOT NULL,
+                password_hash TEXT,
+                name TEXT,
+                phone TEXT,
+                location TEXT,
+                current_role TEXT,
+                current_company TEXT,
+                total_years REAL,
+                current_ctc REAL,
+                expected_ctc REAL,
                 notice_period INTEGER,
-                location VARCHAR(255),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                subscription_tier VARCHAR(50) DEFAULT 'free',
-                profile_data TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS applications (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL REFERENCES users(id),
-                job_id INTEGER,
-                company VARCHAR(255) NOT NULL,
-                role VARCHAR(255) NOT NULL,
-                location VARCHAR(255),
-                job_url TEXT,
-                status VARCHAR(50) DEFAULT 'Applied',
-                applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                notes TEXT
+                skills TEXT,
+                preferences TEXT,
+                subscription_tier TEXT DEFAULT 'free',
+                credits INTEGER DEFAULT 10,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS jobs (
-                id SERIAL PRIMARY KEY,
-                title VARCHAR(500) NOT NULL,
-                company VARCHAR(255) NOT NULL,
-                location VARCHAR(255),
+                id TEXT PRIMARY KEY,
+                title TEXT NOT NULL,
+                company TEXT NOT NULL,
                 description TEXT,
-                requirements TEXT,
-                salary_min DECIMAL(10, 2),
-                salary_max DECIMAL(10, 2),
-                experience_min INTEGER,
-                experience_max INTEGER,
-                job_type VARCHAR(50),
-                source VARCHAR(100),
-                source_url TEXT UNIQUE,
-                posted_date TIMESTAMP,
-                scraped_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                is_active BOOLEAN DEFAULT true
+                location TEXT,
+                salary_min REAL,
+                salary_max REAL,
+                experience_min REAL,
+                experience_max REAL,
+                skills_required TEXT,
+                source TEXT,
+                external_link TEXT,
+                posted_date DATETIME,
+                is_active INTEGER DEFAULT 1,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS resumes (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL REFERENCES users(id),
-                user_name VARCHAR(255),
-                user_email VARCHAR(255),
-                content TEXT NOT NULL,
-                original_filename VARCHAR(500),
-                uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                original_url TEXT,
+                parsed_data TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS job_matches (
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                job_id TEXT,
+                match_score INTEGER,
+                reasons TEXT,
+                is_viewed INTEGER DEFAULT 0,
+                is_saved INTEGER DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+                UNIQUE(user_id, job_id)
+            );
+
+            CREATE TABLE IF NOT EXISTS applications (
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                job_id TEXT,
+                status TEXT DEFAULT 'applied',
+                resume_version_id TEXT,
+                cover_letter TEXT,
+                notes TEXT,
+                applied_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS resume_versions (
-                id SERIAL PRIMARY KEY,
-                user_id INTEGER NOT NULL REFERENCES users(id),
-                job_id INTEGER REFERENCES jobs(id),
-                content TEXT NOT NULL,
-                pdf_path TEXT,
-                ats_score DECIMAL(5, 2),
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                job_id TEXT,
+                content TEXT,
+                pdf_url TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS chat_history (
@@ -201,78 +218,90 @@ class DatabaseManager {
     initializeSqliteSchema() {
         const schema = `
             CREATE TABLE IF NOT EXISTS users (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id TEXT PRIMARY KEY,
                 email TEXT UNIQUE NOT NULL,
-                password_hash TEXT NOT NULL,
+                password_hash TEXT,
                 name TEXT,
                 phone TEXT,
-                current_company TEXT,
+                location TEXT,
                 current_role TEXT,
-                total_years INTEGER,
+                current_company TEXT,
+                total_years REAL,
                 current_ctc REAL,
                 expected_ctc REAL,
                 notice_period INTEGER,
-                location TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                skills TEXT,
+                preferences TEXT,
                 subscription_tier TEXT DEFAULT 'free',
-                profile_data TEXT
-            );
-
-            CREATE TABLE IF NOT EXISTS applications (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                job_id INTEGER,
-                company TEXT NOT NULL,
-                role TEXT NOT NULL,
-                location TEXT,
-                job_url TEXT,
-                status TEXT DEFAULT 'Applied',
-                applied_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                notes TEXT,
-                FOREIGN KEY(user_id) REFERENCES users(id)
+                credits INTEGER DEFAULT 10,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS jobs (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                id TEXT PRIMARY KEY,
                 title TEXT NOT NULL,
                 company TEXT NOT NULL,
-                location TEXT,
                 description TEXT,
-                requirements TEXT,
+                location TEXT,
                 salary_min REAL,
                 salary_max REAL,
-                experience_min INTEGER,
-                experience_max INTEGER,
-                job_type TEXT,
+                experience_min REAL,
+                experience_max REAL,
+                skills_required TEXT,
                 source TEXT,
-                source_url TEXT UNIQUE,
+                external_link TEXT,
                 posted_date DATETIME,
-                scraped_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                is_active INTEGER DEFAULT 1
+                is_active INTEGER DEFAULT 1,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS resumes (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                user_name TEXT,
-                user_email TEXT,
-                content TEXT NOT NULL,
-                original_filename TEXT,
-                uploaded_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY(user_id) REFERENCES users(id)
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                original_url TEXT,
+                parsed_data TEXT,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
+            );
+
+            CREATE TABLE IF NOT EXISTS job_matches (
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                job_id TEXT,
+                match_score INTEGER,
+                reasons TEXT,
+                is_viewed INTEGER DEFAULT 0,
+                is_saved INTEGER DEFAULT 0,
+                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE,
+                UNIQUE(user_id, job_id)
+            );
+
+            CREATE TABLE IF NOT EXISTS applications (
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                job_id TEXT,
+                status TEXT DEFAULT 'applied',
+                resume_version_id TEXT,
+                cover_letter TEXT,
+                notes TEXT,
+                applied_date DATETIME DEFAULT CURRENT_TIMESTAMP,
+                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS resume_versions (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                user_id INTEGER NOT NULL,
-                job_id INTEGER,
-                content TEXT NOT NULL,
-                pdf_path TEXT,
-                ats_score REAL,
+                id TEXT PRIMARY KEY,
+                user_id TEXT,
+                job_id TEXT,
+                content TEXT,
+                pdf_url TEXT,
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                FOREIGN KEY(user_id) REFERENCES users(id),
-                FOREIGN KEY(job_id) REFERENCES jobs(id)
+                FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
+                FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
             );
 
             CREATE TABLE IF NOT EXISTS chat_history (
@@ -436,17 +465,39 @@ class DatabaseManager {
         }
     }
 
-    async createUser(email, passwordHash, name, profileData = {}) {
-        try {
-            const result = await this.safeQuery(`
-                INSERT INTO users (email, password_hash, name, profile_data)
-                VALUES ($1, $2, $3, $4)
-                RETURNING id
-            `, [email, passwordHash, name, JSON.stringify(profileData)]);
+    async createUser(userData) {
+        const {
+            email, passwordHash, name, phone, location,
+            currentRole, currentCompany, totalYears,
+            currentCtc, expectedCtc, noticePeriod, skills, preferences
+        } = userData;
 
+        try {
+            // Handle array/object serialization for SQLite/Postgres compatibility
+            const skillsValue = Array.isArray(skills) ? JSON.stringify(skills) : skills;
+            const preferencesValue = typeof preferences === 'object' ? JSON.stringify(preferences) : preferences;
+            const id = crypto.randomUUID();
+
+            const result = await this.safeQuery(`
+                INSERT INTO users (
+                    id, email, password_hash, name, phone, location, 
+                    current_role, current_company, total_years, 
+                    current_ctc, expected_ctc, notice_period, 
+                    skills, preferences
+                )
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14)
+                RETURNING id
+            `, [
+                id, email, passwordHash, name, phone, location,
+                currentRole, currentCompany, totalYears,
+                currentCtc, expectedCtc, noticePeriod,
+                skillsValue, preferencesValue
+            ]);
+
+            // For SQLite, we return the generated UUID, not the ROWID
             return {
-                lastInsertRowid: result.rows[0].id,
-                rows: result.rows
+                id: id,
+                ...userData
             };
         } catch (error) {
             console.error('Error creating user:', error);
@@ -515,6 +566,31 @@ class DatabaseManager {
             [userId]
         );
         return result.rows[0] || null;
+    }
+
+    async saveChatMessage(userId, role, message, folder = 'All') {
+        try {
+            await this.safeQuery(
+                'INSERT INTO chat_history (user_id, role, message, folder) VALUES ($1, $2, $3, $4)',
+                [userId, role, message, folder]
+            );
+        } catch (error) {
+            console.error('Error saving chat message:', error);
+            // Don't throw, just log. Chat should continue even if history fails.
+        }
+    }
+
+    async getChatHistory(userId, folder = 'All', limit = 10) {
+        try {
+            const result = await this.safeQuery(
+                'SELECT role, message, timestamp FROM chat_history WHERE user_id = $1 AND folder = $2 ORDER BY timestamp ASC LIMIT $3',
+                [userId, folder, limit]
+            );
+            return result.rows;
+        } catch (error) {
+            console.error('Error fetching chat history:', error);
+            return [];
+        }
     }
 
     async close() {

@@ -3,6 +3,11 @@ const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
 
+// Import routes
+const authRoutes = require('./routes/auth');
+const userRoutes = require('./routes/user');
+const jobRoutes = require('./routes/jobs');
+
 // Import utilities
 const errorHandler = require('./utils/errorHandler');
 const security = require('./middleware/security');
@@ -77,11 +82,29 @@ app.use((err, req, res, next) => {
 });
 
 
+// ====== JOB ROUTES ======
+app.use('/api/jobs', jobRoutes);
+
 // ====== AUTH ROUTES ======
 app.use('/api/auth', require('./routes/auth'));
 
 // ====== USER ROUTES ======
 app.use('/api', authMiddleware, require('./routes/user'));
+
+// ====== RESUME ROUTES ======
+app.use('/api/resumes', require('./routes/resumes'));
+
+// ====== APPLICATION ROUTES ======
+app.use('/api/applications', require('./routes/applications'));
+
+// ====== ANALYTICS ROUTES ======
+app.use('/api/analytics', require('./routes/analytics'));
+
+// ====== NETWORKING ROUTES ======
+app.use('/api/networking', require('./routes/networking'));
+
+// ====== PAYMENTS ROUTES ======
+app.use('/api/payments', require('./routes/payments'));
 
 // ====== ORION AI CHAT ROUTES ======
 
@@ -106,7 +129,7 @@ app.post('/api/orion/chat', authMiddleware, async (req, res) => {
         console.error('Chat error:', error);
         res.status(500).json({
             error: 'Chat service error',
-            response: 'I apologize, but I\'m having trouble connecting right now. Please check if OpenAI API key is configured.'
+            response: 'I apologize, but I\'m having trouble connecting right now. Please check if Gemini API key is configured.'
         });
     }
 });
@@ -167,11 +190,11 @@ app.post('/api/cover-letter', authMiddleware, async (req, res) => {
 
         // For now, use Orion to generate cover letter via chat
         const prompt = `Generate a professional cover letter for:
-Company: ${companyInfo.name}
+    Company: ${companyInfo.name}
 Role: ${jobDescription.title}
 My Profile: ${JSON.stringify(userProfile)}
 
-Job Description: ${jobDescription.full}`;
+Job Description: ${jobDescription.full} `;
 
         const coverLetter = await orionService.chatWithOrion(prompt, []);
         res.json({ coverLetter, success: true });
@@ -189,7 +212,7 @@ app.post('/api/interview-prep', authMiddleware, async (req, res) => {
 
         // For now, use Orion to generate interview prep
         const prompt = `Generate interview preparation for:
-Company: ${companyName}
+    Company: ${companyName}
 Role: ${jobDescription.title}
 My Profile: ${JSON.stringify(userProfile)}
 
@@ -239,7 +262,7 @@ app.post('/api/tailor-resume', authMiddleware, async (req, res) => {
         );
 
         // Generate PDF
-        const pdfPath = `/tmp/resume_${req.userId}_${jobId}.pdf`;
+        const pdfPath = `/ tmp / resume_${req.userId}_${jobId}.pdf`;
         await resumeTailoring.generateResumePDF(
             { ...tailoredResume, name: resume.user_name, email: resume.user_email },
             pdfPath
@@ -247,10 +270,10 @@ app.post('/api/tailor-resume', authMiddleware, async (req, res) => {
 
         // Save tailored version in database
         const versionResult = db.query(`
-            INSERT INTO resume_versions (user_id, job_id, content, pdf_path, ats_score, created_at)
-            VALUES ($1, $2, $3, $4, $5, NOW())
+            INSERT INTO resume_versions(user_id, job_id, content, pdf_path, ats_score, created_at)
+VALUES($1, $2, $3, $4, $5, NOW())
             RETURNING id
-        `, [req.userId, jobId, JSON.stringify(tailoredResume), pdfPath, tailoredResume.atsScore]);
+    `, [req.userId, jobId, JSON.stringify(tailoredResume), pdfPath, tailoredResume.atsScore]);
 
         res.json({
             success: true,
@@ -292,7 +315,7 @@ app.post('/api/auto-apply', authMiddleware, async (req, res) => {
                 job
             );
 
-            const pdfPath = `/tmp/resume_${req.userId}_${jobId}.pdf`;
+            const pdfPath = `/ tmp / resume_${req.userId}_${jobId}.pdf`;
             await resumeTailoring.generateResumePDF(
                 { ...tailoredResume, name: user.name, email: user.email },
                 pdfPath
@@ -350,12 +373,12 @@ app.post('/api/batch-auto-apply', authMiddleware, async (req, res) => {
             JOIN jobs j ON jm.job_id = j.id
             WHERE jm.user_id = $1
             AND jm.match_score >= $2
-            AND jm.job_id NOT IN (
-                SELECT job_id FROM applications WHERE user_id = $1
-            )
+            AND jm.job_id NOT IN(
+        SELECT job_id FROM applications WHERE user_id = $1
+    )
             ORDER BY jm.match_score DESC
             LIMIT $3
-        `, [req.userId, minMatchScore, maxApplications]);
+    `, [req.userId, minMatchScore, maxApplications]);
 
         const jobIds = highMatchJobs.rows.map(j => j.id);
 
@@ -376,7 +399,7 @@ app.post('/api/batch-auto-apply', authMiddleware, async (req, res) => {
 
 async function getTailoredResumeForJob(userId, jobId) {
     const result = await db.query(`
-        SELECT * FROM resume_versions
+SELECT * FROM resume_versions
         WHERE user_id = $1 AND job_id = $2
         ORDER BY created_at DESC
         LIMIT 1
@@ -424,12 +447,51 @@ app.use(errorHandler.errorMiddleware());
 
 // Start server (Only if not running in test mode)
 let server;
+const http = require('http');
+const { Server } = require("socket.io");
+
 if (require.main === module) {
-    server = app.listen(port, () => {
+    const httpServer = http.createServer(app);
+    const io = new Server(httpServer, {
+        cors: {
+            origin: ["http://localhost:3001", "http://localhost:5173", "https://jobika-pyt.vercel.app"],
+            methods: ["GET", "POST"]
+        }
+    });
+
+    io.on("connection", (socket) => {
+        console.log("User connected:", socket.id);
+
+        socket.on("chat:message", async (data) => {
+            const { message, history } = data;
+            try {
+                // Get AI response (using existing service)
+                const response = await orionService.chatWithOrion(message, history || []);
+
+                // Simulate streaming for premium feel
+                const chunks = response.split(" ");
+                for (let i = 0; i < chunks.length; i++) {
+                    socket.emit("chat:stream", { chunk: chunks[i] + " " });
+                    await new Promise(r => setTimeout(r, 50)); // 50ms delay per word
+                }
+                socket.emit("chat:end", { fullResponse: response });
+
+            } catch (error) {
+                socket.emit("chat:error", { error: "Failed to get response" });
+            }
+        });
+
+        socket.on("disconnect", () => {
+            console.log("User disconnected:", socket.id);
+        });
+    });
+
+    server = httpServer.listen(port, () => {
         console.log(`\n🚀 JoBika Backend Server Running`);
-        console.log(`📍 Port: ${port}`);
-        console.log(`💾 Database: ${db.dbPath}`);
-        console.log(`🤖 Gemini AI: ${process.env.GEMINI_API_KEY ? '✅ Configured (FREE!)' : '❌ Not configured - Get FREE key: https://aistudio.google.com/app/apikey'}`);
+        console.log(`📍 Port: ${port} `);
+        console.log(`💾 Database: ${db.dbPath} `);
+        console.log(`🤖 Gemini AI: ${process.env.GEMINI_API_KEY ? '✅ Configured (FREE!)' : '❌ Not configured - Get FREE key: https://aistudio.google.com/app/apikey'} `);
+        console.log(`⚡ Socket.io: Enabled for Real-Time Chat`);
         console.log(`\n✨ All systems ready!\n`);
     });
 }
