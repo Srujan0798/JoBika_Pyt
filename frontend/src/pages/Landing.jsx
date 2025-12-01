@@ -36,7 +36,7 @@ const Landing = () => {
                 </Link>
             </div>
             <div className="mt-12 text-sm text-muted-foreground">
-                v3.0 - FINAL UPDATE
+                v4.0 - RED THEME TEST
             </div>
         </div>
     );
