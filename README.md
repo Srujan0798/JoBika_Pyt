@@ -76,6 +76,26 @@ npm run dev
 
 ---
 
+## 🚀 Deployment (CI/CD)
+
+This project uses GitHub Actions for automatic deployment.
+
+### Required GitHub Secrets
+Go to **Settings** -> **Secrets and variables** -> **Actions** and add these:
+
+| Secret Name | Description | Value (Example) |
+| :--- | :--- | :--- |
+| `RAILWAY_TOKEN` | Railway API Token | `846...` |
+| `VERCEL_TOKEN` | Vercel API Token | `cOW...` |
+| `VERCEL_ORG_ID` | Vercel Team ID | `team_...` |
+| `VITE_API_URL` | Live Backend URL | `https://jobika-backend...` |
+
+### Manual Deployment
+- **Backend:** `railway up`
+- **Frontend:** `vercel --prod`
+
+---
+
 ## 📦 **Deployment**
 
 ### Backend → Railway / Render
