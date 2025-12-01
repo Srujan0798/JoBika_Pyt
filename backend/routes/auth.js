@@ -25,6 +25,24 @@ router.post('/login', async (req, res) => {
     }
 });
 
+router.post('/guest', async (req, res) => {
+    try {
+        const guestId = Math.random().toString(36).substring(7);
+        const email = `guest_${guestId}@jobika.com`;
+        const password = `guest_${guestId}`;
+        const name = 'Guest User';
+
+        // Register guest
+        await authService.register(email, password, name);
+
+        // Login guest
+        const result = await authService.login(email, password);
+        res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.get('/me', authMiddleware, async (req, res) => {
     try {
         const user = await db.getUserById(req.userId);
