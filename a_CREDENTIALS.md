@@ -97,3 +97,20 @@ The migration script will now just copy data from SQLite to PostgreSQL (if you h
 ---
 
 **All credentials are saved in backend/.env** ✅
+
+---
+
+## 🚀 Deployment Secrets (Added Dec 2025)
+
+### Railway (Backend)
+```
+RAILWAY_TOKEN: 846fcaf3-cef6-479f-ae06-b32a8eb8ee04
+Service URL: https://jobika-backend-production.up.railway.app
+```
+
+### Vercel (Frontend)
+```
+VERCEL_TOKEN: cOWVNATQUod1dhiXPsyZGeh3
+VERCEL_ORG_ID: team_qylQzs9SSaSlYkZZHaay74LU
+VERCEL_PROJECT_ID: prj_8Q0IkCnsgMAIAz43TpUTnEoa1P3s
+```
