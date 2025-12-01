@@ -53,7 +53,7 @@ jobs:
 
 
       - name: Deploy to Railway
-        run: railway up --service celebrated-tranquility --detach
+        run: railway up --service web --detach
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
         working-directory: ./backend
