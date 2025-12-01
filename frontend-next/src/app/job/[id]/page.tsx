@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
+import { API_BASE_URL } from "@/lib/config";
 import Link from "next/link";
 import { MapPin, Briefcase, IndianRupee, Clock, Building2, Share2, ArrowLeft, Zap, Users, Send } from "lucide-react";
 
@@ -50,7 +51,7 @@ export default function JobDetailsPage() {
             const token = localStorage.getItem("token");
             if (!token) return;
 
-            const res = await fetch(`http://localhost:3000/api/jobs/${id}`, { // Assuming we have this endpoint or filter list
+            const res = await fetch(`${API_BASE_URL}/api/jobs/${id}`, { // Assuming we have this endpoint or filter list
                 // If not, we might need to fetch all and find, or implement GET /api/jobs/:id
                 // Let's assume we implement GET /api/jobs/:id or use the list for now.
                 // Actually, backend jobs.js doesn't have GET /:id. I should add it or just fetch list and find.
@@ -60,7 +61,7 @@ export default function JobDetailsPage() {
 
             // Fallback to list fetch if specific endpoint fails or doesn't exist
             if (!res.ok) {
-                const listRes = await fetch("http://localhost:3000/api/jobs", {
+                const listRes = await fetch(`${API_BASE_URL}/api/jobs`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const listData = await listRes.json();
@@ -84,7 +85,7 @@ export default function JobDetailsPage() {
     const fetchConnections = async (company: string, token: string) => {
         setLoadingConnections(true);
         try {
-            const res = await fetch(`http://localhost:3000/api/networking/connections?company=${encodeURIComponent(company)}`, {
+            const res = await fetch(`${API_BASE_URL}/api/networking/connections?company=${encodeURIComponent(company)}`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -103,7 +104,7 @@ export default function JobDetailsPage() {
         setApplying(true);
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:3000/api/applications/auto-apply", {
+            const res = await fetch(`${API_BASE_URL}/api/applications/auto-apply`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { Briefcase, Building, MapPin, Clock, MoreHorizontal, CheckCircle, XCircle, Calendar } from "lucide-react";
 
 interface Application {
@@ -35,7 +37,7 @@ export default function ApplicationsPage() {
             const token = localStorage.getItem("token");
             if (!token) return;
 
-            const res = await fetch("http://localhost:3000/api/analytics/applications", {
+            const res = await fetch(`${API_BASE_URL}/api/analytics/applications`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();

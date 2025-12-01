@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { User, Mail, Phone, MapPin, Briefcase, Award, Save, Loader2, ArrowLeft } from "lucide-react";
 
 interface UserProfile {
@@ -54,7 +55,7 @@ export default function ProfilePage() {
             // Actually, let's implement GET /api/user/profile in backend if it doesn't exist.
             // Checking user.js... it has PUT /profile but not GET /profile explicitly shown in previous turns.
             // Let's try to fetch.
-            const res = await fetch("http://localhost:3000/api/user/profile", {
+            const res = await fetch(`${API_BASE_URL}/api/user/profile`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -85,7 +86,7 @@ export default function ProfilePage() {
         setMessage("");
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:3000/api/user/profile", {
+            const res = await fetch(`${API_BASE_URL}/api/user/profile`, {
                 method: "PUT",
                 headers: {
                     "Content-Type": "application/json",

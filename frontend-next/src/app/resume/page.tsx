@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { Upload, FileText, CheckCircle, AlertCircle, Loader2, ArrowLeft } from "lucide-react";
 
 export default function ResumeUpload() {
@@ -39,7 +40,7 @@ export default function ResumeUpload() {
                 throw new Error("Please login to upload resume");
             }
 
-            const res = await fetch("http://localhost:3000/api/resume/upload", {
+            const res = await fetch(`${API_BASE_URL}/api/resume/upload`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,

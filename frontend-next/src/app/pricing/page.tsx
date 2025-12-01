@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { Check, Star, Zap, Shield, ArrowLeft, Loader2 } from "lucide-react";
 
 interface Plan {
@@ -25,7 +26,7 @@ export default function PricingPage() {
 
     const fetchPlans = async () => {
         try {
-            const res = await fetch("http://localhost:3000/api/payments/plans");
+            const res = await fetch(`${API_BASE_URL}/api/payments/plans`);
             const data = await res.json();
             if (Array.isArray(data)) {
                 setPlans(data);
@@ -47,7 +48,7 @@ export default function PricingPage() {
             }
 
             // 1. Create Order
-            const orderRes = await fetch("http://localhost:3000/api/payments/create-order", {
+            const orderRes = await fetch(`${API_BASE_URL}/api/payments/create-order`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -62,7 +63,7 @@ export default function PricingPage() {
                 // In real app, this would be Razorpay checkout
                 await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate delay
 
-                const verifyRes = await fetch("http://localhost:3000/api/payments/verify", {
+                const verifyRes = await fetch(`${API_BASE_URL}/api/payments/verify`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -115,8 +116,8 @@ export default function PricingPage() {
                             <div
                                 key={plan.id}
                                 className={`relative bg-white rounded-2xl p-8 border-2 transition-all hover:shadow-xl ${plan.recommended
-                                        ? "border-primary shadow-lg scale-105 z-10"
-                                        : "border-transparent shadow-sm hover:border-primary/20"
+                                    ? "border-primary shadow-lg scale-105 z-10"
+                                    : "border-transparent shadow-sm hover:border-primary/20"
                                     }`}
                             >
                                 {plan.recommended && (
@@ -151,8 +152,8 @@ export default function PricingPage() {
                                     onClick={() => handleSubscribe(plan.id)}
                                     disabled={!!processing}
                                     className={`w-full py-3 rounded-xl font-bold transition-all flex items-center justify-center gap-2 ${plan.recommended
-                                            ? "bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/25"
-                                            : "bg-muted text-foreground hover:bg-muted/80"
+                                        ? "bg-primary text-white hover:bg-primary/90 shadow-lg shadow-primary/25"
+                                        : "bg-muted text-foreground hover:bg-muted/80"
                                         }`}
                                 >
                                     {processing === plan.id ? (

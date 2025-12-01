@@ -1,7 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { Search, MapPin, Briefcase, IndianRupee, Clock, Building2, LogOut, Zap } from "lucide-react";
 
 interface Job {
@@ -44,7 +46,7 @@ export default function Dashboard() {
 
     const fetchJobs = async (token: string) => {
         try {
-            const res = await fetch("http://localhost:3000/api/jobs", {
+            const res = await fetch(`${API_BASE_URL}/api/jobs`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },

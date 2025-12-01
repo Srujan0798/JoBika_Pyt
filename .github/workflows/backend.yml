@@ -50,12 +50,7 @@ jobs:
       - name: Install Railway CLI
         run: npm install -g @railway/cli
 
-      - name: Link Railway Project
-        env:
-          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
-        run: |
-          railway link --service celebrated-tranquility
-        working-directory: ./backend
+
 
       - name: Deploy to Railway
         run: railway up --service celebrated-tranquility --detach

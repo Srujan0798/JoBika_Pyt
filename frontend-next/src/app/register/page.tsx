@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 export default function Register() {
@@ -34,7 +35,7 @@ export default function Register() {
                 expectedCtc: Number(formData.expectedCtc),
             };
 
-            const res = await fetch("http://localhost:3000/api/auth/register", {
+            const res = await fetch(`${API_BASE_URL}/api/auth/register`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload),

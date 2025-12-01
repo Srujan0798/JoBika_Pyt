@@ -105,7 +105,7 @@ The migration script will now just copy data from SQLite to PostgreSQL (if you h
 ### Railway (Backend)
 ```
 RAILWAY_TOKEN: 846fcaf3-cef6-479f-ae06-b32a8eb8ee04
-Service URL: https://jobika-backend-production.up.railway.app
+Service- **NEXT_PUBLIC_API_URL:** `https://jobika-backend-production.up.railway.app` (or your actual backend URL)
 ```
 
 ### Vercel (Frontend)

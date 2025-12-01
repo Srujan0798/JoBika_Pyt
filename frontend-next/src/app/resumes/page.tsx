@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import { API_BASE_URL } from "@/lib/config";
 import { FileText, Plus, Download, Calendar, Briefcase, Loader2, ArrowRight } from "lucide-react";
 
 interface ResumeVersion {
@@ -26,7 +27,7 @@ export default function ResumesPage() {
             const token = localStorage.getItem("token");
             if (!token) return;
 
-            const res = await fetch("http://localhost:3000/api/resumes", {
+            const res = await fetch(`${API_BASE_URL}/api/resumes`, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             const data = await res.json();
@@ -46,7 +47,7 @@ export default function ResumesPage() {
         setTailoring(true);
         try {
             const token = localStorage.getItem("token");
-            const res = await fetch("http://localhost:3000/api/resumes/tailor", {
+            const res = await fetch(`${API_BASE_URL}/api/resumes/tailor`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -121,7 +122,7 @@ export default function ResumesPage() {
                                 </div>
                                 <div className="flex gap-2 mt-auto">
                                     <a
-                                        href={`http://localhost:3000${resume.pdf_url}`}
+                                        href={`${API_BASE_URL}${resume.pdf_url}`}
                                         target="_blank"
                                         rel="noopener noreferrer"
                                         className="flex-1 bg-muted/50 hover:bg-muted text-foreground py-2 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"

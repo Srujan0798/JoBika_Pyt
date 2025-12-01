@@ -3,7 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Send, User, Bot, Loader2, Sparkles, History, MessageSquare } from "lucide-react";
 import Link from "next/link";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
+import { API_BASE_URL } from "@/lib/config";
 
 interface Message {
     id: string;
@@ -29,7 +30,7 @@ export default function CoachPage() {
 
     useEffect(() => {
         // Initialize Socket.io connection
-        socket = io("http://localhost:3000");
+        socket = io(API_BASE_URL);
 
         socket.on("connect", () => {
             console.log("Connected to Orion Coach Server");
@@ -164,8 +165,8 @@ export default function CoachPage() {
                             </div>
 
                             <div className={`rounded-2xl p-4 shadow-sm ${msg.role === 'user'
-                                    ? 'bg-primary text-white rounded-tr-none'
-                                    : 'bg-white border border-muted/20 rounded-tl-none'
+                                ? 'bg-primary text-white rounded-tr-none'
+                                : 'bg-white border border-muted/20 rounded-tl-none'
                                 }`}>
                                 <p className="whitespace-pre-wrap leading-relaxed">{msg.content}</p>
                             </div>
