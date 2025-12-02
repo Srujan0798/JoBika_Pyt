@@ -2,7 +2,6 @@ const express = require('express');
 const router = express.Router();
 const db = require('../database/db');
 const authMiddleware = require('../middleware/auth');
-const authMiddleware = require('../middleware/auth');
 const cache = require('../utils/CacheService');
 
 // GET /api/jobs - Search jobs
