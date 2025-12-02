@@ -11,7 +11,7 @@ const bodyParser = require('body-parser');
 // Import routes
 const authRoutes = require('./routes/auth');
 const userRoutes = require('./routes/user');
-const jobRoutes = require('./routes/jobs');
+const jobRoutes = require('./routes/jobRoutes');
 
 // Import utilities
 const errorHandler = require('./utils/errorHandler');
