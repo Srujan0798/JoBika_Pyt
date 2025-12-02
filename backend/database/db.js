@@ -125,6 +125,7 @@ class DatabaseManager {
                 id TEXT PRIMARY KEY,
                 user_id TEXT,
                 original_url TEXT,
+                file_data BYTEA, -- Store PDF binary data
                 parsed_data TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -164,6 +165,7 @@ class DatabaseManager {
                 job_id TEXT,
                 content TEXT,
                 pdf_url TEXT,
+                file_data BYTEA, -- Store PDF binary data
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
@@ -264,6 +266,7 @@ class DatabaseManager {
                 id TEXT PRIMARY KEY,
                 user_id TEXT,
                 original_url TEXT,
+                file_data BLOB, -- Store PDF binary data
                 parsed_data TEXT,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
@@ -303,6 +306,7 @@ class DatabaseManager {
                 job_id TEXT,
                 content TEXT,
                 pdf_url TEXT,
+                file_data BLOB, -- Store PDF binary data
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE

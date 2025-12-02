@@ -76,12 +76,20 @@ class ResumeTailoringService {
         }
     }
 
-    async generateResumePDF(resumeData, outputPath) {
+    async generateResumePDF(resumeData, outputPath = null) {
         return new Promise((resolve, reject) => {
             const doc = new PDFDocument({ margin: 50, size: 'A4' });
-            const stream = fs.createWriteStream(outputPath);
+            const buffers = [];
 
-            doc.pipe(stream);
+            doc.on('data', buffers.push.bind(buffers));
+            doc.on('end', () => {
+                const pdfData = Buffer.concat(buffers);
+                if (outputPath) {
+                    // If path provided, write to file (optional legacy support)
+                    fs.writeFileSync(outputPath, pdfData);
+                }
+                resolve(pdfData);
+            });
 
             // Colors
             const primaryColor = '#004E98'; // Deep Blue
@@ -146,9 +154,6 @@ class ResumeTailoringService {
             }
 
             doc.end();
-
-            stream.on('finish', () => resolve(outputPath));
-            stream.on('error', reject);
         });
     }
 

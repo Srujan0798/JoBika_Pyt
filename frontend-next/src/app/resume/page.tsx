@@ -40,7 +40,7 @@ export default function ResumeUpload() {
                 throw new Error("Please login to upload resume");
             }
 
-            const res = await fetch(`${API_BASE_URL}/api/resume/upload`, {
+            const res = await fetch(`${API_BASE_URL}/api/resumes/upload`, {
                 method: "POST",
                 headers: {
                     Authorization: `Bearer ${token}`,
