@@ -1,3 +1,7 @@
+const dns = require('dns');
+// Force IPv4 for Supabase connectivity
+dns.setDefaultResultOrder('ipv4first');
+
 require('dotenv').config({ path: '../.env' });
 // Trigger CI/CD
 const express = require('express');
