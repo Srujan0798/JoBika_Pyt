@@ -99,8 +99,8 @@ class DatabaseManager {
                 preferences TEXT,
                 subscription_tier TEXT DEFAULT 'free',
                 credits INTEGER DEFAULT 10,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS jobs (
@@ -116,9 +116,9 @@ class DatabaseManager {
                 skills_required TEXT,
                 source TEXT,
                 external_link TEXT,
-                posted_date DATETIME,
+                posted_date TIMESTAMP,
                 is_active INTEGER DEFAULT 1,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS resumes (
@@ -126,7 +126,7 @@ class DatabaseManager {
                 user_id TEXT,
                 original_url TEXT,
                 parsed_data TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
             );
 
@@ -138,7 +138,7 @@ class DatabaseManager {
                 reasons TEXT,
                 is_viewed INTEGER DEFAULT 0,
                 is_saved INTEGER DEFAULT 0,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE,
                 UNIQUE(user_id, job_id)
@@ -152,8 +152,8 @@ class DatabaseManager {
                 resume_version_id TEXT,
                 cover_letter TEXT,
                 notes TEXT,
-                applied_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                applied_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
             );
@@ -164,7 +164,7 @@ class DatabaseManager {
                 job_id TEXT,
                 content TEXT,
                 pdf_url TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
             );
@@ -238,8 +238,8 @@ class DatabaseManager {
                 preferences TEXT,
                 subscription_tier TEXT DEFAULT 'free',
                 credits INTEGER DEFAULT 10,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS jobs (
@@ -255,9 +255,9 @@ class DatabaseManager {
                 skills_required TEXT,
                 source TEXT,
                 external_link TEXT,
-                posted_date DATETIME,
+                posted_date TIMESTAMP,
                 is_active INTEGER DEFAULT 1,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 
             CREATE TABLE IF NOT EXISTS resumes (
@@ -265,7 +265,7 @@ class DatabaseManager {
                 user_id TEXT,
                 original_url TEXT,
                 parsed_data TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE
             );
 
@@ -277,7 +277,7 @@ class DatabaseManager {
                 reasons TEXT,
                 is_viewed INTEGER DEFAULT 0,
                 is_saved INTEGER DEFAULT 0,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE,
                 UNIQUE(user_id, job_id)
@@ -291,8 +291,8 @@ class DatabaseManager {
                 resume_version_id TEXT,
                 cover_letter TEXT,
                 notes TEXT,
-                applied_date DATETIME DEFAULT CURRENT_TIMESTAMP,
-                updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                applied_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
             );
@@ -303,7 +303,7 @@ class DatabaseManager {
                 job_id TEXT,
                 content TEXT,
                 pdf_url TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id) ON DELETE CASCADE,
                 FOREIGN KEY(job_id) REFERENCES jobs(id) ON DELETE CASCADE
             );
@@ -314,7 +314,7 @@ class DatabaseManager {
                 role TEXT NOT NULL,
                 message TEXT NOT NULL,
                 folder TEXT DEFAULT 'All',
-                timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
+                timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id)
             );
             
@@ -323,7 +323,7 @@ class DatabaseManager {
                 user_id INTEGER NOT NULL,
                 job_id INTEGER NOT NULL,
                 notes TEXT,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 UNIQUE(user_id, job_id),
                 FOREIGN KEY(user_id) REFERENCES users(id),
                 FOREIGN KEY(job_id) REFERENCES jobs(id)
@@ -340,7 +340,7 @@ class DatabaseManager {
                 experience_max INTEGER,
                 salary_min REAL,
                 is_active INTEGER DEFAULT 1,
-                created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
                 FOREIGN KEY(user_id) REFERENCES users(id)
             );
         `;
