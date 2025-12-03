@@ -20,7 +20,7 @@ router.post('/auto-apply', authMiddleware, async (req, res) => {
         }
 
         // 1. Fetch Job Details
-        const jobRes = await db.query('SELECT * FROM jobs WHERE id = ?', [jobId]);
+        const jobRes = await db.query('SELECT * FROM jobs WHERE id = $1', [jobId]);
         const job = jobRes.rows ? jobRes.rows[0] : jobRes[0];
 
         if (!job) {
@@ -32,11 +32,11 @@ router.post('/auto-apply', authMiddleware, async (req, res) => {
         }
 
         // 2. Fetch User Profile
-        const userRes = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
+        const userRes = await db.query('SELECT * FROM users WHERE id = $1', [userId]);
         const user = userRes.rows ? userRes.rows[0] : userRes[0];
 
         // 3. Fetch Resume Version (PDF Path)
-        const resumeRes = await db.query('SELECT * FROM resume_versions WHERE id = ?', [resumeVersionId]);
+        const resumeRes = await db.query('SELECT * FROM resume_versions WHERE id = $1', [resumeVersionId]);
         const resumeVersion = resumeRes.rows ? resumeRes.rows[0] : resumeRes[0];
 
         if (!resumeVersion) {
@@ -83,7 +83,7 @@ router.post('/auto-apply', authMiddleware, async (req, res) => {
         const appId = require('crypto').randomUUID();
         await db.query(`
             INSERT INTO applications (id, user_id, job_id, status, resume_version_id, notes)
-            VALUES (?, ?, ?, ?, ?, ?)
+            VALUES ($1, $2, $3, $4, $5, $6)
         `, [
             appId,
             userId,
