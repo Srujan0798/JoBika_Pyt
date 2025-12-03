@@ -62,8 +62,14 @@ router.post('/upload', authMiddleware, upload.single('resume'), async (req, res)
         const fileBuffer = req.file.buffer;
 
         // 1. Parse PDF Text
-        const pdfData = await pdfParse(fileBuffer);
-        const parsedText = pdfData.text;
+        let parsedText = '';
+        try {
+            const pdfData = await pdfParse(fileBuffer);
+            parsedText = pdfData.text;
+        } catch (parseError) {
+            console.warn('PDF parsing failed:', parseError.message);
+            parsedText = 'Could not extract text from PDF.';
+        }
 
         // 2. Extract basic info (Mock extraction for now, or use AI)
         // Ideally, we would use Gemini here to extract structured JSON from text
