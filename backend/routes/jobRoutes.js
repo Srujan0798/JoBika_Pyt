@@ -37,9 +37,16 @@ router.get('/', async (req, res) => {
 
         query += ' ORDER BY posted_date DESC LIMIT 50';
 
+
         console.log('Executing query:', query, 'with params:', params);
         const result = await db.query(query, params);
         let jobs = result.rows || result;
+
+        // Ensure jobs is an array
+        if (!Array.isArray(jobs)) {
+            console.error('Jobs is not an array:', typeof jobs, jobs);
+            jobs = [];
+        }
 
         console.log(`Found ${jobs.length} jobs`);
 
@@ -56,7 +63,7 @@ router.get('/', async (req, res) => {
                 const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your_jwt_secret');
 
                 // Fetch full user profile for matching
-                const userRes = await db.query('SELECT * FROM users WHERE id = ?', [decoded.userId || decoded.id]);
+                const userRes = await db.query('SELECT * FROM users WHERE id = $1', [decoded.userId || decoded.id]);
                 const user = userRes.rows ? userRes.rows[0] : userRes[0];
 
                 if (user) {
@@ -87,6 +94,7 @@ router.get('/', async (req, res) => {
             // No auth header
         }
 
+        console.log(`Returning ${jobs.length} jobs to client`);
         res.json(jobs);
     } catch (error) {
         console.error('Error searching jobs:', error);
