@@ -75,7 +75,7 @@ class GeminiService {
             const chat = this.model.startChat({
                 history: history.map(msg => ({
                     role: msg.role === 'assistant' ? 'model' : 'user',
-                    parts: [{ text: msg.content }]
+                    parts: [{ text: msg.message || msg.content }]
                 }))
             });
 
