@@ -44,16 +44,16 @@ class SubscriptionManager {
     }
 
     static async checkLimit(userId, actionType) {
-        const user = await db.query(
+        const result = await db.query(
             'SELECT subscription_tier, credits_used_today, credits_reset_at FROM users WHERE id = $1',
             [userId]
         );
 
-        if (!user || user.length === 0) {
+        if (!result.rows || result.rows.length === 0) {
             throw new Error('User not found');
         }
 
-        const userData = user[0];
+        const userData = result.rows[0];
         const tier = userData.subscription_tier || 'free';
         const limits = this.getLimits(tier);
 
@@ -129,16 +129,16 @@ class SubscriptionManager {
     }
 
     static async hasFeature(userId, featureName) {
-        const user = await db.query(
+        const result = await db.query(
             'SELECT subscription_tier FROM users WHERE id = $1',
             [userId]
         );
 
-        if (!user || user.length === 0) {
+        if (!result.rows || result.rows.length === 0) {
             return false;
         }
 
-        const tier = user[0].subscription_tier || 'free';
+        const tier = result.rows[0].subscription_tier || 'free';
         const limits = this.getLimits(tier);
 
         return limits.features.includes(featureName) ||
@@ -147,16 +147,16 @@ class SubscriptionManager {
     }
 
     static async getUsageStats(userId) {
-        const user = await db.query(
+        const result = await db.query(
             'SELECT subscription_tier, credits_used_today, credits_reset_at FROM users WHERE id = $1',
             [userId]
         );
 
-        if (!user || user.length === 0) {
+        if (!result.rows || result.rows.length === 0) {
             throw new Error('User not found');
         }
 
-        const userData = user[0];
+        const userData = result.rows[0];
         const tier = userData.subscription_tier || 'free';
         const limits = this.getLimits(tier);
 
@@ -182,16 +182,16 @@ class SubscriptionManager {
     }
 
     static async checkExpiration(userId) {
-        const user = await db.query(
+        const result = await db.query(
             'SELECT subscription_tier, subscription_expires_at FROM users WHERE id = $1',
             [userId]
         );
 
-        if (!user || user.length === 0) {
+        if (!result.rows || result.rows.length === 0) {
             return;
         }
 
-        const userData = user[0];
+        const userData = result.rows[0];
 
         if (userData.subscription_tier !== 'free' && userData.subscription_expires_at) {
             const now = new Date();
