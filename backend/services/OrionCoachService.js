@@ -26,7 +26,8 @@ Use Indian English and understand concepts like CTC, LPA, notice period, immedia
 
             // Fallback to mock if API fails (e.g. network timeout)
             console.warn('⚠️ Gemini API failed. Falling back to mock response.');
-            return this.getMockResponse(userMessage);
+            const mock = this.getMockResponse(userMessage);
+            return mock + " [DEBUG ERROR: " + error.message + "]";
         }
     }
 
