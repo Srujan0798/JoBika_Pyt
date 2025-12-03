@@ -28,6 +28,9 @@ export default function Dashboard() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
 
+    const [searchQuery, setSearchQuery] = useState("");
+    const [locationFilter, setLocationFilter] = useState("");
+
     useEffect(() => {
         // Check auth
         const token = localStorage.getItem("token");
@@ -46,9 +49,14 @@ export default function Dashboard() {
         fetchJobs(token);
     }, []);
 
-    const fetchJobs = async (token: string) => {
+    const fetchJobs = async (token: string, query = "", location = "") => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/jobs`, {
+            setLoading(true);
+            const params = new URLSearchParams();
+            if (query) params.append("q", query);
+            if (location) params.append("location", location);
+
+            const res = await fetch(`${API_BASE_URL}/api/jobs?${params.toString()}`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                 },
@@ -56,11 +64,21 @@ export default function Dashboard() {
             const data = await res.json();
             if (Array.isArray(data)) {
                 setJobs(data);
+            } else {
+                setJobs([]);
             }
         } catch (error) {
             console.error("Failed to fetch jobs:", error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault();
+        const token = localStorage.getItem("token");
+        if (token) {
+            fetchJobs(token, searchQuery, locationFilter);
         }
     };
 
@@ -203,6 +221,38 @@ export default function Dashboard() {
 
                     {/* Job Feed */}
                     <div className="flex-1">
+                        {/* Search Bar */}
+                        <div className="bg-white p-4 rounded-xl border border-muted/20 shadow-sm mb-6">
+                            <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4">
+                                <div className="flex-1 relative">
+                                    <Briefcase className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                    <input
+                                        type="text"
+                                        placeholder="Search jobs (e.g. React, Python)..."
+                                        value={searchQuery}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                    />
+                                </div>
+                                <div className="flex-1 relative">
+                                    <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+                                    <input
+                                        type="text"
+                                        placeholder="Location (e.g. Bangalore, Remote)..."
+                                        value={locationFilter}
+                                        onChange={(e) => setLocationFilter(e.target.value)}
+                                        className="w-full pl-10 pr-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none transition-all"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="bg-primary text-white px-6 py-2 rounded-lg font-medium hover:bg-primary/90 transition-colors flex items-center justify-center gap-2"
+                                >
+                                    Search
+                                </button>
+                            </form>
+                        </div>
+
                         <h1 className="text-2xl font-bold mb-6">Recommended Jobs</h1>
 
                         {loading ? (
