@@ -14,7 +14,7 @@ router.get('/', async (req, res) => {
         console.log('🔑 Cache key:', cacheKey);
 
         // Check cache first
-        const cachedJobs = cache.get(cacheKey);
+        const cachedJobs = await cache.get(cacheKey);
         if (cachedJobs) {
             console.log('✅ Returning cached jobs:', Array.isArray(cachedJobs) ? cachedJobs.length : 'NOT ARRAY');
             return res.json(cachedJobs);
@@ -60,7 +60,7 @@ router.get('/', async (req, res) => {
         console.log(`✅ Found ${jobs.length} jobs`);
 
         // Cache the raw result before personalization
-        cache.set(cacheKey, jobs);
+        await cache.set(cacheKey, jobs);
 
         // Smart Sort: Calculate match scores if user is logged in
         const authHeader = req.headers.authorization;
