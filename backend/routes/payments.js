@@ -42,7 +42,7 @@ router.post('/verify', authMiddleware, async (req, res) => {
 
             if (planId) {
                 // Update subscription
-                await db.query('UPDATE users SET subscription_tier = ? WHERE id = ?', [planId, userId]);
+                await db.query('UPDATE users SET subscription_tier = $1 WHERE id = $2', [planId, userId]);
 
                 // Add default credits for the plan
                 let creditAmount = 0;
