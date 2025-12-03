@@ -6,17 +6,20 @@ const cache = require('../utils/CacheService');
 
 // GET /api/jobs - Search jobs
 router.get('/', async (req, res) => {
-    console.log('GET /api/jobs hit');
+    console.log('🔍 GET /api/jobs hit');
+    console.log('📋 Query params:', req.query);
     try {
         const { q, location, minSalary, maxSalary, experience } = req.query;
         const cacheKey = `jobs_${JSON.stringify(req.query)}`;
+        console.log('🔑 Cache key:', cacheKey);
 
         // Check cache first
         const cachedJobs = cache.get(cacheKey);
         if (cachedJobs) {
-            console.log('Returning cached jobs');
+            console.log('✅ Returning cached jobs:', Array.isArray(cachedJobs) ? cachedJobs.length : 'NOT ARRAY');
             return res.json(cachedJobs);
         }
+        console.log('❌ No cache found, querying database...');
 
         let query = 'SELECT * FROM jobs WHERE is_active = $1';
         const params = [1]; // is_active = 1 (true)
@@ -38,17 +41,23 @@ router.get('/', async (req, res) => {
         query += ' ORDER BY posted_date DESC LIMIT 50';
 
 
-        console.log('Executing query:', query, 'with params:', params);
+        console.log('📝 Executing query:', query);
+        console.log('📊 With params:', params);
         const result = await db.query(query, params);
+        console.log('🔍 Query result type:', typeof result);
+        console.log('🔍 Query result keys:', Object.keys(result || {}));
+        console.log('🔍 result.rows type:', typeof result.rows);
+        console.log('🔍 result.rows:', result.rows);
         let jobs = result.rows || result;
+        console.log('📦 Jobs after extraction:', typeof jobs, Array.isArray(jobs) ? `Array[${jobs.length}]` : 'NOT ARRAY');
 
         // Ensure jobs is an array
         if (!Array.isArray(jobs)) {
-            console.error('Jobs is not an array:', typeof jobs, jobs);
+            console.error('⚠️ Jobs is not an array:', typeof jobs, jobs);
             jobs = [];
         }
 
-        console.log(`Found ${jobs.length} jobs`);
+        console.log(`✅ Found ${jobs.length} jobs`);
 
         // Cache the raw result before personalization
         cache.set(cacheKey, jobs);
