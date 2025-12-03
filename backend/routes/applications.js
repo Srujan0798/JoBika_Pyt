@@ -24,7 +24,7 @@ router.get('/', authMiddleware, async (req, res) => {
         res.json(result.rows || result);
     } catch (error) {
         console.error('Error fetching applications:', error);
-        res.status(500).json({ error: 'Failed to fetch applications' });
+        res.status(500).json({ error: 'Failed to fetch applications: ' + error.message });
     }
 });
 
