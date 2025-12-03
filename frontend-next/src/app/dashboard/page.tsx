@@ -26,7 +26,7 @@ export default function Dashboard() {
     const [loading, setLoading] = useState(true);
     const [user, setUser] = useState<any>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
 
     useEffect(() => {
         // Check auth
