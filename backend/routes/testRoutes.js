@@ -117,6 +117,14 @@ router.post('/migrate', async (req, res) => {
             console.log('Error adding file_data to resume_versions (might exist):', e.message);
         }
 
+        // Add created_at to applications
+        try {
+            await db.query('ALTER TABLE applications ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP');
+            console.log('Added created_at to applications');
+        } catch (e) {
+            console.log('Error adding created_at to applications (might exist):', e.message);
+        }
+
         res.json({ success: true, message: 'Migrations completed' });
     } catch (error) {
         console.error('Migration error:', error);
