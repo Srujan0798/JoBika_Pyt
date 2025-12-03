@@ -151,8 +151,8 @@ app.post('/api/orion/chat', authMiddleware, validate(chatMessageSchema), async (
     } catch (error) {
         console.error('Chat error:', error);
         res.status(500).json({
-            error: 'Chat service error',
-            response: 'I apologize, but I\'m having trouble connecting right now. Please check if Gemini API key is configured.'
+            error: 'Chat service error: ' + error.message,
+            response: 'I apologize, but I\'m having trouble connecting right now. Error: ' + error.message
         });
     }
 });
