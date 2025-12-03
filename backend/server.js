@@ -54,7 +54,7 @@ app.use(bodyParser.urlencoded({ extended: true, limit: '10mb' }));
 
 // Initialize services
 // db is imported as singleton
-const GEMINI_KEY = process.env.GEMINI_API_KEY || 'AIzaSyAj2kgwOETC5gkSbok4So1N9eZ-IKTsYAU'; // Fallback provided by user
+const GEMINI_KEY = process.env.GEMINI_API_KEY; // Fallback provided by user
 
 const authService = new AuthService();
 const orionService = new OrionCoachService(GEMINI_KEY);
