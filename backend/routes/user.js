@@ -7,7 +7,7 @@ const { validate, alertSchema } = require('../middleware/validation');
 // PROFILE ENDPOINTS
 // ============================================================
 
-router.get('/profile', async (req, res) => {
+router.get('/user/profile', async (req, res) => {
     try {
         const userRes = await db.query('SELECT * FROM users WHERE id = $1', [req.userId]);
         const user = userRes.rows ? userRes.rows[0] : userRes[0];
@@ -25,7 +25,7 @@ router.get('/profile', async (req, res) => {
     }
 });
 
-router.put('/profile', async (req, res) => {
+router.put('/user/profile', async (req, res) => {
     try {
         const { skills, experience, education, preferences, phone, location } = req.body;
 
