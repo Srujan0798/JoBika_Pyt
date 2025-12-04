@@ -19,6 +19,7 @@ WORKDIR /app
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
 # where available (npm@5+)
 COPY package*.json ./
+COPY prisma ./prisma/
 
 # Skip Chromium download for Puppeteer as we installed Chrome above
 ENV PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
