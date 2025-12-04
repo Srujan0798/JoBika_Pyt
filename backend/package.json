@@ -1,7 +1,7 @@
 {
     "name": "jobika-backend",
     "version": "1.0.0",
-    "description": "JoBika AI-Powered Job Application Platform - Backend API",
+    "description": "JoBika Backend API - TypeScript + Prisma + Express + PostgreSQL",
     "main": "server.ts",
     "scripts": {
         "start": "ts-node server.ts",
