@@ -1,12 +1,16 @@
+# Railway Nixpacks configuration for TypeScript + Prisma
+
 [phases.setup]
-nixPkgs = ["nodejs", "google-chrome"]
+nixPkgs = ["nodejs-18_x"]
+
+[phases.install]
+cmds = ["npm ci"]
 
 [phases.build]
-cmds = ["npm install"]
+cmds = [
+  "npx prisma generate",
+  "npm run build"
+]
 
 [start]
-cmd = "node server.js"
-
-[variables]
-PUPPETEER_SKIP_CHROMIUM_DOWNLOAD = "true"
-PUPPETEER_EXECUTABLE_PATH = "/usr/bin/google-chrome-stable"
+cmd = "npm start"

@@ -1,1 +1,2 @@
-web: node server.js
+# Procfile for Railway deployment
+web: npm start
