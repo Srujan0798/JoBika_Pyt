@@ -468,11 +468,11 @@ SELECT * FROM resume_versions
 // SUBSCRIPTION & USAGE ENDPOINTS
 // ============================================================
 
-import { SubscriptionManager } from './middleware/subscription');
+const subscriptionManager = new SubscriptionManager();
 
 app.get('/api/subscription/status', authMiddleware, async (req, res) => {
     try {
-        const stats = await SubscriptionManager.getUsageStats(req.user.id);
+        const stats = await subscriptionManager.getUsageStats(req.user.id);
         res.json(stats);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -483,7 +483,7 @@ app.get('/api/subscription/limits', authMiddleware, async (req, res) => {
     try {
         const user = await db.query('SELECT subscription_tier FROM users WHERE id = $1', [req.user.id]);
         const tier = user.rows[0]?.subscription_tier || 'free';
-        const limits = SubscriptionManager.getLimits(tier);
+        const limits = subscriptionManager.getLimits(tier);
         res.json(limits);
     } catch (error) {
         res.status(500).json({ error: error.message });
@@ -495,8 +495,6 @@ app.use(errorHandler.errorMiddleware());
 
 // Start server (Only if not running in test mode)
 let server;
-import http from 'http';
-import { Server } from "socket.io";
 
 if (require.main === module) {
     const httpServer = http.createServer(app);
