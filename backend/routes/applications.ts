@@ -5,6 +5,7 @@ import authMiddleware from '../middleware/auth';
 import ApplicationFormFiller from '../services/ApplicationFormFiller';
 import path from 'path';
 import fs from 'fs';
+import crypto from 'crypto';
 
 // Initialize service
 const formFiller = new ApplicationFormFiller();
@@ -120,7 +121,7 @@ router.post('/auto-apply', authMiddleware, async (req, res) => {
         const result = await formFiller.autoApplyToJob(job.external_link, userData, tailoredResume, supervised);
 
         // 5. Log Application Attempt
-        import appId from 'crypto').randomUUID(;
+        const appId = crypto.randomUUID();
         await db.query(`
             INSERT INTO applications (id, user_id, job_id, status, resume_version_id, notes)
             VALUES ($1, $2, $3, $4, $5, $6)

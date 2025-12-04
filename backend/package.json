@@ -5,8 +5,8 @@
     "main": "server.ts",
     "scripts": {
         "start": "ts-node server.ts",
-        "dev": "ts-node-dev --respawn --transpile-only server.js",
-        "dev:js": "nodemon server.js",
+        "dev": "ts-node-dev --respawn --transpile-only server.ts",
+        "dev:js": "nodemon server.ts",
         "build": "tsc",
         "test": "jest",
         "test:watch": "jest --watch",

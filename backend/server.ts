@@ -1,4 +1,38 @@
 import dns from 'dns';
+import dotenv from 'dotenv';
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import morgan from 'morgan';
+import http from 'http';
+import { Server } from 'socket.io';
+import authRoutes from './routes/auth';
+import userRoutes from './routes/user';
+import jobRoutes from './routes/jobRoutes';
+import resumeRoutes from './routes/resumes';
+import applicationRoutes from './routes/applications';
+import analyticsRoutes from './routes/analytics';
+import networkingRoutes from './routes/networking';
+import paymentRoutes from './routes/payments';
+import testRoutes from './routes/testRoutes';
+import cacheRoutes from './routes/cacheRoutes';
+import errorHandler from './utils/errorHandler';
+import security from './middleware/security';
+import authMiddleware from './middleware/auth';
+import db from './database/db';
+import AuthService from './services/AuthService';
+import OrionCoachService from './services/OrionCoachService';
+import JobScraper from './services/JobScraper';
+import ATSService from './services/ATSService';
+import ResumeTailoringService from './services/ResumeTailoringService';
+import ApplicationFormFiller from './services/ApplicationFormFiller';
+import EmailService from './services/EmailService';
+import cache from './utils/CacheService';
+import logger from './utils/Logger';
+import { dbCircuitBreaker, apiRetry, gracefulDegradation } from './utils/resiliencePatterns';
+import { validate, validateQuery, jobSearchSchema, chatMessageSchema, alertSchema, autoApplyRequestSchema, tailorResumeSchema } from './middleware/validation';
+import { SubscriptionManager } from './middleware/subscription';
+import dns from 'dns';
 // Force IPv4 for Supabase connectivity
 dns.setDefaultResultOrder('ipv4first');
 

@@ -8,6 +8,7 @@ import path from 'path';
 import fs from 'fs';
 import multer from 'multer';
 import pdfParse from 'pdf-parse';
+import crypto from 'crypto';
 
 // Configure Multer for memory storage (files stored as Buffer)
 const upload = multer({
@@ -79,7 +80,7 @@ router.post('/upload', authMiddleware, upload.single('resume'), async (req, res)
         };
 
         // 3. Save to Database (Store Buffer directly)
-        import resumeId from 'crypto').randomUUID(;
+        const resumeId = crypto.randomUUID();
         await db.query(`
             INSERT INTO resumes (id, user_id, original_url, file_data, parsed_data)
             VALUES ($1, $2, $3, $4, $5)
@@ -187,7 +188,7 @@ router.post('/tailor', authMiddleware, async (req, res) => {
         const pdfBuffer = await tailoringService.generateResumePDF(tailoredResume);
 
         // 5. Save Version to DB
-        import versionId from 'crypto').randomUUID(;
+        const versionId = crypto.randomUUID();
         await db.query(`
             INSERT INTO resume_versions (id, user_id, job_id, content, pdf_url, file_data)
             VALUES ($1, $2, $3, $4, $5, $6)

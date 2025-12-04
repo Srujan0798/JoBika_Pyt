@@ -8,6 +8,8 @@
         "outDir": "./dist",
         "rootDir": "./",
         "strict": true,
+        "allowJs": true,
+        "noEmit": false,
         "esModuleInterop": true,
         "skipLibCheck": true,
         "forceConsistentCasingInFileNames": true,
